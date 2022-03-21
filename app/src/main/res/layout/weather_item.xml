@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="280px"
+    android:orientation="horizontal"
+    android:paddingLeft="50px"
+    android:paddingRight="50px"
+    android:background="#F4FDE9"
+    android:gravity="center"
+
+    android:id="@+id/weather_item"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <LinearLayout
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content">
+
+            <ImageView
+                android:id="@+id/weather_image"
+                android:layout_width="180px"
+                android:layout_height="match_parent"
+                android:background="#7EBCA8"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/cloudy"/>
+            <LinearLayout
+                android:layout_height="match_parent"
+                android:layout_width="390px"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:id="@+id/weatherDesciption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="30px"
+                    android:textSize="18dp"
+                    android:text="null"/>
+                <TextView
+                    android:id="@+id/temperature"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="30px"
+                    android:textSize="40dp"
+                    android:text="null 度"/>
+                <TextView
+                    android:id="@+id/location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:paddingRight="30px"
+                    android:textSize="18dp"
+                    android:text="NoDataSource"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+
+            android:layout_height="match_parent"
+            android:layout_width="160dp"
+            android:gravity="center_vertical"
+            >
+            <LinearLayout
+                android:layout_height="match_parent"
+                android:layout_width="420px"
+                android:orientation="vertical"
+                android:gravity="center_vertical"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="30px"
+                        android:textSize="18dp"
+                        android:text="濕度"/>
+                    <TextView
+                        android:id="@+id/humidity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="30px"
+                        android:textSize="24dp"
+                        android:text="null %"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="30px"
+                        android:textSize="18dp"
+                        android:text="風速"/>
+                    <TextView
+                        android:id="@+id/windSpeed"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="30px"
+                        android:textSize="24dp"
+                        android:text="null m/s"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="30px"
+                        android:textSize="18dp"
+                        android:text="雨量"/>
+                    <TextView
+                        android:id="@+id/rainFall"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="30px"
+                        android:textSize="24dp"
+                        android:text="null mm"/>
+                </LinearLayout>
+            </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

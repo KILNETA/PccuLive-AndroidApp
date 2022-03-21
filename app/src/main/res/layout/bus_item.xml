@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="180px"
+    android:background="#4B5155"
+    android:id="@+id/bus_item"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_marginRight="200px"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_height="178px"
+                android:layout_width="match_parent"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_marginLeft="30px"
+                    android:layout_width="250px"
+                    android:layout_height="140px"
+                    android:background="@drawable/bus_estimate_time"
+                    app:strokeColor="#E6EC51"
+                    app:strokeWidth="20px"
+                    android:text="10"
+                    app:cornerRadius="85px"
+                    android:gravity="center"
+                    style="bus">
+                    <TextView
+                        android:id="@+id/TimeState"
+                        android:layout_marginLeft="17px"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textColor="@color/white"
+                        android:gravity="center"
+                        android:textSize="60px"
+                        android:text=""/>
+                    <TextView
+                        android:id="@+id/EstimateTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textColor="@color/white"
+                        android:gravity="center"
+                        android:textSize="90px"
+                        android:text="－"/>
+                    <TextView
+                        android:id="@+id/TimeMin"
+                        android:layout_marginRight="20px"
+                        android:paddingBottom="25px"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textColor="@color/white"
+                        android:gravity="bottom"
+                        android:textSize="45px"
+                        android:text="分"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/StationName"
+                    android:layout_marginLeft="30px"
+                    android:layout_marginRight="100px"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/white"
+                    android:gravity="center_vertical"
+                    android:singleLine="true"
+                    android:textSize="60px"
+                    android:text="文化大學一"
+                    />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginLeft="30px"
+                android:layout_marginRight="30px"
+                android:background="#A3A3A3"
+                android:layout_height="2px"
+                android:layout_width="match_parent"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginLeft="-200px"
+            android:background="#2E2E2E"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical">
+            <LinearLayout
+                android:layout_marginRight="20px"
+                android:layout_marginLeft="20px"
+                android:layout_width="65px"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_width="65px"
+                    android:layout_height="65px"
+                    android:src="@drawable/bus_1"/>
+                <ImageView
+                    android:layout_marginTop="25px"
+                    android:layout_marginBottom="25px"
+                    android:layout_width="65px"
+                    android:layout_height="65px"
+                    android:src="@drawable/bus_1"/>
+                <ImageView
+                    android:layout_width="65px"
+                    android:layout_height="65px"
+                    android:src="@drawable/bus_1"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="55px"
+                android:layout_marginBottom="55px"
+                android:layout_width="5px"
+                android:layout_height="match_parent"
+                android:background="@color/PCCU_yellow"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

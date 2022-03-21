@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <!-- rectangle表示为矩形 -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <!-- 變白 -->
+            <solid android:color="#80FFFFFF" />
+            <!--圓角-->
+            <corners android:radius="200px" />
+        </shape>
+    </item>
+    <item android:state_pressed="false">
+        <shape android:shape="rectangle">
+            <!-- 透明色 -->
+            <solid android:color="#00000000" />
+            <!--圓角-->
+            <corners android:radius="200px" />
+        </shape>
+    </item>
+</selector>

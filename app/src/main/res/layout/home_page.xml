@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_page"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_marginBottom="130px">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="359px"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="70px"
+            android:gravity="center_vertical"
+            android:text="即時天氣"
+            android:textSize="19dp"
+            android:background="#98D2EC"
+            android:paddingLeft="10px"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#f3f3f3"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/weather_list"
+            android:layout_width="match_parent"
+            android:layout_height="280px"/>
+        <ProgressBar
+            android:id="@+id/WeatherUpdataProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="5px"
+            style="@android:style/Widget.Material.ProgressBar.Horizontal"
+            android:max="59"
+            android:progress="0"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#f3f3f3"/>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/CwbRadarEcho"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/sunny"
+        />
+
+
+
+</LinearLayout>
