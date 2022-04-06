@@ -13,9 +13,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.pccu.Internet.Weather_API
+import com.example.pccu.Internet.*
 
-import com.example.pccu.Internet.Weather_Data
 import kotlinx.android.synthetic.main.weather_item.view.*
 
 import com.example.pccu.R
@@ -25,28 +24,40 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 
+import java.io.ByteArrayInputStream
+import java.io.InputStream
+
 
 class Home_Page : Fragment(R.layout.home_page){
 
     private var CountdownTimer:Timer? = null
 
+    //關閉頁面
     override fun onDestroyView() {
-        CountdownTimer!!.cancel();
+        CountdownTimer!!.cancel()
+        CountdownTimer!!.purge()
         super.onDestroyView()
     }
 
+    //顯示頁面
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState) //創建頁面
 
+        //氣溫列表呼叫
         weather_list.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false)
+        //初始化 氣溫適配器
         val adapter = adapter()
+        //氣溫列表 連接適配器
         weather_list.adapter = adapter
+        //首次更新數據
         adapter.upDatas()
 
+        //初始化計時器
         CountdownTimer = Timer()
-
+        //氣溫計數值
         var i=0
 
+        //更新氣溫用計時器 60s 更新一次
         class CountdownTimerTask : TimerTask() {
             @RequiresApi(Build.VERSION_CODES.N)
             override fun run() {
@@ -56,39 +67,51 @@ class Home_Page : Fragment(R.layout.home_page){
                 else if( i==60 ){ i=0 }
             }
         }
-
+        //套用計時器設定
         CountdownTimer!!.schedule(CountdownTimerTask(), 500, 500)
     }
 
-    inner class adapter:RecyclerView.Adapter<MyViewHolder>(){ //該頁面的數據展示者
+    //Weather列表適配器
+    inner class adapter:RecyclerView.Adapter<MyViewHolder>(){
+        //氣溫API數據組 <Weather_Data>
         private val Weather_Data = mutableListOf<Weather_Data>()
+        //計算滑動定位 座標變數 Dx:水平座標 NowPosition:當前項目座標
         private var Dx = 0; var NowPosition = 0;
 
+        //數據更新
         fun upDatas(){
+            //協程調用氣溫API
             GlobalScope.launch ( Dispatchers.Main ){
                 val Weather = withContext(Dispatchers.IO) {
                     Weather_API().Get()
                 }
+                //呼叫 重置氣溫資料
                 reSetData(Weather!!)
             }
         }
 
+        //重置氣溫資料
         fun reSetData(Weather_Data: List<Weather_Data>){
             Log.d("upDatas", Weather_Data!!.toString())
+            //導入數據資料
             this.Weather_Data.addAll(Weather_Data)
+            //刷新視圖列表
             notifyDataSetChanged()
         }
 
+        //創建視圖持有者 (連結weather_item顯示物件)
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
             val view =
                 LayoutInflater.from(context).inflate(R.layout.weather_item,parent,false)
             return MyViewHolder(view)
         }
 
+        //設置展示物件數量 (天氣數值量)
         override fun getItemCount(): Int {
             return if(Weather_Data.size == 0) 1 else Weather_Data.size
         }
 
+        //物件建構者
         override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
             if(Weather_Data != mutableListOf<Weather_Data>()){

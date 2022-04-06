@@ -1,5 +1,6 @@
 package com.example.pccu.Internet
 
+import android.util.Log
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -8,10 +9,17 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import java.util.concurrent.TimeUnit
 import android.webkit.WebSettings
+import com.example.pccu.AppStart.Http
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.Callback
 import okhttp3.Request
 import okhttp3.Interceptor
+import org.json.JSONObject
 import retrofit2.http.Path
 import retrofit2.http.Query
+import java.io.InputStream
 import java.util.*
 
 
@@ -21,9 +29,10 @@ object  HttpRetrofit{ //更好的網路數據解析
         .connectTimeout(10, TimeUnit.SECONDS) //連接超時
         .readTimeout(10, TimeUnit.SECONDS) //讀取超時
         .writeTimeout(10, TimeUnit.SECONDS) //請求超時
-        .addInterceptor(HttpLoggingInterceptor()) //添加 Http日誌攔截器
+        .addInterceptor(HttpLoggingInterceptor()) //添加 Http日誌攔截器.setLenient()
         .build() //建構
 
+    //API (Json專用)
     fun<T> create(clazz: Class<T>,Url:String): T{
 
         val retrofit = Retrofit.Builder() //builder建構者
@@ -34,6 +43,16 @@ object  HttpRetrofit{ //更好的網路數據解析
             .build() //建構
 
         return retrofit.create(clazz) //回傳 獲取的 :Retrofit 函數
+    }
+
+    //連線 取出網頁文字檔(XML)
+    fun create(Url:String): InputStream{
+        var response = client.newCall( Request.Builder()
+            .url(Url)
+            .build()
+        ).execute()
+
+        return response.body!!.byteStream()
     }
 
     /**

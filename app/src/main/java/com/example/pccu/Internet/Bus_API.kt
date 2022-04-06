@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.http.GET
+import java.io.Serializable
 import java.util.*
 
 class Bus_API{
@@ -31,6 +32,7 @@ class Bus_API{
         return a
     }
 
+    //到站時間查詢interface
     fun GetBusEstimateTime(Zh_tw:String): Vector<Bus_Data_EstimateTime>? {
         //根網域
         val Url = "https://ptx.transportdata.tw/"
@@ -46,7 +48,7 @@ class Bus_API{
 data class NameType(
     val Zh_tw:String,                //中文繁體名稱
     val En:String                   //英文名稱
-)
+) : Serializable
 
 // 經緯度  -數據結構
 data class PointType(
@@ -54,46 +56,47 @@ data class PointType(
     val PositionLat: Double,         //位置緯度(WGS84)
     val GeoHash: String              //地理空間編碼
 
-)
+) : Serializable
 
 // 取得指定[縣市],[路線名稱]的公車動態定時資料(A1)[批次更新] -數據結構
-data class Bus_Data_A1( // Bus A1 Data
+data class Bus_Data_A1(
+    // Bus A1 Data
     val PlateNumb: String,           //車牌號碼
     val OperatorID: String,          //營運業者代碼
     val RouteUID: String,            //路線唯一識別代碼
-                                            // 規則為 {業管機關簡碼} + {RouteID}，其中 {業管機關簡碼}
-                                            // 可於Authority API中的AuthorityCode欄位查詢
+    // 規則為 {業管機關簡碼} + {RouteID}，其中 {業管機關簡碼}
+    // 可於Authority API中的AuthorityCode欄位查詢
     val RouteID: List<NameType>,     //路線名字 (List)
     val SubRouteUID: String,         //子路線唯一識別代碼
-                                            // 規則為 {業管機關簡碼} + {SubRouteID}，其中 {業管機關簡碼}
-                                            // 可於Authority API中的AuthorityCode欄位查詢
+    // 規則為 {業管機關簡碼} + {SubRouteID}，其中 {業管機關簡碼}
+    // 可於Authority API中的AuthorityCode欄位查詢
     val SubRouteID: String,          //地區既用中之子路線代碼(為原資料內碼)
     val SubRouteName: List<NameType>,//路線名字 (List)
     val Direction: Int,          //去返程 {
-                                            // 0:去程 1:返程 2:迴圈 255:未知 }
+    // 0:去程 1:返程 2:迴圈 255:未知 }
     val BusPosition: List<PointType>,//車輛位置經度
     val Speed: Double,               //行駛速度(kph)
     val Azimuth: Double,             //方位角
     val DutyStatus: Int,         //勤務狀態 {
-                                            // 0:正常 1:開始 2:結束 }
+    // 0:正常 1:開始 2:結束 }
     val BusStatus: Int,          //行車狀況 {
-                                            // 0:正常
-                                            // 1:車禍 2:故障 4:緊急求援
-                                            // 3:塞車
-                                            // 90:不明 91:去回不明 98:偏移路線 99:非營運狀態 255:未知
-                                            // 5:加油 100:客滿 101:包車出租 }
+    // 0:正常
+    // 1:車禍 2:故障 4:緊急求援
+    // 3:塞車
+    // 90:不明 91:去回不明 98:偏移路線 99:非營運狀態 255:未知
+    // 5:加油 100:客滿 101:包車出租 }
     val MessageType: Int,        //資料型態種類 {
-                                            // 0:未知 1:定期 2:非定期 }
+    // 0:未知 1:定期 2:非定期 }
     val GPSTime: String,             //車機時間              (ISO8601格式:yyyy-MM-ddTHH:mm:sszzz)
     val TransTime: String,           //車機資料傳輸時間       (ISO8601格式:yyyy-MM-ddTHH:mm:sszzz)
-                                            // [多數單位沒有提供此欄位資訊]
+    // [多數單位沒有提供此欄位資訊]
     val SrcRecTime: String,          //來源端平台接收時間     (ISO8601格式:yyyy-MM-ddTHH:mm:sszzz)
     val SrcTransTime: String,        //來源端平台資料傳出時間  (ISO8601格式:yyyy-MM-ddTHH:mm:sszzz)
-                                            // [公總使用動態即時推播故有提供此欄位, 而非公總系統因使用整包資料更新, 故沒有提供此欄位]
+    // [公總使用動態即時推播故有提供此欄位, 而非公總系統因使用整包資料更新, 故沒有提供此欄位]
     val SrcUpdateTime: String,       //來源端平台資料更新時間  (ISO8601格式:yyyy-MM-ddTHH:mm:sszzz)
-                                            // [公總使用動態即時推播故沒有提供此欄位, 而非公總系統因提供整包資料更新, 故有提供此欄]
+    // [公總使用動態即時推播故沒有提供此欄位, 而非公總系統因提供整包資料更新, 故有提供此欄]
     val UpdateTime: String,          //本平台資料更新時間      (ISO8601格式:yyyy-MM-ddTHH:mm:sszzz)
-)
+) : Serializable
 
 // 取得指定[縣市],[路線名稱]的公車動態定點資料(A2)[批次更新] -數據結構
 data class Bus_Data_A2( // Bus A2 Data
@@ -137,7 +140,7 @@ data class Bus_Data_A2( // Bus A2 Data
     val SrcUpdateTime: String,       //來源端平台資料更新時間  (ISO8601格式:yyyy-MM-ddTHH:mm:sszzz)
                                             // [公總使用動態即時推播故沒有提供此欄位, 而非公總系統因提供整包資料更新, 故有提供此欄]
     val UpdateTime: String           //本平台資料更新時間      (ISO8601格式:yyyy-MM-ddTHH:mm:sszzz)
-)
+) : Serializable
 
 // 站點 -數據結構
 data class Stop(
@@ -154,7 +157,7 @@ data class Stop(
     val StationGroupID:String,       //站牌所屬的組站位ID
     val LocationCityCode:String,     //站牌位置縣市之代碼
                                             // (國際ISO 3166-2 三碼城市代碼)[若為公路/國道客運路線則為空值]
-)
+) : Serializable
 
 // 取得指定[縣市],[路線名稱]的市區公車顯示用路線站序資料 -數據結構
 data class Bus_Data_Station( // Bus Station
@@ -168,7 +171,7 @@ data class Bus_Data_Station( // Bus Station
     val Stops: List<Stop>,          //所有經過站牌
     val UpdateTime: String,          //本平台資料更新時間      (ISO8601格式:yyyy-MM-ddTHH:mm:sszzz)
     val VersionID: Int           //資料版本編號
-)
+) : Serializable
 
 // 到站時間預估 -數據結構
 data class Estimate(
@@ -177,7 +180,7 @@ data class Estimate(
     val IsLastBus: Boolean,          //是否為末班車
     val VehicleStopStatus: Int,  //車輛於該站之進離站狀態 {
                                      // 0:離站 1:進站 }
-)
+) : Serializable
 
 // 取得指定[縣市],[路線名稱]的公車預估到站資料(N1)[批次更新] -數據結構
 data class Bus_Data_EstimateTime( // Bus EstimateTime
@@ -224,4 +227,4 @@ data class Bus_Data_EstimateTime( // Bus EstimateTime
     val SrcUpdateTime: String,       //來源端平台資料更新時間             (ISO8601格式:yyyy-MM-ddTHH:mm:sszzz)
                                             // [公總使用動態即時推播故沒有提供此欄位, 而非公總系統因提供整包資料更新, 故有提供此欄]
     val UpdateTime: String           //本平台資料更新時間                (ISO8601格式:yyyy-MM-ddTHH:mm:sszzz)
-)
+) : Serializable
