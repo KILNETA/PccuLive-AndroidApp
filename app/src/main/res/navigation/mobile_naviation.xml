@@ -15,12 +15,22 @@
         android:id="@+id/navigation_announcement"
         android:name="com.example.pccu.Page.Announcement_Page"
         android:label="activity_main"
-        tools:layout="@layout/announcement_page" />
+        tools:layout="@layout/announcement_page" >
+        <action
+            android:id="@+id/action_navigation_announcement_to_navigation_announcement_context_page"
+            app:destination="@id/navigation_announcement_context_page" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_bus"
         android:name="com.example.pccu.Page.Bus_Page"
         android:label="activity_main"
         tools:layout="@layout/bus_page" />
+
+    <fragment
+        android:id="@+id/navigation_announcement_context_page"
+        android:name="com.example.pccu.Page.Announcement.Announcement_Content_Page"
+        android:label="activity_main"
+        tools:layout="@layout/announcement_content_page" />
 
 </navigation>

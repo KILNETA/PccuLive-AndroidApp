@@ -1,25 +1,50 @@
 package com.example.pccu.Internet
 
-import android.util.Log
 import org.xmlpull.v1.XmlPullParser
-
 import android.util.Xml
 import java.io.InputStream
 import java.util.*
 
-class PccuAnnouncement_Xml_API {
+/**
+ * 連線取得PCCU公告列表XML檔
+ *
+ * @author KILNETA
+ * @since Alpha_1.0
+ */
+class PccuAnnouncement_Xml {
 
-    fun Get(): InputStream? {
+    /**
+     * 連線取得PCCU公告列表XML檔
+     * @return PCCU公告XML字串流 : [InputStream]
+     *
+     * @author KILNETA
+     * @since Alpha_1.0
+     */
+    fun Get(): InputStream {
         val Url = "https://ap2.pccu.edu.tw/postrss/createrss.aspx"
-        return HttpRetrofit.create(Url)
+        return HttpRetrofit.create_XML(Url)
     }
 }
+
+/**
+ * 使用XmlPullParser解析並擷取PCCU_Xml公告 "object"
+ *
+ * @author KILNETA
+ * @since Alpha_1.0
+ */
 object AnnouncementByPULL {
 
-    //採用XmlPullParser來解析文件
+    /**
+     * 使用XmlPullParser解析 取得PCCU_XML公告列表
+     * @param inputStream [InputStream] 公告XML字串流
+     * @return 公告列表 : Vector<[Announcement_Data]>
+     *
+     * @author KILNETA
+     * @since Alpha_1.0
+     */
     @Throws(Throwable::class)
     fun getAnnouncements(inputStream: InputStream?): Vector<Announcement_Data>? {
-        var announcement_Datas: Vector<Announcement_Data>? = Vector<Announcement_Data>()
+        val announcement_Datas: Vector<Announcement_Data>? = Vector<Announcement_Data>()
         var mAnnouncement_Data: Announcement_Data? = null
 
         //創建XmlPullParser
@@ -34,6 +59,7 @@ object AnnouncementByPULL {
         while( "channel" == xmlPullParser.getName() ){
             xmlPullParser.nextTag()
         }
+        //直到解析
         while (eventType != XmlPullParser.END_DOCUMENT) {
             when (eventType) {
                 XmlPullParser.START_TAG -> {
@@ -43,83 +69,101 @@ object AnnouncementByPULL {
                         //通過解析器獲取Title的元素值，並設置一個新的Announcement_Data對象的Title
                         mAnnouncement_Data = Announcement_Data()
                     }
+                    //如過 mAnnouncement_Data 已經重製過 開始解析公告列表
                     if (mAnnouncement_Data != null) {
-                        if ("title" == xmlPullParser.name)
+                        if ("title" == xmlPullParser.name) //公告標題
                             mAnnouncement_Data.SetTitle(xmlPullParser.nextText())
-                        if ("link" == xmlPullParser.name)
+                        if ("link" == xmlPullParser.name) //公告連結
                             mAnnouncement_Data.SetLink(xmlPullParser.nextText())
-                        if ("source" == xmlPullParser.name)
+                        if ("source" == xmlPullParser.name) //外部資源
                             mAnnouncement_Data.SetSource(xmlPullParser.nextText())
-                        if ("enclosure" == xmlPullParser.name)
+                        if ("enclosure" == xmlPullParser.name) //顯示資源
                             mAnnouncement_Data.SetEnclosure(xmlPullParser.nextText())
-                        if ("author" == xmlPullParser.name)
+                        if ("author" == xmlPullParser.name) //公告處室
                             mAnnouncement_Data.SetAuthor(xmlPullParser.nextText())
-                        if ("pubDate" == xmlPullParser.name)
+                        if ("pubDate" == xmlPullParser.name) //公告時間
                             mAnnouncement_Data.SetPubDate(xmlPullParser.nextText())
                     }
                 }
+                //如果遇到結束標籤 -> 存儲擷取的資料到 回傳用的Vector<Announcement_Data>中
                 XmlPullParser.END_TAG -> if ("item".equals(xmlPullParser.name)) {
                     announcement_Datas!!.add(mAnnouncement_Data!!)
                     mAnnouncement_Data = null
                 }
+                //其他操作 -> NULL
                 else -> {
                 }
             }
+            //到下一個節點
             eventType = xmlPullParser.next()
         }
+        //回傳 資料列表Vector<Announcement_Data>
         return announcement_Datas
     }
 }
 
-class Announcement_Data() {
+/**
+ * 公告資料 -數據結構
+ * @param title     [String] 公告標題
+ * @param link      [String] 公告連結
+ * @param source    [String] 外部資源
+ * @param enclosure [String] 顯示資源
+ * @param author    [String] 公告處室
+ * @param pubDate   [String] 公告時間
+ *
+ * @author KILNETA
+ * @since Alpha_1.0
+ */
+data class Announcement_Data (
 
-    var title: String? = null      //公告標題
-    var link: String? = null       //公告連結
-    var source: String? = null     //外部資源 (一般是連結)
-    var enclosure: Boolean? = null //顯示資源 (一般是公告附件)(僅顯示有附件)
-    var author: String? = null     //公告處室
+    var title: String? = null,      //公告標題
+    var link: String? = null,       //公告連結
+    var source: String? = null,     //外部資源 (一般是連結)
+    var enclosure: Boolean? = null, //顯示資源 (一般是公告附件)(僅顯示有附件)
+    var author: String? = null,     //公告處室
     var pubDate: String? = null     //公告時間
+){
 
+    /**存儲公告標題
+     * @param title    [String] 公告標題
+     */
     fun SetTitle(title: String?) {
         this.title = title
     }
-    fun GetTitle(): String? {
-        return this.title
-    }
 
+    /**存儲公告連結
+     * @param link    [String] 公告連結
+     */
     fun SetLink(link: String?) {
         this.link = link
     }
-    fun GetLink(): String? {
-        return this.link
-    }
 
+    /**存儲外部資源
+     * @param source    [String] 外部資源
+     */
     fun SetSource(source: String?) {
         this.source = source
     }
-    fun GetSource(): String? {
-        return this.source
-    }
 
-    fun SetEnclosure(title: String?) {
-        if( title!=null )
+    /**存儲顯示資源
+     * @param enclosure    [String] 顯示資源
+     */
+    fun SetEnclosure(enclosure: String?) {
+        if( enclosure!=null )
             this.enclosure = true
     }
-    fun GetEnclosure(): Boolean? {
-        return this.enclosure
-    }
 
+    /**存儲公告處室
+     * @param author    [String] 公告處室
+     */
     fun SetAuthor(author: String?) {
         this.author = author
     }
-    fun GetAuthor(): String? {
-        return this.author
-    }
 
+    /**存儲公告時間
+     * @param pubDate    [String] 公告時間
+     */
     fun SetPubDate(pubDate: String?) {
         this.pubDate = pubDate
-    }
-    fun GetPubDate(): String? {
-        return this.pubDate
     }
 }

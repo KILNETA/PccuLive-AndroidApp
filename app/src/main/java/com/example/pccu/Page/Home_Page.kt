@@ -11,37 +11,63 @@ import kotlinx.android.synthetic.main.home_page.*
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pccu.Internet.*
+import com.example.pccu.Page.Bus.Bus_ListPage.MyViewHolder
 
 import kotlinx.android.synthetic.main.weather_item.view.*
 
 import com.example.pccu.R
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.util.*
 
-import java.io.ByteArrayInputStream
-import java.io.InputStream
-
-
+/**
+ * 程式主頁面 : "Fragment(home_page)"
+ *
+ * @author KILNETA
+ * @since Alpha_1.0
+ */
 class Home_Page : Fragment(R.layout.home_page){
 
     private var CountdownTimer:Timer? = null
 
-    //關閉頁面
+    /**
+     * home_page頁面被關閉
+     *
+     * @author KILNETA
+     * @since Alpha_1.0
+     */
     override fun onDestroyView() {
         CountdownTimer!!.cancel()
         CountdownTimer!!.purge()
         super.onDestroyView()
     }
 
-    //顯示頁面
+    /**
+     * home_page建構頁面
+     * @param view [View] 該頁面的父類
+     * @param savedInstanceState [Bundle] 傳遞的資料
+     *
+     * @author KILNETA
+     * @since Alpha_1.0
+     */
+    @DelicateCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState) //創建頁面
+
+
+        //中央氣象局 雷達迴波圖 測試用
+        val mIv = view.findViewById<ImageView>(R.id.CwbRadarEcho);
+        GlobalScope.launch {
+            val msg =
+                HttpRetrofit.create_Image("https://www.cwb.gov.tw/Data/radar/CV1_TW_3600.png")!!
+            withContext(Dispatchers.Main) {
+                mIv.setImageBitmap(msg)
+            }
+        }
+
 
         //氣溫列表呼叫
         weather_list.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false)
@@ -71,14 +97,27 @@ class Home_Page : Fragment(R.layout.home_page){
         CountdownTimer!!.schedule(CountdownTimerTask(), 500, 500)
     }
 
-    //Weather列表適配器
+    /**
+     * Weather列表控件的適配器 "內部類"
+     *
+     * @author KILNETA
+     * @since Alpha_1.0
+     */
     inner class adapter:RecyclerView.Adapter<MyViewHolder>(){
-        //氣溫API數據組 <Weather_Data>
+        /**氣溫API數據組 [Weather_Data]*/
         private val Weather_Data = mutableListOf<Weather_Data>()
-        //計算滑動定位 座標變數 Dx:水平座標 NowPosition:當前項目座標
-        private var Dx = 0; var NowPosition = 0;
+        //計算滑動定位 座標變數
+        /** 水平座標 */
+        private var Dx = 0
+        /** 當前項目座標*/
+        private var NowPosition = 0
 
-        //數據更新
+        /**
+         * 更新資料
+         *
+         * @author KILNETA
+         * @since Alpha_1.0
+         */
         fun upDatas(){
             //協程調用氣溫API
             GlobalScope.launch ( Dispatchers.Main ){
@@ -90,28 +129,55 @@ class Home_Page : Fragment(R.layout.home_page){
             }
         }
 
-        //重置氣溫資料
+        /**
+         * 重製列表並導入新數據
+         *
+         * @author KILNETA
+         * @since Alpha_1.0
+         */
         fun reSetData(Weather_Data: List<Weather_Data>){
-            Log.d("upDatas", Weather_Data!!.toString())
+            Log.d("upDatas", Weather_Data.toString())
             //導入數據資料
             this.Weather_Data.addAll(Weather_Data)
             //刷新視圖列表
             notifyDataSetChanged()
         }
 
-        //創建視圖持有者 (連結weather_item顯示物件)
+        /**
+         * 重構 創建視圖持有者 (連結weather_item顯示物件)
+         * @param parent [ViewGroup] 視圖組
+         * @param viewType [Int] 視圖類型
+         * @return 當前持有者 : [MyViewHolder]
+         *
+         * @author KILNETA
+         * @since Alpha_1.0
+         */
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
             val view =
                 LayoutInflater.from(context).inflate(R.layout.weather_item,parent,false)
             return MyViewHolder(view)
         }
 
-        //設置展示物件數量 (天氣數值量)
+        /**
+         * 重構 獲取展示物件數量 (天氣數值量)
+         * @return 列表元素數量 : [Int]
+         *
+         * @author KILNETA
+         * @since Alpha_1.0
+         */
         override fun getItemCount(): Int {
             return if(Weather_Data.size == 0) 1 else Weather_Data.size
         }
 
-        //物件建構者
+        /**
+         * 重構 綁定視圖持有者
+         * @param holder [MyViewHolder] 當前持有者
+         * @param position [Int] 元素位置(第幾項)
+         * @return 列表元素數量 : [Int]
+         *
+         * @author KILNETA
+         * @since Alpha_1.0
+         */
         override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
             if(Weather_Data != mutableListOf<Weather_Data>()){
@@ -151,6 +217,14 @@ class Home_Page : Fragment(R.layout.home_page){
                     if (dx < -50 || dx > 50) Dx = dx
                 }
 
+                /**
+                 * 重構 偵測滾動狀態的改變
+                 * @param recyclerView [RecyclerView] 回收視圖
+                 * @param newState [Int] 新狀態
+                 *
+                 * @author KILNETA
+                 * @since Alpha_1.0
+                 */
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     /** newState: Int
                         value(0) SCROLL_STATE_IDLE -當前未滾動。
@@ -171,5 +245,14 @@ class Home_Page : Fragment(R.layout.home_page){
             })
         }
     }
+
+    /**
+     * 當前持有者 "內部類"
+     * @param view [View] 該頁面的父類
+     * @return 回收視圖持有者 : [RecyclerView.ViewHolder]
+     *
+     * @author KILNETA
+     * @since Alpha_1.0
+     */
     inner class MyViewHolder(view: View): RecyclerView.ViewHolder(view){}
 }

@@ -2,34 +2,48 @@ package com.example.pccu.AppStart
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-
-import java.util.concurrent.TimeUnit
-
-import org.json.JSONArray
-import org.json.JSONObject
-import java.io.IOException
-
-import okhttp3.*
-
 import com.example.pccu.R
 
-
+/**
+ * PCCU_APP主框架建構類 : "AppCompatActivity"
+ *
+ * @author KILNETA
+ * @since Alpha_1.0
+ */
 class MainActivity : AppCompatActivity(){
 
+    /**
+     * PCCU_APP主框架建構
+     * @param savedInstanceState [Bundle] 傳遞的資料
+     *
+     * @author KILNETA
+     * @since Alpha_1.0
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
+        //建構主框架
         super.onCreate(savedInstanceState)
+        //設置內容視圖為 -> activity_main
         setContentView(R.layout.activity_main)
 
+        //設置底部導航視圖 -> bottom_navigation
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        //設置導航控制器 -> nav_fragment
         val navController = findNavController(R.id.nav_fragment)
+        //底部導航視圖(bottom_navigation) 連結 導航控制器(nav_fragment)
         bottomNavigationView.setupWithNavController(navController)
     }
 }
 
+/*
+/**
+ * 最早測試異步網路連線取得API資料的檔案 (已棄用)
+ *
+ * @author KILNETA
+ * @since Alpha_1.0
+ */
 object Http {
     val client  = OkHttpClient.Builder()    //builder建構者
         .connectTimeout(10, TimeUnit.SECONDS) //連接超時
@@ -69,3 +83,4 @@ object Http {
     }
 
 }
+*/

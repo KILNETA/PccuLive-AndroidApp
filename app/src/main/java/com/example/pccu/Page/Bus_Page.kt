@@ -5,8 +5,6 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import com.example.pccu.R
 
-import android.util.Log
-
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -23,20 +21,38 @@ import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.collections.ArrayList
 
-
+/**
+ * 公車系統 主頁面 頁面建構類 : "Fragment(bus_page)"
+ *
+ * @author KILNETA
+ * @since Alpha_1.0
+ */
 class Bus_Page : Fragment(R.layout.bus_page) {
 
-    //頁面適配器
+    /**頁面適配器*/
     var pageAdapter : PageAdapter? = null
 
-    //頁面被關閉時
+    /**
+     * bus_page頁面被關閉
+     *
+     * @author KILNETA
+     * @since Alpha_1.0
+     */
     override fun onDestroyView() {
         super.onDestroyView()
     }
 
-    //當頁面第一次創建
+    /**
+     * bus_page頁面建構
+     * @param view [View] 該頁面的父類
+     * @param savedInstanceState [Bundle] 傳遞的資料
+     *
+     * @author KILNETA
+     * @since Alpha_1.0
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState) //創建頁面
+        //預設紅五路線
         val T_OutBound = "往陽明山"
         val T_ReturnTrip = "往劍潭捷運站"
         val Zh_tw = "紅5"
@@ -88,23 +104,46 @@ class Bus_Page : Fragment(R.layout.bus_page) {
         }.attach()
     }*/
 
-    //頁面控件 class
-    class PageAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle, BusName: String, Station: List<Bus_Data_Station>, EstimateTime: List<Vector<Bus_Data_EstimateTime>>) :
-        //頁面控件 頁面適配器
-        FragmentStateAdapter(fragmentManager, lifecycle ) {
+    /**
+     * bus_page頁面控件適配器
+     * @param fragmentManager [FragmentManager] 子片段管理器
+     * @param lifecycle [Lifecycle] 生命週期
+     * @param BusName [String] 公車名
+     * @param Station List<[Bus_Data_Station]> 站點資料表
+     * @param EstimateTime List<Vector<[Bus_Data_EstimateTime]>> 進站時間資料表
+     *
+     * @author KILNETA
+     * @since Alpha_1.0
+     */
+    class PageAdapter(
+        fragmentManager: FragmentManager, // 子片段管理器
+        lifecycle: Lifecycle, // 生命週期
+        BusName: String, // 公車名
+        Station: List<Bus_Data_Station>, // 站點資料表
+        EstimateTime: List<Vector<Bus_Data_EstimateTime>> // 進站時間資料表
+    ):  FragmentStateAdapter( // 片段狀態適配器
+        fragmentManager, // 片段管理器
+        lifecycle // 生命週期
+    ){
 
-        //顯示頁面控件 增加指定頁面
+        /**顯示頁面控件 增加指定頁面*/
         var fragments: ArrayList<Fragment> = arrayListOf(
             Bus_ListPage.newInstance(0, BusName, Station!!, EstimateTime[0]),   //去程
             Bus_ListPage.newInstance(1, BusName, Station!!, EstimateTime[1])    //返程
         )
 
-        //獲取頁面數量
+        /**頁面數量
+         * @return 頁面數量 : [Int]
+         */
         override fun getItemCount(): Int {
             return fragments.size
         }
 
         //創建頁面
+        /**創建頁面
+         * @param position [Int] 頁面數量
+         * @return 頁面 : [Fragment]
+         */
         override fun createFragment(position: Int): Fragment {
             return fragments[position]
         }

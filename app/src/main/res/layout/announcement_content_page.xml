@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/announcement_content_page"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_marginBottom="130px">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/PCCU_yellow"
+                        android:gravity="center_vertical"
+                        android:padding="20px"
+                        android:textSize="18dp"
+                        android:text="\n"/>
+                </LinearLayout>
+
+                <!--公告內文 Content-->
+                <LinearLayout
+                    android:id="@+id/Content"
+                    android:layout_width="match_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical">
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_alignParentBottom="true"
+                android:background="#DBE2E6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <!--附件 Appendix-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="60dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="10px"
+                        android:gravity="center"
+                        android:text="附　件"/>
+                    <LinearLayout
+                        android:id="@+id/Appendix"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                    </LinearLayout>
+                </LinearLayout>
+                <!--分割線-->
+                <LinearLayout
+                    android:background="#FFFFFF"
+                    android:layout_width="match_parent"
+                    android:layout_height="3px"/>
+                <!--活動資訊 ActivityInformation-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="60dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:layout_margin="10px"
+                        android:text="活動資訊"/>
+                    <LinearLayout
+                        android:id="@+id/ActivityInformation"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                    </LinearLayout>
+                </LinearLayout>
+                <!--分割線-->
+                <LinearLayout
+                    android:background="#FFFFFF"
+                    android:layout_width="match_parent"
+                    android:layout_height="3px"/>
+                <!--相關連結 RelatedLinks-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="60dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:layout_margin="10px"
+                        android:text="相關連結"/>
+                    <LinearLayout
+                        android:id="@+id/RelatedLinks"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                    </LinearLayout>
+                </LinearLayout>
+                <!--分割線-->
+                <LinearLayout
+                    android:background="#FFE5C9"
+                    android:layout_width="match_parent"
+                    android:layout_height="5px"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:background="@color/PCCU_yellow"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_weight="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="20dp"
+                                android:gravity="center"
+                                android:layout_margin="10px"
+                                android:text="公告起訖"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/AnnouncementTimes_Start"
+                                    android:layout_weight="1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:text="--"/>
+
+                                <TextView
+                                    android:id="@+id/AnnouncementTimes_End"
+                                    android:layout_weight="1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:text="--"/>
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <!--分割線-->
+                        <LinearLayout
+                            android:background="#FFE5C9"
+                            android:layout_width="3px"
+                            android:layout_height="match_parent"/>
+
+                        <LinearLayout
+                            android:layout_weight="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="20dp"
+                                android:gravity="center"
+                                android:layout_margin="10px"
+                                android:text="活動起訖"/>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/ActiveTimes_Start"
+                                    android:layout_weight="1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:text="--"/>
+
+                                <TextView
+                                    android:id="@+id/ActiveTimes_End"
+                                    android:layout_weight="1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:text="--"/>
+
+
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!--分割線-->
+                    <LinearLayout
+                        android:background="#FFE5C9"
+                        android:layout_width="match_parent"
+                        android:layout_height="3px"/>
+
+                    <LinearLayout
+                        android:layout_alignParentBottom="true"
+                        android:layout_width="match_parent"
+                        android:background="@color/PCCU_yellow"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_weight="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:layout_margin="10px"
+                                android:text="公告分類"/>
+
+                            <TextView
+                                android:id="@+id/Classification"
+                                android:gravity="center"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="--"/>
+
+
+
+                        </LinearLayout>
+
+                        <!--分割線-->
+                        <LinearLayout
+                            android:background="#FFE5C9"
+                            android:layout_width="3px"
+                            android:layout_height="match_parent"/>
+
+                        <LinearLayout
+                            android:layout_weight="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:layout_margin="10px"
+                                android:text="公告單位"/>
+
+                            <TextView
+                                android:id="@+id/cato"
+                                android:gravity="center"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="--"/>
+
+                        </LinearLayout>
+
+                        <!--分割線-->
+                        <LinearLayout
+                            android:background="#FFE5C9"
+                            android:layout_width="3px"
+                            android:layout_height="match_parent"/>
+
+                        <LinearLayout
+                            android:layout_weight="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:layout_margin="10px"
+                                android:text="點閱率"/>
+
+                            <TextView
+                                android:id="@+id/CTR"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="--"/>
+
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
