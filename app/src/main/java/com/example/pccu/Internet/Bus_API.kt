@@ -20,7 +20,7 @@ class Bus_API{
      */
     fun GetA1(): List<Bus_Data_A1>? {
         val Url = "https://ptx.transportdata.tw/"
-        return HttpRetrofit.create_Json(ApiServce::class.java,Url).getBusA1().execute().body()
+        return HttpRetrofit.create_Json_Bus(ApiServce::class.java,Url).getBusA1().execute().body()
     }
 
     /**
@@ -32,7 +32,7 @@ class Bus_API{
      */
     fun GetA2(): List<Bus_Data_A2>? {
         val Url = "https://ptx.transportdata.tw/"
-        return HttpRetrofit.create_Json(ApiServce::class.java,Url).getBusA2().execute().body()
+        return HttpRetrofit.create_Json_Bus(ApiServce::class.java,Url).getBusA2().execute().body()
     }
 
     /**
@@ -51,7 +51,7 @@ class Bus_API{
         //檔案格式
         val format = "JSON"
         //回傳 路線站點表
-        return HttpRetrofit.create_Json(ApiServce::class.java,Url).getBusStation(Zh_tw,filter,format).execute().body()
+        return HttpRetrofit.create_Json_Bus(ApiServce::class.java,Url).getBusStation(Zh_tw,filter,format).execute().body()
     }
 
     /**
@@ -70,7 +70,7 @@ class Bus_API{
         //檔案格式
         val format = "JSON"
         //回傳 到站時間表
-        return HttpRetrofit.create_Json(ApiServce::class.java,Url).getBusEstimateTime(Zh_tw,filter,format).execute().body()
+        return HttpRetrofit.create_Json_Bus(ApiServce::class.java,Url).getBusEstimateTime(Zh_tw,filter,format).execute().body()
     }
 }
 

@@ -30,14 +30,14 @@ object  HttpRetrofit{
      * @since Alpha_1.0
      */
     private val client: OkHttpClient = OkHttpClient.Builder() //builder建構者
-        .connectTimeout(100, TimeUnit.SECONDS) //連接超時
-        .readTimeout(100, TimeUnit.SECONDS) //讀取超時
-        .writeTimeout(100, TimeUnit.SECONDS) //請求超時
+        .connectTimeout(1000, TimeUnit.SECONDS) //連接超時
+        .readTimeout(1000, TimeUnit.SECONDS) //讀取超時
+        .writeTimeout(1000, TimeUnit.SECONDS) //請求超時
         .addInterceptor(HttpLoggingInterceptor()) //添加 Http日誌攔截器.setLenient()
         .build() //建構
 
     /**
-     * 連線 API (Json專用)
+     * 連線 Json_API (無偽裝瀏覽器)
      *
      * @param clazz [Class] -> <Json接周資料結構>
      * @param Url [String] 目標網址
@@ -47,6 +47,27 @@ object  HttpRetrofit{
      * @since Alpha_1.0
      */
     fun<T> create_Json(clazz: Class<T>,Url:String): T{
+
+        val retrofit = Retrofit.Builder() //builder建構者
+            .client(client) //獲取 :OkHttpClient 連接函數
+            .baseUrl(Url) //API根網域
+            .addConverterFactory(GsonConverterFactory.create()) //Gson數據解析
+            .build() //建構
+
+        return retrofit.create(clazz) //回傳 獲取的 :Retrofit 函數
+    }
+
+    /**
+     * 連線 Json_API (目前供給Bus_API用)
+     *
+     * @param clazz [Class] -> <Json接周資料結構>
+     * @param Url [String] 目標網址
+     * @return Json文字 : [接收Json資料結構]
+     *
+     * @author KILNETA
+     * @since Alpha_1.0
+     */
+    fun<T> create_Json_Bus(clazz: Class<T>,Url:String): T{
 
         val retrofit = Retrofit.Builder() //builder建構者
             .client(client) //獲取 :OkHttpClient 連接函數
@@ -76,6 +97,17 @@ object  HttpRetrofit{
         ).execute() //執行
 
         return response.body!!.byteStream()
+    }
+
+    fun create_String(Url:String): String{
+        //建立Request，設置連線資訊
+        val response = client.newCall(
+            Request.Builder() //連線資訊建構
+                .url(Url) //輸入網址
+                .build() //建構連線
+        ).execute() //執行
+
+        return response.body!!.string()
     }
 
     /**
@@ -166,6 +198,18 @@ interface ApiServce{
      */
     @GET("public/weather.json") //取得Api資訊的子節點
     fun getWeather(): Call<List<Weather_Data>> //得到天氣資料
+
+    /** 取得Google_Calendar_Api資訊的子節點
+     *  @return [ToDayCalendar]
+     *  @author KILNETA
+     *  @since  Alpha_2.0
+     */
+    @GET("pccu.edu.tw_blcke48f8jv7rd96hs8oeb06ro%40group.calendar.google.com/events?")
+    fun getCalendar(
+        @Query("key") key:String,
+        @Query("timeMax") timeMax:String,
+        @Query("timeMin") timeMin:String
+    ): Call<ToDayCalendar>
 
     /** 取得指定"縣市","路線名稱"的公車動態定時資料(A1)"批次更新"
      *  @return [Bus_Data_A1]

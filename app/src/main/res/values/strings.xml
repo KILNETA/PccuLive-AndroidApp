@@ -1,7 +1,13 @@
 <resources>
     <string name="app_name">PCCU</string>
 
-    <string name="menu_home">Home</string>
-    <string name="menu_announcement">Announcement</string>
-    <string name="menu_bus">Bus</string>
+    <string name="menu_home">主 頁</string>
+    <string name="menu_announcement">公 告</string>
+    <string name="menu_bus">公 車</string>
+
+    <string name="FastLink_Course_assistance_system">課 輔 系 統</string>
+    <string name="FastLink_Student_area">學 生 專 區</string>
+    <string name="FastLink_Pccu_page">文 化 校 網</string>
+    <string name="FastLink_Course_selection">選 課 專 區</string>
+    <string name="FastLink_Epidemic_Prevention_Zone">防 疫 專 區</string>
 </resources>

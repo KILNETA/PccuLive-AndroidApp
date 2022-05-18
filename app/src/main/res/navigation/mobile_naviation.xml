@@ -9,7 +9,11 @@
         android:id="@+id/navigation_home"
         android:name="com.example.pccu.Page.Home_Page"
         android:label="Home"
-        tools:layout="@layout/home_page" />
+        tools:layout="@layout/home_page" >
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_live_image_page"
+            app:destination="@id/navigation_live_image_page" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_announcement"
@@ -32,5 +36,11 @@
         android:name="com.example.pccu.Page.Announcement.Announcement_Content_Page"
         android:label="activity_main"
         tools:layout="@layout/announcement_content_page" />
+
+    <fragment
+        android:id="@+id/navigation_live_image_page"
+        android:name="com.example.pccu.Page.Live_Image.LiveImage_Page"
+        android:label="activity_main"
+        tools:layout="@layout/live_image_page" />
 
 </navigation>

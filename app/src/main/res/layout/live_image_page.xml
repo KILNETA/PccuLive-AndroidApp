@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/live_image_page"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="130px">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+        <LinearLayout
+            android:id="@+id/Livepage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:background="@color/PCCU_yellow"
+                android:layout_width="match_parent"
+                android:layout_height="140px"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:textColor="#575757"
+                    android:text="即時影像"
+                    android:textSize="18dp"
+                    android:paddingLeft="70px"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/About"
+                    app:backgroundTint="#00FFFFFF"
+                    android:stateListAnimator="@null"
+                    android:layout_width="140px"
+                    android:insetTop="10px"
+                    android:insetRight="10px"
+                    android:insetBottom="10px"
+                    android:insetLeft="10px"
+                    android:layout_height="match_parent"
+                    android:padding="20px"
+                    app:cornerRadius="350px"
+                    app:icon="@drawable/about"
+                    app:iconGravity="top"
+                    app:iconSize="80px"
+                    app:iconTint="#575757"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:background="@color/PCCU_yellow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/camera_tabs"
+                    android:layout_marginRight="80px"
+                    android:layout_marginLeft="80px"
+                    android:layout_width="match_parent"
+                    android:layout_height="100px"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tabTextAppearance="@style/bottom_tab_title_inactive"
+                    app:tabSelectedTextColor="#FFFFFF"
+                    app:tabTextColor="#99FFFFFF"
+                    app:tabIndicatorColor="#FF0083"
+                    android:background="@color/PCCU_yellow">
+
+                    <com.google.android.material.tabs.TabItem
+                        android:id="@+id/tabA"
+                        android:text="文化"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"/>
+
+                    <com.google.android.material.tabs.TabItem
+                        android:id="@+id/tabB"
+                        android:text="仰德"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"/>
+
+                    <com.google.android.material.tabs.TabItem
+                        android:id="@+id/tabC"
+                        android:text="劍潭"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"/>
+
+                    <com.google.android.material.tabs.TabItem
+                        android:id="@+id/tabD"
+                        android:text="後山"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"/>
+
+                </com.google.android.material.tabs.TabLayout>
+            </LinearLayout>
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/LiveCameras_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"/>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
