@@ -4,8 +4,7 @@
     android:id="@+id/live_image_page"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginBottom="130px">
+    android:layout_height="match_parent">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -32,7 +31,7 @@
                     android:paddingLeft="70px"/>
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/About"
+                    android:id="@+id/aboutButton"
                     app:backgroundTint="#00FFFFFF"
                     android:stateListAnimator="@null"
                     android:layout_width="140px"
@@ -96,10 +95,10 @@
                 </com.google.android.material.tabs.TabLayout>
             </LinearLayout>
             <androidx.viewpager2.widget.ViewPager2
+                android:layout_weight="1"
                 android:id="@+id/LiveCameras_fragment"
                 android:layout_width="match_parent"
-                android:layout_height="fill_parent"/>
+                android:layout_height="wrap_content"/>
         </LinearLayout>
     </ScrollView>
-
 </LinearLayout>

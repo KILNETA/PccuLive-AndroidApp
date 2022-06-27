@@ -80,7 +80,12 @@ class Bus_Page : Fragment(R.layout.bus_page) {
                         EstimateTime!![1].add(Data_EstimateTime[i]) //返程 到站時間
                 }
             //創建Bus頁面資料
-            pageAdapter =PageAdapter(childFragmentManager, lifecycle, "紅5", Station!!, EstimateTime!!)
+            pageAdapter = PageAdapter(
+                childFragmentManager,
+                lifecycle,
+                "紅5",
+                Station!!,
+                EstimateTime!!)
             //Bus頁面 是配器
             bus_fragment.adapter = pageAdapter
 

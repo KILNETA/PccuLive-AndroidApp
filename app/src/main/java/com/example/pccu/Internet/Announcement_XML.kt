@@ -43,8 +43,10 @@ object AnnouncementByPULL {
      * @since Alpha_1.0
      */
     @Throws(Throwable::class)
-    fun getAnnouncements(inputStream: InputStream?): Vector<Announcement_Data>? {
-        val announcement_Datas: Vector<Announcement_Data>? = Vector<Announcement_Data>()
+    fun getAnnouncements(inputStream: InputStream?): Vector<Announcement_Data> {
+        //最終輸出的公告資訊列表
+        val announcement_Datas: Vector<Announcement_Data> = Vector<Announcement_Data>()
+        //擷取單個公告資訊
         var mAnnouncement_Data: Announcement_Data? = null
 
         //創建XmlPullParser
@@ -59,9 +61,11 @@ object AnnouncementByPULL {
         while( "channel" == xmlPullParser.getName() ){
             xmlPullParser.nextTag()
         }
-        //直到解析
+        //直到解析結束
         while (eventType != XmlPullParser.END_DOCUMENT) {
+            //判斷eventType選擇適配的標籤
             when (eventType) {
+                //如果遇到開始標籤 -> 逐行解剖
                 XmlPullParser.START_TAG -> {
                     //獲得解析器當前指向的元素的名字
                     //當指向元素的名字和id,name,sex這些屬性重合時可以返回他們的值
@@ -71,17 +75,17 @@ object AnnouncementByPULL {
                     }
                     //如過 mAnnouncement_Data 已經重製過 開始解析公告列表
                     if (mAnnouncement_Data != null) {
-                        if ("title" == xmlPullParser.name) //公告標題
+                        if (xmlPullParser.name == "title")      //公告標題
                             mAnnouncement_Data.SetTitle(xmlPullParser.nextText())
-                        if ("link" == xmlPullParser.name) //公告連結
+                        if (xmlPullParser.name == "link")       //公告連結
                             mAnnouncement_Data.SetLink(xmlPullParser.nextText())
-                        if ("source" == xmlPullParser.name) //外部資源
+                        if (xmlPullParser.name == "source")     //外部資源
                             mAnnouncement_Data.SetSource(xmlPullParser.nextText())
-                        if ("enclosure" == xmlPullParser.name) //顯示資源
+                        if (xmlPullParser.name == "enclosure")  //顯示資源
                             mAnnouncement_Data.SetEnclosure(xmlPullParser.nextText())
-                        if ("author" == xmlPullParser.name) //公告處室
+                        if (xmlPullParser.name == "author")     //公告處室
                             mAnnouncement_Data.SetAuthor(xmlPullParser.nextText())
-                        if ("pubDate" == xmlPullParser.name) //公告時間
+                        if (xmlPullParser.name == "pubDate")    //公告時間
                             mAnnouncement_Data.SetPubDate(xmlPullParser.nextText())
                     }
                 }

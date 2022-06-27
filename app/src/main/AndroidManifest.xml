@@ -14,6 +14,7 @@
         android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.PCCU">
+        <!-- 首頁Activity -->
         <activity
             android:name=".AppStart.MainActivity"
             android:exported="true">
@@ -23,6 +24,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- 新分頁-即時影像-Activity -->
+        <activity
+            android:name=".Page.Live_Image.LiveImage_Page"
+            android:exported="true"/>
+        <!-- 新分頁-即時影像-Activity -->
+        <activity
+            android:name=".Page.Announcement.Announcement_Content_Page"
+            android:exported="true"/>
     </application>
 
     <!-- 網路權限 -->

@@ -1,17 +1,23 @@
 package com.example.pccu.Page
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.pccu.About.About_BottomSheet
 import com.example.pccu.Internet.AnnouncementByPULL
 import com.example.pccu.Internet.Announcement_Data
 import com.example.pccu.Internet.PccuAnnouncement_Xml
+import com.example.pccu.Page.Announcement.Announcement_Content_Page
+import com.example.pccu.Page.Live_Image.LiveImage_Page
 import com.example.pccu.R
 import kotlinx.android.synthetic.main.announcement_item.view.*
 import kotlinx.android.synthetic.main.announcement_page.*
@@ -27,6 +33,27 @@ import java.util.*
 class  Announcement_Page : Fragment(R.layout.announcement_page){
 
     /**
+     * 停止載入動畫
+     * @author KILNETA
+     * @since Alpha_2.0
+     */
+    fun stopLoading(){
+        //停止載入動畫前判斷視圖是否還存在 避免APP發生崩潰
+        if(view != null) {
+            //取得載入動畫物件
+            val Loading = view!!.findViewById<LinearLayout>(R.id.loading)
+            //修改版面 (隱藏)
+            val params = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                0,
+                1F
+            )
+            //套用設定至載入動畫物件
+            Loading.setLayoutParams(params)
+        }
+    }
+
+    /**
      * aannouncement_page頁面建構
      * @param view [View] 該頁面的父類
      * @param savedInstanceState [Bundle] 傳遞的資料
@@ -34,9 +61,34 @@ class  Announcement_Page : Fragment(R.layout.announcement_page){
      * @author KILNETA
      * @since Alpha_1.0
      */
+    @DelicateCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        fun setAboutButton(){
+            val context = arrayOf(
+                "提醒：",
+                "　　有時文大公告系統的連線狀況不佳，則需要等待較長加載時間。",
+                "",
+                "聲明：",
+                "　　本程式之公告系統僅是提供便捷閱讀，無法保證公告的展示之正確性，若認為是重要訊息通知，" +
+                        "請務必返回文大官方公告頁面校驗，以確保內容正確，若造成損失本程式一概不負責。",
+                "",
+                "　　公告條目、內文若出現部分無法顯示，或是內容出現問題，可聯繫程式負責方協助修正，並提供該則公告連結。",
+                "",
+                "公告來源：",
+                "　　中國文化大學"
+            )
+
+            val Button = view.findViewById<Button>(R.id.aboutButton)
+            Button.setOnClickListener{
+                val FastLinkSheetFragment = About_BottomSheet(context)
+                FastLinkSheetFragment.show(parentFragmentManager, FastLinkSheetFragment.tag)
+            }
+        }
+
         //呼叫頁面建置
         super.onViewCreated(view, savedInstanceState)
+
+        setAboutButton()
 
         //列表控件announcement_list的設置佈局管理器 (列表)
         announcement_list.layoutManager =
@@ -59,7 +111,7 @@ class  Announcement_Page : Fragment(R.layout.announcement_page){
      * @author KILNETA
      * @since Alpha_1.0
      */
-    inner class Adapter:RecyclerView.Adapter<MyViewHolder>(){
+    inner class Adapter():RecyclerView.Adapter<MyViewHolder>(){
         // 公告列表資料
         var AnnouncementList = Vector<Announcement_Data>()
 
@@ -96,6 +148,8 @@ class  Announcement_Page : Fragment(R.layout.announcement_page){
             this.AnnouncementList.addAll(AnnouncementList)
             //刷新視圖列表
             notifyDataSetChanged()
+            //關閉loading動畫
+            stopLoading()
 
             //Log.d("upDatas", "${this.AnnouncementList.size}") //測試公告量
         }
@@ -162,7 +216,19 @@ class  Announcement_Page : Fragment(R.layout.announcement_page){
                 //傳遞 公告連結 -> 公告內文顯示頁面
                 bundle.putString("Url", PccuList.link)
                 //轉換當前的頁面 至 公告內文頁面
-                Navigation.findNavController(view!!).navigate(R.id.navigation_announcement_context_page, bundle)
+
+                //新方案 (新建Activity介面展示)
+                val IntentObj = Intent()
+                IntentObj.setClass(context!!, Announcement_Content_Page::class.java)
+                //載入資料傳遞者
+                IntentObj.putExtras(bundle)
+                //連接Activity
+                startActivity(IntentObj)
+
+                // 棄用方案 (直接更換當前View)
+                //Navigation.findNavController(view!!).navigate(R.id.navigation_announcement_context_page, bundle)
+
+
 
                 // 棄置方案 vvv
                 //val intent = Intent()

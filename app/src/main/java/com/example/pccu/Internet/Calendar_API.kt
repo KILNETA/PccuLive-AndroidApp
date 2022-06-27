@@ -45,12 +45,11 @@ class Calendar_API{
         val timeMax = Datum+"T23:59:59Z"
         val timeMin = Datum+"T00:00:00Z"
 
-
-
         //回傳取得的今日行事曆
         return HttpRetrofit.create_Json(ApiServce::class.java,Url).getCalendar(key,timeMax,timeMin).execute().body()
     }
-    /*
+
+    /* 捨棄的API連接方案
     fun GetTEST(context: Context){
         val am: AssetManager = context.getAssets()
         val inputStream = am.open("key-file-name.json")
@@ -72,7 +71,7 @@ class Calendar_API{
             .setOrderBy("startTime")
             .setSingleEvents(true)
             .setShowDeleted(false)
-            .setKey("AIzaSyCfNg3iPymNfISqJp1tuJrcCA8K3r6EIuo")    //("api-key-string_from_developer_console")
+            .setKey("${BuildConfig.API_KEY}")    //("api-key-string_from_developer_console")
             .execute()
 
         Log.d("GetTEST",client.toString())

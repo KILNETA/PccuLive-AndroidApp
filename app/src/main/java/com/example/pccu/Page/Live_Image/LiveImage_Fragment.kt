@@ -91,7 +91,7 @@ class LiveImage_Fragment  : Fragment(R.layout.live_image_fragment) {
     }
 
     /**
-     * bus_list_page建構頁面
+     * LiveImage_Fragment建構頁面
      * @param view [View] 該頁面的父類
      * @param ImageSources [Bundle] 傳遞的資料
      *

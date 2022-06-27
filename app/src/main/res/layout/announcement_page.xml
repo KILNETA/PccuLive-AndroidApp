@@ -9,6 +9,55 @@
     android:orientation="vertical"
     android:layout_marginBottom="130px">
 
+    <LinearLayout
+        android:background="@color/PCCU_yellow"
+        android:layout_width="match_parent"
+        android:layout_height="140px"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:textColor="#575757"
+            android:text="文大公告"
+            android:textSize="18dp"
+            android:paddingLeft="70px"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/aboutButton"
+            app:backgroundTint="#00FFFFFF"
+            android:stateListAnimator="@null"
+            android:layout_width="140px"
+            android:insetTop="10px"
+            android:insetRight="10px"
+            android:insetBottom="10px"
+            android:insetLeft="10px"
+            android:layout_height="match_parent"
+            android:padding="20px"
+            app:cornerRadius="350px"
+            app:icon="@drawable/about"
+            app:iconGravity="top"
+            app:iconSize="80px"
+            app:iconTint="#575757"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/loading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+    <ProgressBar
+        android:layout_margin="10dp"
+        style="@style/Widget.MaterialComponents.ChipGroup"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        />
+    </LinearLayout>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/announcement_list"
         android:layout_width="match_parent"

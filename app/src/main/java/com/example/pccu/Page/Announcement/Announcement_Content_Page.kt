@@ -16,15 +16,16 @@ import org.jsoup.nodes.Element
 import java.util.*
 import com.example.pccu.R
 import android.webkit.WebView
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.*
 
 /**
- * PCCU公告系統 公告內容 頁面建構類 : "Fragment(announcement_content_page)"
+ * PCCU公告系統 公告內容 頁面建構類 : "AppCompatActivity(announcement_content_page)"
  *
  * @author KILNETA
  * @since Alpha_1.0
  */
-class  Announcement_Content_Page : Fragment(R.layout.announcement_content_page){
+class  Announcement_Content_Page : AppCompatActivity(R.layout.announcement_content_page){
 
     /**
      * announcement_content_page頁面建構
@@ -34,15 +35,17 @@ class  Announcement_Content_Page : Fragment(R.layout.announcement_content_page){
      * @author KILNETA
      * @since Alpha_1.0
      */
+    @DelicateCoroutinesApi
     @RequiresApi(Build.VERSION_CODES.N)
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         //呼叫頁面建置
-        super.onViewCreated(view, savedInstanceState)
+        super.onCreate(savedInstanceState)
 
         //取出數據傳遞中的公告連結 來源:Announcement_Page > List.Adapter > onBindViewHolder
-        val Content_Url = arguments?.getString("Url")
+        val bundle = intent.extras!!
+        val Content_Url = bundle.getString("Url")
         //取得公告內文
-        CallPccuAnnouncement_Content(view, Content_Url!!)
+        CallPccuAnnouncement_Content(Content_Url!!)
     }
 
     /**
@@ -54,7 +57,7 @@ class  Announcement_Content_Page : Fragment(R.layout.announcement_content_page){
      * @since Alpha_1.0
      */
     @RequiresApi(Build.VERSION_CODES.N)
-    fun reExhibit(view: View, ContentData: Announcement_Content ){
+    fun reExhibit(ContentData: Announcement_Content ){
 
         /*
         val lin = view.findViewById<LinearLayout>(R.id.Content)
@@ -69,19 +72,19 @@ class  Announcement_Content_Page : Fragment(R.layout.announcement_content_page){
         ///vvv正式 ^^^測試新增圖片
 
         // 設置主旨(標題)
-        ChangeTitle(view, ContentData.Subject!!)
+        ChangeTitle(ContentData.Subject!!)
         // 設置內文
-        ContentSetter(view,ContentData.Text)
+        ContentSetter(ContentData.Text)
         // 設置附件
-        addLinkText(view, ContentData.Appendix,R.id.Appendix)
+        addLinkText(ContentData.Appendix,R.id.Appendix)
         // 設置活動資訊
-        addLinkText(view,ContentData.ActivityInformation,R.id.ActivityInformation)
+        addLinkText(ContentData.ActivityInformation,R.id.ActivityInformation)
         // 設置相關連結
-        addLinkText(view,ContentData.RelatedLinks,R.id.RelatedLinks)
+        addLinkText(ContentData.RelatedLinks,R.id.RelatedLinks)
         // 設置公告、活動起迄時間
-        Time_Announcement(view, ContentData)
+        Time_Announcement(ContentData)
         // 設置雜項內容(公告分類、公告單位、點閱率)
-        MiscellaneousDatas(view, ContentData)
+        MiscellaneousDatas(ContentData)
 
     }
 
@@ -93,9 +96,9 @@ class  Announcement_Content_Page : Fragment(R.layout.announcement_content_page){
      * @author KILNETA
      * @since Alpha_1.0
      */
-    fun ChangeTitle(view: View, Subject: String){
+    fun ChangeTitle(Subject: String){
         //取得主旨的控件
-        val Titel = view.findViewById<TextView>(R.id.title)
+        val Titel = findViewById<TextView>(R.id.title)
         //輸入資料到控件中
         Titel.setText(Subject)
     }
@@ -109,11 +112,11 @@ class  Announcement_Content_Page : Fragment(R.layout.announcement_content_page){
      * @since Alpha_1.0
      */
     @RequiresApi(Build.VERSION_CODES.N)
-    fun ContentSetter(view: View, ContentData: Vector<Element>) {
+    fun ContentSetter(ContentData: Vector<Element>) {
         //逐一讀取內文表
         for (i in 0 until ContentData.size) {
             //添加內文
-            addContentText(view, ContentData[i])
+            addContentText(ContentData[i])
         }
     }
 
@@ -127,11 +130,11 @@ class  Announcement_Content_Page : Fragment(R.layout.announcement_content_page){
      */
     @SuppressLint("SetJavaScriptEnabled")
     @RequiresApi(Build.VERSION_CODES.N)
-    fun addContentText(view: View, ContentData: Element){
+    fun addContentText(ContentData: Element){
         //取得內文的控件
-        val lin = view.findViewById<LinearLayout>(R.id.Content)
+        val lin = findViewById<LinearLayout>(R.id.Content)
         //新建WebView控件
-        val webView = WebView(this.context!!)
+        val webView = WebView(this)
 
         //已啟用 JavaScript
         webView.settings.javaScriptEnabled = true
@@ -151,13 +154,13 @@ class  Announcement_Content_Page : Fragment(R.layout.announcement_content_page){
      * @author KILNETA
      * @since Alpha_1.0
      */
-    fun Time_Announcement(view: View, ContentData: Announcement_Content){
+    fun Time_Announcement(ContentData: Announcement_Content){
         // 取得 "公告、活動起迄時間" 的控件
         val TimesControls: Array<TextView> = arrayOf(
-            view.findViewById(R.id.AnnouncementTimes_Start),
-            view.findViewById(R.id.AnnouncementTimes_End),
-            view.findViewById(R.id.ActiveTimes_Start),
-            view.findViewById(R.id.ActiveTimes_End)
+            findViewById(R.id.AnnouncementTimes_Start),
+            findViewById(R.id.AnnouncementTimes_End),
+            findViewById(R.id.ActiveTimes_Start),
+            findViewById(R.id.ActiveTimes_End)
         )
         //內文資料表格化
         val TimeDatas: Array<String> = arrayOf(
@@ -186,12 +189,12 @@ class  Announcement_Content_Page : Fragment(R.layout.announcement_content_page){
      * @author KILNETA
      * @since Alpha_1.0
      */
-    fun MiscellaneousDatas(view: View, ContentData: Announcement_Content){
+    fun MiscellaneousDatas(ContentData: Announcement_Content){
         //取得 "公告分類、公告單位、點閱率" 的控件
         val MiscellaneousControls: Array<TextView> = arrayOf(
-            view.findViewById(R.id.Classification),
-            view.findViewById(R.id.cato),
-            view.findViewById(R.id.CTR)
+            findViewById(R.id.Classification),
+            findViewById(R.id.cato),
+            findViewById(R.id.CTR)
         )
         //內文資料表格化
         val MiscellaneousData: Array<String> = arrayOf(
@@ -219,12 +222,12 @@ class  Announcement_Content_Page : Fragment(R.layout.announcement_content_page){
      * @since Alpha_1.0
      */
     @RequiresApi(Build.VERSION_CODES.N)
-    fun addLinkText(view: View, linkList: Vector<String>, linLayout: Int){
+    fun addLinkText(linkList: Vector<String>, linLayout: Int){
         //取得 放連結的控件
-        val lin = view.findViewById<LinearLayout>(linLayout)
+        val lin = findViewById<LinearLayout>(linLayout)
 
         if(linkList.size == 0) { //沒有連結就印 灰黑色"--"
-            val textView = TextView(this.context)
+            val textView = TextView(this)
             textView.setMovementMethod(LinkMovementMethod.getInstance())
             textView.setText("--")
             textView.setLinkTextColor(Color.parseColor("#7d7d7d"))
@@ -232,7 +235,7 @@ class  Announcement_Content_Page : Fragment(R.layout.announcement_content_page){
         }
         else //否則印出所有列表中的連結
             for(i in 0 until linkList.size){
-                val textView = TextView(this.context)
+                val textView = TextView(this)
                 textView.setMovementMethod(LinkMovementMethod.getInstance())
                 textView.setText(Html.fromHtml(linkList[i],Html.FROM_HTML_MODE_LEGACY))
                 lin.addView(textView)
@@ -248,9 +251,9 @@ class  Announcement_Content_Page : Fragment(R.layout.announcement_content_page){
      * @since Alpha_1.0
      */
     @RequiresApi(Build.VERSION_CODES.N)
-    fun reSetData(view: View, ContentData: Announcement_Content?){
+    fun reSetData(ContentData: Announcement_Content?){
         //導入數據資料
-        reExhibit(view, ContentData!!)
+        reExhibit(ContentData!!)
     }
 
     /**
@@ -263,7 +266,7 @@ class  Announcement_Content_Page : Fragment(R.layout.announcement_content_page){
      */
     @DelicateCoroutinesApi
     @RequiresApi(Build.VERSION_CODES.N)
-    fun CallPccuAnnouncement_Content(view: View, Content_Url: String){
+    fun CallPccuAnnouncement_Content(Content_Url: String){
 
         //取用協程
         GlobalScope.launch {
@@ -276,7 +279,7 @@ class  Announcement_Content_Page : Fragment(R.layout.announcement_content_page){
             //返回主線程
             withContext(Dispatchers.Main) {
                 //重新設置公告的數據資料
-                reSetData(view, ContentParser().getContent(announcementList))
+                reSetData(ContentParser().getContent(announcementList))
             }
         }
     }
@@ -369,4 +372,3 @@ class URLDrawable(context: Context) : BitmapDrawable() {
 */
 
 // ----^^^----  <TextView>公告內文的圖片顯示重構functions 目前已用 <WebView>  ----^^^----
-

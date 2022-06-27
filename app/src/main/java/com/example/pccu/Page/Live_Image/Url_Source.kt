@@ -1,11 +1,7 @@
 package com.example.pccu.Page.Live_Image
 
-import android.content.Intent
-import android.net.Uri
 import android.widget.ImageView
 import android.widget.TextView
-import com.example.pccu.Internet.Estimate
-import com.example.pccu.Internet.NameType
 import java.io.Serializable
 
 /**即時影像基礎資料 -資料結構

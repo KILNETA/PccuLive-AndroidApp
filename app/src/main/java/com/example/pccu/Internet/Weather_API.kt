@@ -1,5 +1,7 @@
 package com.example.pccu.Internet
 
+import java.io.Serializable
+
 /**
  * 連接PCCU的氣溫API
  *
@@ -48,4 +50,4 @@ data class Weather_Data( //天氣資料 數據結構
     val UpdateTime: String,         //更新時間
     val InfoSource: String,         //信息來源
     val WeatherDesciption: String   //天氣描述
-)
+): Serializable

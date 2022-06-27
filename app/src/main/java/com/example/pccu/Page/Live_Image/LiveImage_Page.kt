@@ -2,6 +2,9 @@ package com.example.pccu.Page.Live_Image
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup.FOCUS_BLOCK_DESCENDANTS
+import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
@@ -12,33 +15,56 @@ import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.live_image_page.*
 import java.util.*
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-
+import com.example.pccu.About.About_BottomSheet
 
 /**
- * 即時影像 主頁面 頁面建構類 : "Fragment(live_image_page)"
+ * 即時影像 主頁面 頁面建構類 : "AppCompatActivity(live_image_page)"
  *
  * @author KILNETA
  * @since Alpha_2.0
  */
-class LiveImage_Page : Fragment(R.layout.live_image_page) {
+class LiveImage_Page : AppCompatActivity(R.layout.live_image_page) {
 
     /**頁面適配器*/
     var pageAdapter : PageAdapter? = null
 
     /**
      * live_image_page頁面建構
-     * @param view [View] 該頁面的父類
      * @param savedInstanceState [Bundle] 傳遞的資料
      *
      * @author KILNETA
      * @since Alpha_2.0
      */
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
 
-        super.onViewCreated(view, savedInstanceState) //創建頁面
+
+        fun setAboutButton(){
+            val context = arrayOf(
+                "提醒：",
+                "　　由於文大即時影像改版，以及北市即時影像過於卡頓且僅能播放片段；且考量用戶流量問題，故不採用播放影片的方式，" +
+                        "改採用即時影像圖片，並且定時刷新。",
+                "部分文大即時影像附有互動功能，因此可能不會每次都是同一個影像角度，若須使用互動功能請至該影像之網站。",
+                "點擊影像圖片即可連接至該影像之網站。",
+                "",
+                "　　即時影像若出現部分無法顯示，可能是影像來源有問題；若出現整頁無法顯示，且點擊影像區後仍無法正確連線，可聯繫程式負責方協助修正。",
+                "",
+                "即時影像來源：",
+                "　　中國文化大學、臺北市即時交通資訊網。"
+            )
+
+            val Button = findViewById<Button>(R.id.aboutButton)
+            Button.setOnClickListener{
+                val FastLinkSheetFragment = About_BottomSheet(context)
+                FastLinkSheetFragment.show(supportFragmentManager, FastLinkSheetFragment.tag)
+            }
+        }
+
+        super.onCreate(savedInstanceState) //創建頁面
+
+        setAboutButton()
 
         /**顯示頁面控件 增加指定頁面*/
-        var fragments: ArrayList<Fragment> = arrayListOf(
+        val fragments: ArrayList<Fragment> = arrayListOf(
             LiveImage_Fragment.newInstance(MoreCameras.CameraSource[0]),   //文化
             LiveImage_Fragment.newInstance(MoreCameras.CameraSource[1]),   //仰德
             LiveImage_Fragment.newInstance(MoreCameras.CameraSource[2]),   //劍潭
@@ -46,7 +72,7 @@ class LiveImage_Page : Fragment(R.layout.live_image_page) {
         )
 
         //創建Bus頁面資料
-        pageAdapter = PageAdapter(childFragmentManager, lifecycle, fragments)
+        pageAdapter = PageAdapter(supportFragmentManager, lifecycle, fragments)
         //Bus頁面 是配器
         LiveCameras_fragment.adapter = pageAdapter
 
@@ -57,7 +83,11 @@ class LiveImage_Page : Fragment(R.layout.live_image_page) {
             tab.text = title[position]
         }.attach()
 
-        val tabLayout = view.findViewById<ViewPager2>(R.id.LiveCameras_fragment)
+        //取得 ViewPage2 控件
+        val tabLayout = findViewById<ViewPager2>(R.id.LiveCameras_fragment)
+
+        //設置View覆蓋子類控件而直接獲得焦點 (避免ViewPage2跳轉頁面位置)
+        tabLayout.descendantFocusability = FOCUS_BLOCK_DESCENDANTS
 
         //重構 ViewPage2 控件的部分功能
         tabLayout.registerOnPageChangeCallback(object : OnPageChangeCallback() {

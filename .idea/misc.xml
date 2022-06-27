@@ -12,19 +12,25 @@
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/drawable/button_effect.xml" value="0.221875" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/drawable/ic_launcher_background.xml" value="0.38229166666666664" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout-v23/fast_links.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/about_pages.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/about_view.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/activity_new.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/announcement_content_page.xml" value="0.33" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/announcement_item.xml" value="0.5" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/announcement_page.xml" value="0.253125" />
+        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/bottom_menu_fragment.xml" value="0.20208333333333334" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/bus_item.xml" value="0.33" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/bus_list_page.xml" value="0.21228583368157125" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/bus_page.xml" value="0.33" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/calendar_item.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/fast_links.xml" value="0.36614583333333334" />
-        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/home_page.xml" value="0.5" />
+        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/home_page.xml" value="0.25" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/live_image_fragment.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/live_image_page.xml" value="0.28125" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/tab_change.xml" value="0.2640625" />
+        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/test.xml" value="0.20208333333333334" />
+        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/weather_fragment.xml" value="0.3328804347826087" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/weather_item.xml" value="0.5" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/menu/bus_menu.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/menu/fast_links.xml" value="0.36614583333333334" />

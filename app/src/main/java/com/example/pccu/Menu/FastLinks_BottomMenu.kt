@@ -11,13 +11,32 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.LinearLayout
 
-class BottomSheetFragment : BottomSheetDialogFragment() {
+/**
+ *  首頁快速連結彈窗介面 建構類 : "BottomSheetDialogFragment"
+ *
+ * @author KILNETA
+ * @since Alpha_1.0
+ */
+class FastLinks_BottomMenu : BottomSheetDialogFragment() {
+
+    /**
+     * 重構 創建視圖
+     * @param inflater [LayoutInflater] 打氣機
+     * @param container [ViewGroup] 容器
+     * @param savedInstanceState [Bundle] 已保存實例狀態
+     * @return 視圖 : [View]
+     *
+     * @author KILNETA
+     * @since Alpha_3.0
+     */
+    // inflater 類似於findViewById()。
+    // 不同點是LayoutInflater是用來找res/layout/下的xml佈局文件，並且實例化；
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        // Inflate the layout for this fragment
+        // 膨脹這個片段的佈局
         return inflater.inflate(R.layout.fast_links, container, false)
     }
 

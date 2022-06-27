@@ -12,6 +12,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:overScrollMode="never"
+        android:scrollbars="none"
         android:fillViewport="true">
         <LinearLayout
             android:layout_width="match_parent"
@@ -59,7 +61,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="295px"
+                android:layout_height="290px"
                 android:orientation="vertical">
                 <View
                     android:layout_width="match_parent"
@@ -67,15 +69,18 @@
                     android:background="#f3f3f3"/>
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/weather_list"
+                    android:background="#F4FDE9"
                     android:layout_width="match_parent"
-                    android:layout_height="280px"/>
-                <ProgressBar
-                    android:id="@+id/WeatherUpdataProgressBar"
+                    android:layout_height="280px"
+                    android:descendantFocusability="blocksDescendants"
+                    android:overScrollMode="never"/>
+                <!--<androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/weather_list"
+                    android:background="#F4FDE9"
                     android:layout_width="match_parent"
-                    android:layout_height="5px"
-                    style="@android:style/Widget.Material.ProgressBar.Horizontal"
-                    android:max="59"
-                    android:progress="0"/>
+                    android:layout_height="280px"
+                    android:overScrollMode="never"/>
+                -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="5px"
@@ -143,7 +148,8 @@
                     android:id="@+id/calendar_list"
                     android:layout_width="wrap_content"
                     android:layout_weight="1"
-                    android:layout_height="200px"/>
+                    android:layout_height="200px"
+                    android:overScrollMode="never"/>
             </LinearLayout>
             <View
                 android:layout_width="match_parent"
@@ -198,8 +204,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
+                <ProgressBar
+                    android:background="#A61DC05E"
+                    android:id="@+id/WeatherUpdataProgressBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="5px"
+                    style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                    android:max="59"
+                    android:progress="0"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
 </LinearLayout>
