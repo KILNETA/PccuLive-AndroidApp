@@ -10,12 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="6px"
         android:background="#5CB3BC"
-        android:max="59"
+        android:max="19"
         android:progress="32" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/bus_list"
+        android:id="@+id/bus_StationList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false" />
 
 </LinearLayout>

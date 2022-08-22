@@ -30,7 +30,7 @@ class ContentParser{
         //      有些特殊公告內文含有<tr> 不另外計數會出現資料爬取溢位
         //      一般來說 主旨、內文 <tr>位置不會被影響
         //      相關連結 永遠是最後一個<tr>
-        var tr_quantity = document.outerHtml().split("<tr>").size/2
+        var tr_quantity = document.select("tr").size-1
         // vvv --- 曾有特例會發生越界偵測<tr>產生錯誤數據 解法 --- vvv
         if(document.select("tr")[tr_quantity].html() == "<td height=\"12\">&nbsp;</td>")
             tr_quantity--
@@ -89,7 +89,7 @@ fun pushSubject(subjectText: Element , Content: Announcement_Content){
     Content.SetSubject(subjectText.text())
 
     //後台測試
-    //Log.d("主旨", "${Content.GetSubject()}") //主旨
+    Log.d("主旨", "${Content.Subject}") //主旨
 }
 
 /**

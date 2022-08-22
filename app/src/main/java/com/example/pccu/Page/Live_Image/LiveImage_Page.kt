@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.live_image_page.*
 import java.util.*
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.pccu.About.About_BottomSheet
+import kotlinx.android.synthetic.main.cwb_home_page.*
 
 /**
  * 即時影像 主頁面 頁面建構類 : "AppCompatActivity(live_image_page)"
@@ -36,8 +37,6 @@ class LiveImage_Page : AppCompatActivity(R.layout.live_image_page) {
      * @since Alpha_2.0
      */
     override fun onCreate(savedInstanceState: Bundle?) {
-
-
         fun setAboutButton(){
             val context = arrayOf(
                 "提醒：",
@@ -70,6 +69,8 @@ class LiveImage_Page : AppCompatActivity(R.layout.live_image_page) {
             LiveImage_Fragment.newInstance(MoreCameras.CameraSource[2]),   //劍潭
             LiveImage_Fragment.newInstance(MoreCameras.CameraSource[3]),   //後山
         )
+        //允許您定義在螢幕外呈現多少頁。 (全部頁數顯示)
+        LiveCameras_fragment.offscreenPageLimit = fragments.size
 
         //創建Bus頁面資料
         pageAdapter = PageAdapter(supportFragmentManager, lifecycle, fragments)
@@ -83,14 +84,11 @@ class LiveImage_Page : AppCompatActivity(R.layout.live_image_page) {
             tab.text = title[position]
         }.attach()
 
-        //取得 ViewPage2 控件
-        val tabLayout = findViewById<ViewPager2>(R.id.LiveCameras_fragment)
-
         //設置View覆蓋子類控件而直接獲得焦點 (避免ViewPage2跳轉頁面位置)
-        tabLayout.descendantFocusability = FOCUS_BLOCK_DESCENDANTS
+        LiveCameras_fragment.descendantFocusability = FOCUS_BLOCK_DESCENDANTS
 
         //重構 ViewPage2 控件的部分功能
-        tabLayout.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+        LiveCameras_fragment.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             /**
              * 頁面被選中顯示
              * @param position [Int] 當前位置
@@ -105,7 +103,7 @@ class LiveImage_Page : AppCompatActivity(R.layout.live_image_page) {
                 //(避免如果使用TabLayout切換頁面時APP崩潰)
                 if (view != null) {
                     //重置ViewPage2控件的高度適配子視圖
-                    updatePagerHeightForChild(view, tabLayout)
+                    updatePagerHeightForChild(view, LiveCameras_fragment)
                 }
             }
 

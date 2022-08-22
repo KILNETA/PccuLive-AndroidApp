@@ -3,6 +3,7 @@ package com.example.pccu.Internet
 import android.content.Context
 import com.example.pccu.BuildConfig
 import com.example.pccu.R
+import java.io.Serializable
 
 /*
 import android.content.Context
@@ -37,7 +38,7 @@ class Calendar_API{
      * @author KILNETA
      * @since Alpha_1.0
      */
-    fun Get(Datum:String): ToDayCalendar? {
+    fun Get(Datum:String): CalendarSourse? {
         //API 主網域
         val Url = "https://www.googleapis.com/calendar/v3/calendars/"
         //設置條件
@@ -88,12 +89,12 @@ class Calendar_API{
  * @param accessRole        [String] 訪問角色
  * @param defaultReminders  Array<[String]> 默認提醒
  * @param nextSyncToken     [String] 下一個同步令牌
- * @param items             Array<[creator]> 行事活動表
+ * @param items             Array<[Calendars]> 行事活動表
  *
  * @author KILNETA
  * @since Alpha_2.0
  */
-data class ToDayCalendar(
+data class CalendarSourse(
     val kind : String,
     val etag : String,
     val summary : String,
@@ -104,6 +105,26 @@ data class ToDayCalendar(
     val nextSyncToken : String,
     val items : Array<Calendars>,
 )
+
+/**
+ * 今日行事曆 -數據結構
+ * @param kind              [String] 種類
+ * @param etag              [String] 電子標籤
+ * @param summary           [String] 概括
+ * @param updated           [String] 更新
+ * @param timeZone          [String] 時區
+ * @param accessRole        [String] 訪問角色
+ * @param defaultReminders  Array<[String]> 默認提醒
+ * @param nextSyncToken     [String] 下一個同步令牌
+ * @param items             Array<[Calendars]> 行事活動表
+ *
+ * @author KILNETA
+ * @since Alpha_2.0
+ */
+data class ToDayCalendar(
+    val updated : String,
+    val items : ArrayList<Calendars> = arrayListOf(),
+): Serializable
 
 /**
  * 行事活動 -數據結構

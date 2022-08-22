@@ -17,7 +17,8 @@
         <!-- 首頁Activity -->
         <activity
             android:name=".AppStart.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,9 +29,21 @@
         <activity
             android:name=".Page.Live_Image.LiveImage_Page"
             android:exported="true"/>
-        <!-- 新分頁-即時影像-Activity -->
+        <!-- 新分頁-公告內文-Activity -->
         <activity
             android:name=".Page.Announcement.Announcement_Content_Page"
+            android:exported="true"/>
+        <!-- 新分頁-即時氣象-Activity -->
+        <activity
+            android:name=".AppStart.Cwb_MainActivity"
+            android:exported="true"/>
+        <!-- 新分頁-即時氣象-Activity -->
+        <activity
+            android:name=".Page.Bus.Search.Search_Activity"
+            android:exported="true"/>
+        <!-- 新分頁-即時氣象-Activity -->
+        <activity
+            android:name=".Page.Bus.Bus_RoutePage"
             android:exported="true"/>
     </application>
 

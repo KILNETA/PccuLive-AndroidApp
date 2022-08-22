@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:clipChildren="false"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="180px"
-    android:background="#4B5155"
+    android:layout_height="150px"
     android:id="@+id/bus_item"
 
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -15,20 +15,22 @@
         android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_marginRight="200px"
+            android:layout_marginLeft="10px"
+            android:background="#4B5155"
+            android:layout_marginRight="150px"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <LinearLayout
-                android:layout_height="178px"
+                android:layout_height="match_parent"
                 android:layout_width="match_parent"
                 android:gravity="center_vertical">
 
                 <LinearLayout
-                    android:layout_marginLeft="30px"
-                    android:layout_width="250px"
-                    android:layout_height="140px"
+                    android:layout_marginLeft="10px"
+                    android:layout_width="210px"
+                    android:layout_height="110px"
                     android:background="@drawable/bus_estimate_time"
                     app:strokeColor="#E6EC51"
                     app:strokeWidth="20px"
@@ -38,12 +40,12 @@
                     style="bus">
                     <TextView
                         android:id="@+id/TimeState"
-                        android:layout_marginLeft="17px"
+                        android:layout_marginLeft="15px"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:textColor="@color/white"
                         android:gravity="center"
-                        android:textSize="60px"
+                        android:textSize="18sp"
                         android:text=""/>
                     <TextView
                         android:id="@+id/EstimateTime"
@@ -51,31 +53,30 @@
                         android:layout_height="match_parent"
                         android:textColor="@color/white"
                         android:gravity="center"
-                        android:textSize="90px"
+                        android:textSize="27sp"
                         android:text="－"/>
                     <TextView
                         android:id="@+id/TimeMin"
-                        android:layout_marginRight="20px"
-                        android:paddingBottom="25px"
+                        android:layout_marginRight="10px"
+                        android:paddingBottom="15px"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:textColor="@color/white"
                         android:gravity="bottom"
-                        android:textSize="45px"
-                        android:text="分"/>
+                        android:textSize="14sp"
+                        android:text=""/>
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/StationName"
-                    android:layout_marginLeft="30px"
-                    android:layout_marginRight="100px"
+                    android:layout_marginLeft="20px"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textColor="@color/white"
                     android:gravity="center_vertical"
                     android:singleLine="true"
-                    android:textSize="60px"
-                    android:text="文化大學一"
+                    android:textSize="18sp"
+                    android:text=""
                     />
 
 
@@ -90,38 +91,32 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_marginLeft="-200px"
-            android:background="#2E2E2E"
+            android:layout_marginLeft="-150px"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical">
+            android:layout_height="200px">
             <LinearLayout
                 android:layout_marginRight="20px"
                 android:layout_marginLeft="20px"
-                android:layout_width="65px"
+                android:layout_width="60px"
                 android:layout_height="match_parent"
-                android:gravity="center_vertical"
                 android:orientation="vertical">
                 <ImageView
-                    android:layout_width="65px"
-                    android:layout_height="65px"
+                    android:id="@+id/BusIcon_now"
+                    android:layout_marginTop="45px"
+                    android:layout_marginBottom="15px"
+                    android:layout_width="60px"
+                    android:layout_height="60px"
                     android:src="@drawable/bus_1"/>
                 <ImageView
-                    android:layout_marginTop="25px"
-                    android:layout_marginBottom="25px"
-                    android:layout_width="65px"
-                    android:layout_height="65px"
-                    android:src="@drawable/bus_1"/>
-                <ImageView
-                    android:layout_width="65px"
-                    android:layout_height="65px"
+                    android:id="@+id/BusIcon_after"
+                    android:layout_width="60px"
+                    android:layout_height="60px"
                     android:src="@drawable/bus_1"/>
             </LinearLayout>
             <LinearLayout
-                android:layout_marginTop="55px"
-                android:layout_marginBottom="55px"
+                android:layout_marginTop="45px"
                 android:layout_width="5px"
-                android:layout_height="match_parent"
+                android:layout_height="65px"
                 android:background="@color/PCCU_yellow"/>
 
         </LinearLayout>

@@ -15,7 +15,7 @@ import android.widget.LinearLayout
  *  首頁快速連結彈窗介面 建構類 : "BottomSheetDialogFragment"
  *
  * @author KILNETA
- * @since Alpha_1.0
+ * @since Alpha_3.0
  */
 class FastLinks_BottomMenu : BottomSheetDialogFragment() {
 
@@ -55,27 +55,27 @@ class FastLinks_BottomMenu : BottomSheetDialogFragment() {
         view.findViewById<LinearLayout>(R.id.FastLink_Course_assistance_system)
             .setOnClickListener{
                 uri = Uri.parse(url[0])
-                startActivity(Intent(Intent.ACTION_VIEW, uri!!))
+                startActivity(Intent(Intent.ACTION_VIEW, uri))
             }
         view.findViewById<LinearLayout>(R.id.FastLink_Student_area)
             .setOnClickListener{
                 uri = Uri.parse(url[1])
-                startActivity(Intent(Intent.ACTION_VIEW, uri!!))
+                startActivity(Intent(Intent.ACTION_VIEW, uri))
             }
         view.findViewById<LinearLayout>(R.id.FastLink_Pccu_page)
             .setOnClickListener{
                 uri = Uri.parse(url[2])
-                startActivity(Intent(Intent.ACTION_VIEW, uri!!))
+                startActivity(Intent(Intent.ACTION_VIEW, uri))
             }
         view.findViewById<LinearLayout>(R.id.FastLink_Course_selection)
             .setOnClickListener{
                 uri = Uri.parse(url[3])
-                startActivity(Intent(Intent.ACTION_VIEW, uri!!))
+                startActivity(Intent(Intent.ACTION_VIEW, uri))
             }
         view.findViewById<LinearLayout>(R.id.FastLink_Epidemic_Prevention_Zone)
             .setOnClickListener{
                 uri = Uri.parse(url[4])
-                startActivity(Intent(Intent.ACTION_VIEW, uri!!))
+                startActivity(Intent(Intent.ACTION_VIEW, uri))
             }
     }
 }

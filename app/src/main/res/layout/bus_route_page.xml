@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:background="@color/PCCU_yellow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10px"
+        android:paddingRight="10px"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/backButton"
+            app:backgroundTint="#00FFFFFF"
+            android:stateListAnimator="@null"
+            android:layout_width="120px"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10px"
+            android:insetTop="10px"
+            android:insetBottom="10px"
+            android:padding="20px"
+            app:cornerRadius="90dp"
+            app:icon="@drawable/back"
+            app:iconGravity="start"
+            app:iconSize="80px"
+            />
+
+        <TextView
+            android:id="@+id/routeName"
+            android:layout_weight="1"
+            android:paddingTop="5px"
+            android:paddingBottom="5px"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:text=""
+            android:textColor="#FFFFFF"
+            android:gravity="center_vertical"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/moreButton"
+            app:backgroundTint="#00FFFFFF"
+            android:stateListAnimator="@null"
+            android:layout_width="120px"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10px"
+            android:insetTop="10px"
+            android:insetBottom="10px"
+            android:padding="20px"
+            app:cornerRadius="90dp"
+            app:icon="@drawable/more"
+            app:iconGravity="start"
+            app:iconSize="80px"
+            />
+    </LinearLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/bus_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabTextAppearance="@style/bottom_tab_title_inactive"
+        app:tabGravity="center"
+        app:tabMode="scrollable"
+        app:tabSelectedTextColor="#FFFFFF"
+        app:tabTextColor="#99FFFFFF"
+        app:tabIndicatorColor="#FFFFFF"
+        android:background="@color/PCCU_yellow"/>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:background="#2E2E2E"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/bus_fragment"/>
+
+</LinearLayout>

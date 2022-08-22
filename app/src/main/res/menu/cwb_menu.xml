@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_cwb_home"
+        android:icon="@drawable/cwb_home"
+        android:title="首頁" />
+
+    <item
+        android:id="@+id/navigation_cwb_image"
+        android:icon="@drawable/cwb_image"
+        android:title="氣象圖資"/>
+
+</menu>

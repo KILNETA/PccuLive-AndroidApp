@@ -1,25 +1,32 @@
 package com.example.pccu.Page
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.example.pccu.R
-
+import kotlinx.android.synthetic.main.bus_page.*
+import androidx.annotation.RequiresApi
+import android.content.Intent
+import android.util.TypedValue
+import android.view.Gravity
+import android.view.ViewGroup
+import android.widget.*
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.pccu.Internet.Bus_API
-import com.example.pccu.Internet.Bus_Data_EstimateTime
-import com.example.pccu.Internet.Bus_Data_Station
-import com.example.pccu.Page.Bus.Bus_ListPage
+import com.example.pccu.About.About_BottomSheet
+import com.example.pccu.Internet.*
+import com.example.pccu.Page.Bus.Bus_CollectFragment
+import com.example.pccu.Page.Bus.Dialogs.*
+import com.example.pccu.Page.Bus.Search.Search_Activity
+import com.example.pccu.Shared_Functions.Object_SharedPreferences
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.bus_page.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.util.*
-import kotlin.collections.ArrayList
+import kotlinx.android.synthetic.main.bus_page.bus_fragment
+import kotlinx.android.synthetic.main.bus_page.bus_tabs
+import kotlinx.android.synthetic.main.bus_page.moreButton
+import kotlinx.android.synthetic.main.bus_route_page.*
+
 
 /**
  * 公車系統 主頁面 頁面建構類 : "Fragment(bus_page)"
@@ -32,14 +39,194 @@ class Bus_Page : Fragment(R.layout.bus_page) {
     /**頁面適配器*/
     var pageAdapter : PageAdapter? = null
 
-    /**
-     * bus_page頁面被關閉
-     *
-     * @author KILNETA
-     * @since Alpha_1.0
-     */
-    override fun onDestroyView() {
-        super.onDestroyView()
+    var LastPageNum = 0
+
+    var CollectList : ArrayList<SaveBusList> = arrayListOf()
+
+    fun setMore_MenuButton(){
+        moreButton.setOnClickListener{
+            //定義PopupMenu對象
+            val popupMenu = PopupMenu(context, moreButton)
+            //設置PopupMenu對象的佈局
+            popupMenu.getMenuInflater().inflate(R.menu.bus_menu, popupMenu.getMenu())
+            popupMenu.setOnMenuItemClickListener { item ->
+                when(item.itemId){
+                    R.id.bus_editGroup -> {
+                        val editGroup = Bus_editGroup_Dialog(
+                            object : Bus_editGroup_Dialog.PriorityListener {
+                                override fun respond(respond: Boolean?) {
+                                    if (respond!!) setCollectPage()
+                                }
+                            }
+                        )
+                        val args = Bundle()
+                        args.putSerializable("CollectList", CollectList)
+                        LastPageNum = 0
+                        editGroup.setArguments(args)
+                        editGroup.show(childFragmentManager,"editGroup")
+                    }
+                    R.id.bus_removeGroup ->{
+                        val removeGroup = Bus_removeGroup_Dialog(
+                            object : Bus_removeGroup_Dialog.PriorityListener {
+                                override fun respond(respond: Boolean?) {
+                                    if(respond!!) setCollectPage()
+                                }
+                            }
+                        )
+                        val args = Bundle()
+                        LastPageNum = 0
+                        removeGroup.setArguments(args)
+                        removeGroup.show(childFragmentManager,"removeGroup")
+                    }
+                    R.id.bus_sequenceStation -> {
+                        if(CollectList[bus_fragment.currentItem].SaveStationList.isNotEmpty()) {
+                            val sequenceStation = Bus_sequenceStation_Dialog(
+                                object : Bus_sequenceStation_Dialog.PriorityListener {
+                                    override fun respond(respond: Boolean?) {
+                                        if (respond!!) setCollectPage()
+                                    }
+                                }
+                            )
+                            val args = Bundle()
+                            args.putSerializable(
+                                "CollectStation",
+                                CollectList[bus_fragment.currentItem]
+                            )
+                            LastPageNum = bus_fragment.currentItem
+                            sequenceStation.setArguments(args)
+                            sequenceStation.show(childFragmentManager, "sequenceStation")
+                        }
+                        else{
+                            val toast: Toast =
+                                Toast.makeText(parentFragment!!.context!!, "此群組沒有任何站牌", Toast.LENGTH_SHORT)
+                            toast.setGravity(Gravity.CENTER, 0, 0)
+                            toast.show()
+                        }
+                    }
+                    R.id.bus_removeStation -> {
+                        if(CollectList[bus_fragment.currentItem].SaveStationList.isNotEmpty()) {
+                            val removeStation = Bus_removeStation_Dialog(
+                                    object : Bus_removeStation_Dialog.PriorityListener {
+                                    override fun respond(respond: Boolean?) {
+                                        if(respond!!) setCollectPage()
+                                    }
+                                }
+                            )
+                            val args = Bundle()
+                            args.putSerializable(
+                                "CollectStation",
+                                CollectList[bus_fragment.currentItem]
+                            )
+                            LastPageNum = bus_fragment.currentItem
+                            removeStation.setArguments(args)
+                            removeStation.show(childFragmentManager, "removeStation")
+                        }
+                        else{
+                            val toast: Toast =
+                                Toast.makeText(parentFragment!!.context!!, "此群組沒有任何站牌", Toast.LENGTH_SHORT)
+                            toast.setGravity(Gravity.CENTER, 0, 0)
+                            toast.show()
+                        }
+                    }
+                    R.id.bus_bout -> {
+                        val context = arrayOf(
+                            "提醒：",
+                            "　　氣象資料若出現部分無法顯示，或是內容出現問題，可聯繫程式負責方協助修正。",
+                            "",
+                            "資料來源：",
+                            "　　交通部中央氣象局、行政院環境保護署"
+                        )
+
+                        val FastLinkSheetFragment = About_BottomSheet(context)
+                        FastLinkSheetFragment.show(parentFragmentManager, FastLinkSheetFragment.tag)
+                    }
+                }
+                false
+            }
+            //顯示菜單
+            popupMenu.show()
+
+        }
+    }
+
+    fun setSearchBox(){
+        searchBox.setOnClickListener{
+            //轉換當前的頁面 至 公告內文頁面
+            //新方案 (新建Activity介面展示)
+            val IntentObj = Intent()
+            IntentObj.setClass(context!!, Search_Activity::class.java )
+            startActivity(IntentObj)
+        }
+    }
+
+    fun getCollectBuses(): ArrayList<SaveBusList> {
+
+        var Return = Object_SharedPreferences.get(
+            "Bus",
+            "Collects",
+            context!!)
+
+        if( Return == null) {
+            Return = arrayListOf<SaveBusList>(
+                SaveBusList("最愛", false)
+            )
+            Object_SharedPreferences.save(
+                "Bus",
+                "Collects",
+                Return,
+                context!!
+            )
+        }
+
+       return if(Return!=null) Return as ArrayList<SaveBusList> else arrayListOf()
+    }
+
+    fun createFragment(): ArrayList<Fragment>{
+        val fragment = arrayListOf<Fragment>()
+        for(i in CollectList.indices){
+            fragment.add(Bus_CollectFragment())
+        }
+        return fragment
+    }
+
+    fun setCollectPage(){
+
+        CollectList = getCollectBuses()!!
+        //創建Bus頁面資料
+        pageAdapter = PageAdapter(
+            childFragmentManager,
+            lifecycle,
+            createFragment()
+        )
+        //Bus頁面 是配器
+        bus_fragment.adapter = pageAdapter
+
+        //套用至Bus頁面的標題
+        bus_tabs.scrollBarSize
+        TabLayoutMediator(bus_tabs, bus_fragment) { tab, position ->
+
+            val textView = TextView(context)
+            val selectedSize =
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 16f, resources.displayMetrics)
+
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, selectedSize)
+            textView.setTextColor(resources.getColor(R.color.white))
+            textView.text = tab.text
+            textView.gravity = Gravity.CENTER
+            tab.customView = textView
+            textView.text = CollectList[position].ListName
+
+            val params = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                0f)
+            textView.setLayoutParams(params)
+            tab.view.setLayoutParams(params)
+        }.attach()
+
+        if(LastPageNum >= CollectList.size)
+            LastPageNum = 0
+        bus_fragment.setCurrentItem(LastPageNum)
     }
 
     /**
@@ -50,93 +237,38 @@ class Bus_Page : Fragment(R.layout.bus_page) {
      * @author KILNETA
      * @since Alpha_1.0
      */
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState) //創建頁面
-        //預設紅五路線
-        val T_OutBound = "往陽明山"
-        val T_ReturnTrip = "往劍潭捷運站"
-        val Zh_tw = "紅5"
 
-        //協程 (取得 站務資料、到站時間)
-        GlobalScope.launch ( Dispatchers.Main ){
-            //站務資料 連接BusAPI
-            val Station = withContext(Dispatchers.IO) {
-                Bus_API().GetBusStation(Zh_tw)
-            }
-            //到站時間 連接BusAPI
-            val Data_EstimateTime = withContext(Dispatchers.IO) {
-                Bus_API().GetBusEstimateTime(Zh_tw)
-            }
+        //更多功能菜單
+        setMore_MenuButton()
+        //搜索介面
+        setSearchBox()
 
-            //估計時間
-            val EstimateTime: List<Vector<Bus_Data_EstimateTime>> = mutableListOf(Vector(),Vector())
-            //如果 到站時間 不是空的
-            if(Data_EstimateTime!=null)
-                //分類資料 去程、返程
-                for (i in 0..Data_EstimateTime!!.size-1){
-                    if(Data_EstimateTime[i].Direction==0)
-                        EstimateTime!![0].add(Data_EstimateTime[i]) //去程 到站時間
-                    else
-                        EstimateTime!![1].add(Data_EstimateTime[i]) //返程 到站時間
-                }
-            //創建Bus頁面資料
-            pageAdapter = PageAdapter(
-                childFragmentManager,
-                lifecycle,
-                "紅5",
-                Station!!,
-                EstimateTime!!)
-            //Bus頁面 是配器
-            bus_fragment.adapter = pageAdapter
+        getCollectBuses()
 
-            //頁面標題配置
-            val title: ArrayList<String> = arrayListOf(T_OutBound, T_ReturnTrip)
-            //套用至Bus頁面的標題
-            TabLayoutMediator(bus_tabs, bus_fragment) { tab, position ->
-                tab.text = title[position]
-            }.attach()
-        }
+        setCollectPage()
     }
-
-    /* 未用到的function
-    fun loadBusList(T_OutBound: String, T_ReturnTrip: String, Station: List<Bus_Data_Station>, EstimateTime: List<Vector<Bus_Data_EstimateTime>>){
-        pageAdapter = PageAdapter(childFragmentManager, lifecycle , "紅5", Station, EstimateTime)
-        bus_fragment.adapter = pageAdapter
-
-        val title: ArrayList<String> = arrayListOf(T_OutBound,T_ReturnTrip )
-        TabLayoutMediator(bus_tabs, bus_fragment) { tab, position ->
-            tab.text = title[position]
-        }.attach()
-    }*/
 
     /**
      * bus_page頁面控件適配器
      * @param fragmentManager [FragmentManager] 子片段管理器
      * @param lifecycle [Lifecycle] 生命週期
-     * @param BusName [String] 公車名
-     * @param Station List<[Bus_Data_Station]> 站點資料表
-     * @param EstimateTime List<Vector<[Bus_Data_EstimateTime]>> 進站時間資料表
+     * @param fragments ArrayList<[Fragment]> 欲展視的片段視圖
      *
      * @author KILNETA
      * @since Alpha_1.0
      */
-    class PageAdapter(
+    inner class PageAdapter(
         fragmentManager: FragmentManager, // 子片段管理器
         lifecycle: Lifecycle, // 生命週期
-        BusName: String, // 公車名
-        Station: List<Bus_Data_Station>, // 站點資料表
-        EstimateTime: List<Vector<Bus_Data_EstimateTime>> // 進站時間資料表
+        val fragments: ArrayList<Fragment>
+
     ):  FragmentStateAdapter( // 片段狀態適配器
         fragmentManager, // 片段管理器
         lifecycle // 生命週期
     ){
-
-        /**顯示頁面控件 增加指定頁面*/
-        var fragments: ArrayList<Fragment> = arrayListOf(
-            Bus_ListPage.newInstance(0, BusName, Station!!, EstimateTime[0]),   //去程
-            Bus_ListPage.newInstance(1, BusName, Station!!, EstimateTime[1])    //返程
-        )
-
         /**頁面數量
          * @return 頁面數量 : [Int]
          */
@@ -150,6 +282,9 @@ class Bus_Page : Fragment(R.layout.bus_page) {
          * @return 頁面 : [Fragment]
          */
         override fun createFragment(position: Int): Fragment {
+            val args = Bundle()
+            args.putSerializable("CollectList", CollectList[position]);
+            fragments[position].setArguments(args)
             return fragments[position]
         }
     }

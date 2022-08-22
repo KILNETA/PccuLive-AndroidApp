@@ -5,7 +5,7 @@
 
     <!-- 边框的颜色和粗细 -->
     <stroke
-        android:width="5px"
+        android:width="3px"
         android:color="@color/PCCU_yellow"
         />
 

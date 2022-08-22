@@ -23,6 +23,9 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "API_KEY", API_KEY)
+        buildConfigField("String", "CWB_API_KEY", CWB_API_KEY)
+        buildConfigField("String", "TDX_Id_API_KEY", TDX_Id_API_KEY)
+        buildConfigField("String", "TDX_Secret_API_KEY", TDX_Secret_API_KEY)
     }
 
     buildFeatures {

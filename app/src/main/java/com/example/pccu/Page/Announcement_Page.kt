@@ -16,6 +16,8 @@ import com.example.pccu.About.About_BottomSheet
 import com.example.pccu.Internet.AnnouncementByPULL
 import com.example.pccu.Internet.Announcement_Data
 import com.example.pccu.Internet.PccuAnnouncement_Xml
+import com.example.pccu.Menu.AnnouncementListItem_BottomMenu
+import com.example.pccu.Menu.FastLinks_BottomMenu
 import com.example.pccu.Page.Announcement.Announcement_Content_Page
 import com.example.pccu.Page.Live_Image.LiveImage_Page
 import com.example.pccu.R
@@ -63,6 +65,11 @@ class  Announcement_Page : Fragment(R.layout.announcement_page){
      */
     @DelicateCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        /**
+         * 設置關於按鈕功能
+         * @author KILNETA
+         * @since Alpha_3.0
+         */
         fun setAboutButton(){
             val context = arrayOf(
                 "提醒：",
@@ -88,6 +95,7 @@ class  Announcement_Page : Fragment(R.layout.announcement_page){
         //呼叫頁面建置
         super.onViewCreated(view, savedInstanceState)
 
+        //設置關於按鈕功能
         setAboutButton()
 
         //列表控件announcement_list的設置佈局管理器 (列表)
@@ -235,6 +243,15 @@ class  Announcement_Page : Fragment(R.layout.announcement_page){
                 //intent.setClass(getContext()!!, Announcement_Content_Page::class.java)
                 //startActivity(intent)
             }
+
+            //設置元素子控件的長按功能
+            holder.itemView.setOnLongClickListener {
+                //顯示底部彈窗列表
+                val SheetFragment = AnnouncementListItem_BottomMenu(PccuList.link!!)
+                SheetFragment.show(parentFragmentManager, SheetFragment.tag)
+                return@setOnLongClickListener true
+            }
+
         }
     }
 

@@ -13,7 +13,7 @@ import com.example.pccu.R
  * @author KILNETA
  * @since Alpha_1.0
  */
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity(R.layout.activity_main){
 
     /**
      * PCCU_APP主框架建構
@@ -25,8 +25,6 @@ class MainActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         //建構主框架
         super.onCreate(savedInstanceState)
-        //設置內容視圖為 -> activity_main
-        setContentView(R.layout.activity_main)
 
         //設置底部導航視圖 -> bottom_navigation
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)

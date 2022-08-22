@@ -16,9 +16,9 @@ data class CameraUrls(
     val Url:String
 ) : Serializable
 
-/**即時影像基礎資料 -資料結構
- * @param Name [String] 影像名稱
- * @param Url [String] 影像來源
+/**即時影像來源資料 -資料結構
+ * @param useClassification [String] 使用分類
+ * @param Data List<[CameraUrls]> 影像來源表
  *
  * @author KILNETA
  * @since Alpha_2.0
@@ -243,13 +243,13 @@ object MoreCameras{
 
 
 /**影像控件 -數據結構
- * @param titel [TextView] 影像標題控件編號
+ * @param title [TextView] 影像標題控件編號
  * @param imageView [ImageView] 影像圖片控件編號
  *
  * @author KILNETA
  * @since Alpha_2.0
  */
 data class CameraItem(
-    val titel: TextView,
-    val imageView: ImageView,
+    val title: TextView,
+    val imageView: ImageView
 )

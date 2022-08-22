@@ -123,15 +123,11 @@ class LiveImage_Fragment  : Fragment(R.layout.live_image_fragment) {
                     TextView(this.context!!),
                     ImageView(this.context!!)
                 )
-                Item.imageView.setLayoutParams(
-                    ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                    )
-                )
-                Item.titel.setPadding(70, 10, 0, 10)
-                Item.titel.textSize = 18F
-                Item.titel.setBackgroundColor(Color.parseColor("#7EBCA8"))
+
+                //標題控件 設定
+                Item.title.setPadding(70, 10, 0, 10)
+                Item.title.textSize = 18F
+                Item.title.setBackgroundColor(Color.parseColor("#7EBCA8"))
 
                 //影像控件 設定
                 Item.imageView.setLayoutParams(
@@ -152,7 +148,7 @@ class LiveImage_Fragment  : Fragment(R.layout.live_image_fragment) {
                 CameraItem.orientation = LinearLayout.VERTICAL
 
                 //將控件綁定於視圖組上
-                CameraItem.addView(Item.titel)
+                CameraItem.addView(Item.title)
                 CameraItem.addView(Item.imageView)
 
                 //將視圖組綁定於即時影像區上 (顯示於Home_Page上)
@@ -173,12 +169,16 @@ class LiveImage_Fragment  : Fragment(R.layout.live_image_fragment) {
                 //返回主線程
                 GlobalScope.launch ( Dispatchers.Main ){
                     //即時影像元件組 -標題-
-                    cameraItem[i].titel.text = periodCameras.Data[i].Name //設定鏡頭名稱
+                    cameraItem[i].title.text = periodCameras.Data[i].Name //設定鏡頭名稱
 
                     //即時影像元件組 -影像-
                     Picasso.get() //Picasso影像取得插件
                         .load( getClassificationUrl( periodCameras, i,0))
                         .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE) //不使用暫存影像
+                        // vvv 沒有使用更新功能
+                        //.placeholder(cameraItem[i].imageView.drawable) //加載中顯示圖片 (上一張即時影像)
+                        .placeholder(R.drawable.loding_black) //loading
+                        .error(R.drawable.no_image) //連線錯誤顯示圖片
                         .into(cameraItem[i].imageView) //匯入視圖
 
                     //設定影像點擊 連結 瀏覽器直播影像

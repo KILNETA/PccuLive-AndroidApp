@@ -2,18 +2,27 @@ package com.example.pccu.Internet
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
+import com.example.pccu.BuildConfig.TDX_Id_API_KEY
+import com.example.pccu.BuildConfig.TDX_Secret_API_KEY
+import com.google.gson.Gson
 
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
 import java.util.concurrent.TimeUnit
-import retrofit2.http.Path
-import retrofit2.http.Query
 import java.io.InputStream
 import java.util.*
+import okhttp3.FormBody
+
+import okhttp3.OkHttpClient
+import okhttp3.RequestBody
+import retrofit2.http.*
+import retrofit2.http.Headers
+import java.lang.reflect.Type
+
 
 /**
  * 更好的網路數據解析 "object"
@@ -181,6 +190,31 @@ object  HttpRetrofit{
             }
         ).build()
     }
+
+    /**
+     * 重構okhttp頭部 (暫時用於Bus的連結)
+     *
+     * @return http協議頭部資訊 : [OkHttpClient]
+     *
+     * @author KILNETA
+     * @since Alpha_1.0
+     */
+    fun create_TDX(){
+        val formBody: RequestBody = FormBody.Builder()
+            .add("content-type","application/x-www-form-urlencoded")
+            .add("grant_type", "client_credentials") //傳遞鍵值對參數
+            .add("client_id", TDX_Id_API_KEY) //傳遞鍵值對參數
+            .add("client_secret", TDX_Secret_API_KEY) //傳遞鍵值對參數
+            .build()
+        val request: Request = Request.Builder()
+            .url("https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token")
+            .post(formBody)
+            .build()
+
+        val response = client.newCall(request)
+
+        Log.e("TDX_TEST",response.execute().body!!.string())
+    }
 }
 
 /**
@@ -209,31 +243,56 @@ interface ApiServce{
         @Query("key") key:String,
         @Query("timeMax") timeMax:String,
         @Query("timeMin") timeMin:String
-    ): Call<ToDayCalendar>
+    ): Call<CalendarSourse>
 
-    /** 取得指定"縣市","路線名稱"的公車動態定時資料(A1)"批次更新"
-     *  @return [Bus_Data_A1]
+    /** 取得CWB_Api資訊的子節點
+     *  @return [CwbWeatherSource]
      *  @author KILNETA
-     *  @since  Alpha_1.0
+     *  @since  Alpha_4.0
      */
-    @GET("MOTC/v2/Bus/Route/City/Taipei/紅5?\$format=JSON") //取得BusA1資訊的子節點
-    fun getBusA1(): Call<List<Bus_Data_A1>> //得到動態定時資料
+    @Headers("accept: application/json")
+    @GET("api/v1/rest/datastore/F-C0032-001?")
+    fun getCWB(
+        @Query("Authorization") key:String,
+    ): Call<CwbWeatherSource>
 
-    /** 取得指定"縣市","路線名稱"的公車動態定點資料(A2)"批次更新"
-     *  @return [Bus_Data_A2]
+    /** 取得TDX_token
+     *  @return [CwbWeatherSource]
      *  @author KILNETA
-     *  @since  Alpha_1.0
+     *  @since  Alpha_4.0
      */
-    @GET("MOTC/v2/Bus/RealTimeNearStop/City/Taipei/紅5?\$format=JSON") //取得BusA2資訊的子節點
-    fun getBusA2(): Call<List<Bus_Data_A2>> //得到動態定點資料
+    @POST("auth/realms/TDXConnect/protocol/openid-connect/token")
+    @FormUrlEncoded
+    fun getTDX_token(
+        @Header("content-type") `content-type`:String,
+        @Field("grant_type") grant_type:String,
+        @Field("client_id") client_id:String,
+        @Field("client_secret") client_secret:String
+    ): Call<TDX_token>
+    /** 市區公車之路線資料
+     *  @return [CwbWeatherSource]
+     *  @author KILNETA
+     *  @since  Alpha_4.0
+     */
+    @GET("api/basic/v2/Bus/{activity}/City/{city}{routeName}?")
+    fun getTDX_CR(
+        @Header("authorization") authorization:String,
+        @Path("activity") activity:String,
+        @Path("city") city:String,
+        @Path("routeName") routeName:String?,
+        @Query("\$filter") filter:String?,
+        @Query("\$format") format:String,
+    ): Call<ResponseBody>
 
     /** 取得指定"縣市","路線名稱"的路線資料
      *  @return 路線資料 : [Bus_Data_Station]
      *  @author KILNETA
      *  @since  Alpha_1.0
      */
-    @GET("MOTC/v2/Bus/DisplayStopOfRoute/City/Taipei/{Zh_tw}?") //取得BusStation資訊的子節點
+    @GET("api/basic/v2/Bus/DisplayStopOfRoute/City/{city}/{Zh_tw}?") //取得BusStation資訊的子節點
     fun getBusStation(
+        @Header("authorization") authorization:String,
+        @Path("city") city:String,
         @Path("Zh_tw") Zh_tw:String,
         @Query("\$filter") filter:String,
         @Query("\$format") format:String

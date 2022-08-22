@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">PCCU</string>
 
+    <string name="app_label">search</string>
+    <string name="search_hint">search</string>
+
     <string name="menu_home">主 頁</string>
     <string name="menu_announcement">公 告</string>
     <string name="menu_bus">公 車</string>
