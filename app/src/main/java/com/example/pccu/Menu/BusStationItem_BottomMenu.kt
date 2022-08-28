@@ -2,10 +2,10 @@ package com.example.pccu.Menu
 
 import android.os.Bundle
 import android.view.*
-import com.example.pccu.Internet.BusRoute
-import com.example.pccu.Internet.NameType
-import com.example.pccu.Internet.SaveStation
-import com.example.pccu.Page.Bus.Dialogs.Bus_addStation_Dialog
+import com.example.pccu.internet.BusRoute
+import com.example.pccu.internet.NameType
+import com.example.pccu.internet.CollectStation
+import com.example.pccu.page.bus.Dialogs.Bus_addStation_Dialog
 import com.example.pccu.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.bus_route_item_menu.*
@@ -50,7 +50,7 @@ class BusStationItem_BottomMenu(
 
         BusStationName.text = StationName.Zh_tw
         BusStationItem_Menu_Collect.setOnClickListener{
-            val saveStation = SaveStation(
+            val saveStation = CollectStation(
                 RouteData,
                 if(Direction==0) RouteData.DestinationStopNameZh else RouteData.DepartureStopNameZh,
                 StationUID,

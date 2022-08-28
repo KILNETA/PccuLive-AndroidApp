@@ -18,7 +18,7 @@
         android:title="移除站牌"/>
 
     <item
-        android:id="@+id/bus_bout"
+        android:id="@+id/bus_about"
         android:title="關於"/>
 
 </menu>

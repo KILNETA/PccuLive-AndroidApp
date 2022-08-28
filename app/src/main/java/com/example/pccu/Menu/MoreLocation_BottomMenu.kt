@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.example.pccu.Page.Cwb.Cwb_Home_Page
+import com.example.pccu.page.cwb.CwbHomePage
 import com.example.pccu.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.cwb_home_page.view.*
@@ -17,18 +17,18 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import android.widget.FrameLayout
 import androidx.annotation.RequiresApi
-import com.example.pccu.Page.Cwb.CwbSource
+import com.example.pccu.page.cwb.CwbSource
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 /**
  *  CWB頁面 選擇氣象預報地區_彈窗介面 建構類 : "BottomSheetDialogFragment"
  *  @param parentView [View] 父視圖
- *  @param parent [Cwb_Home_Page] 父類別(氣象主頁)
+ *  @param parent [CwbHomePage] 父類別(氣象主頁)
  *
  * @author KILNETA
  * @since Alpha_4.0
  */
-class MoreLocation_BottomMenu(val parentView:View, val parent: Cwb_Home_Page) : BottomSheetDialogFragment() {
+class MoreLocation_BottomMenu(val parentView:View, val parent: CwbHomePage) : BottomSheetDialogFragment() {
 
     /**確保底部彈窗無法被滑動 使用之變數*/ //底頁行為
     private var mBottomSheetBehavior: BottomSheetBehavior<View>? = null
@@ -164,11 +164,11 @@ class MoreLocation_BottomMenu(val parentView:View, val parent: Cwb_Home_Page) : 
                     //更改父視圖當前縣市 //給用戶看
                     parentView.Cwb_Location.text = CwbSource.CWB_locations[j][i]
                     //更改父類別(氣象主頁)目標縣市 //給資料看
-                    parent.TargetLocation = CwbSource.CWB_locations[j][i]
+                    parent.targetLocation = CwbSource.CWB_locations[j][i]
                     //重新設置 氣象預報 展示之數據
                     parent.resetCwbForecast()
                     //重新設置 空汙預報 展示之數據
-                    parent.resetEPA_View()
+                    parent.resetEpaView()
                     //點選後徹底關閉這個彈窗頁面
                     super.onDismiss(dialog!!)
                 }

@@ -11,6 +11,9 @@ apply plugin: 'com.android.application'
 // Add this line
 apply plugin: 'com.google.gms.google-services'
 
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
 android {
     compileSdk 31
 
@@ -69,6 +72,9 @@ android {
 }
 
 dependencies {
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.20"
+    implementation 'androidx.core:core-ktx:1.0.2'
 
     implementation 'org.jsoup:jsoup:1.14.3'
 

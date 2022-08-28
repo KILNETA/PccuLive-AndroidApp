@@ -6,11 +6,12 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Page.Live_Image.LiveImage_Page">
+    tools:context=".page.liveImage.LiveImagePage">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#000000"
         android:fillViewport="true">
         <LinearLayout
             android:id="@+id/Livepage"

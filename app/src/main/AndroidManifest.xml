@@ -16,7 +16,7 @@
         android:theme="@style/Theme.PCCU">
         <!-- 首頁Activity -->
         <activity
-            android:name=".AppStart.MainActivity"
+            android:name=".appStart.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -27,23 +27,23 @@
         </activity>
         <!-- 新分頁-即時影像-Activity -->
         <activity
-            android:name=".Page.Live_Image.LiveImage_Page"
+            android:name=".page.liveImage.LiveImagePage"
             android:exported="true"/>
         <!-- 新分頁-公告內文-Activity -->
         <activity
-            android:name=".Page.Announcement.Announcement_Content_Page"
+            android:name=".page.announcement.AnnouncementContentPage"
             android:exported="true"/>
         <!-- 新分頁-即時氣象-Activity -->
         <activity
-            android:name=".AppStart.Cwb_MainActivity"
+            android:name=".appStart.CwbMainActivity"
             android:exported="true"/>
         <!-- 新分頁-即時氣象-Activity -->
         <activity
-            android:name=".Page.Bus.Search.Search_Activity"
+            android:name=".page.bus.search.SearchActivity"
             android:exported="true"/>
         <!-- 新分頁-即時氣象-Activity -->
         <activity
-            android:name=".Page.Bus.Bus_RoutePage"
+            android:name=".page.bus.BusRoutePage"
             android:exported="true"/>
     </application>
 

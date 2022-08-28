@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.pccu.Page.Home_Page"
+        android:name="com.example.pccu.page.HomePage"
         tools:layout="@layout/home_page" >
     </fragment>
 
     <fragment
         android:id="@+id/navigation_announcement"
-        android:name="com.example.pccu.Page.Announcement_Page"
+        android:name="com.example.pccu.page.AnnouncementPage"
         tools:layout="@layout/announcement_page" >
     </fragment>
 
     <fragment
         android:id="@+id/navigation_bus"
-        android:name="com.example.pccu.Page.Bus_Page"
+        android:name="com.example.pccu.page.BusPage"
         tools:layout="@layout/bus_page" />
 
 </navigation>

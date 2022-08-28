@@ -108,14 +108,14 @@
                         android:orientation="horizontal"
                         android:gravity="center">
                         <TextView
-                            android:id="@+id/CalendarYear"
+                            android:id="@+id/calendarYear"
                             android:layout_weight="0.1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:paddingLeft="10px"
                             android:text="－－"/>
                         <TextView
-                            android:id="@+id/CalendarMoon"
+                            android:id="@+id/calendarMoon"
                             android:layout_weight="0.1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -130,7 +130,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <TextView
-                            android:id="@+id/CalendarDate"
+                            android:id="@+id/calendarDay"
                             android:layout_marginTop="-20px"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

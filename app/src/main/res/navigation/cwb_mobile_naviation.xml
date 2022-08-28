@@ -7,13 +7,13 @@
 
     <fragment
         android:id="@+id/navigation_cwb_home"
-        android:name="com.example.pccu.Page.Cwb.Cwb_Home_Page"
+        android:name="com.example.pccu.page.cwb.CwbHomePage"
         tools:layout="@layout/cwb_home_page" >
     </fragment>
 
     <fragment
         android:id="@+id/navigation_cwb_image"
-        android:name="com.example.pccu.Page.Cwb.Cwb_Image_Page"
+        android:name="com.example.pccu.page.cwb.CwbImagePage"
         tools:layout="@layout/cwb_image_page" >
     </fragment>
 
