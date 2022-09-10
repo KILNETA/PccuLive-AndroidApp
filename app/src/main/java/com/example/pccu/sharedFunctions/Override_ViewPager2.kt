@@ -1,5 +1,6 @@
 package com.example.pccu.sharedFunctions
 
+import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.Px
@@ -7,6 +8,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import kotlin.math.abs
 
 /**
  * 設置 CWB氣象展示頁面偏移量 適配器
@@ -58,8 +60,8 @@ class OffsetPageTransformer(
         }
 
         //調整比例 的加權算法(當頁面非在第一位時要縮小)
-        page.scaleY = 1 - (0.2f * Math.abs(position))
-        page.scaleX = 1 - (0.2f * Math.abs(position))
+        page.scaleY = 1 - (0.2f * abs(position))
+        page.scaleX = 1 - (0.2f * abs(position))
 
         //設置視圖 (當頁面非在第一位時變暗) <未使用>
         //val startColor = ContextCompat.getColor(this, R.color.light_blue)

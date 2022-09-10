@@ -8,9 +8,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/huagan_head"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/huagan_head"
         android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.PCCU">
@@ -28,23 +28,29 @@
         <!-- 新分頁-即時影像-Activity -->
         <activity
             android:name=".page.liveImage.LiveImagePage"
-            android:exported="true"/>
+            android:exported="true"
+            android:screenOrientation="portrait"/>
         <!-- 新分頁-公告內文-Activity -->
         <activity
             android:name=".page.announcement.AnnouncementContentPage"
-            android:exported="true"/>
+            android:exported="true"
+            android:screenOrientation="portrait"/>
         <!-- 新分頁-即時氣象-Activity -->
         <activity
             android:name=".appStart.CwbMainActivity"
-            android:exported="true"/>
+            android:exported="true"
+            android:screenOrientation="portrait"/>
         <!-- 新分頁-即時氣象-Activity -->
         <activity
             android:name=".page.bus.search.SearchActivity"
-            android:exported="true"/>
+            android:exported="true"
+            android:screenOrientation="portrait"/>
         <!-- 新分頁-即時氣象-Activity -->
         <activity
             android:name=".page.bus.BusRoutePage"
-            android:exported="true"/>
+            android:exported="true"
+            android:screenOrientation="portrait"/>
+
     </application>
 
     <!-- 網路權限 -->

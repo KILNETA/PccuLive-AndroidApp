@@ -6,12 +6,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/noNetWork"
+        android:layout_weight="0"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:background="#FF4141"
+        android:textColor="#FFFFFF"
+        android:text="無法連線上網"
+        android:textSize="14sp"/>
+
     <androidx.appcompat.widget.SearchView
         android:id="@+id/_searchView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20px"
-        android:layout_marginBottom="20px"
+        android:layout_marginTop="7dp"
+        android:layout_marginBottom="7dp"
         android:background="@drawable/search_style"
         app:iconifiedByDefault="false"
         app:queryBackground="@null"
@@ -23,27 +34,27 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20px"
-            android:layout_marginRight="20px"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#777777"
-                android:textSize="16dp"
+                android:textSize="16sp"
                 android:text="找到 "/>
             <TextView
                 android:id="@+id/resultNum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#777777"
-                android:textSize="16dp"
+                android:textSize="16sp"
                 android:text="－"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#777777"
-                android:textSize="16dp"
+                android:textSize="16sp"
                 android:text=" 筆資料："/>
         </LinearLayout>
         <androidx.recyclerview.widget.RecyclerView
@@ -51,8 +62,8 @@
             android:gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10px"
-            android:layout_marginBottom="10px"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
             android:overScrollMode="never" />
     </LinearLayout>
 

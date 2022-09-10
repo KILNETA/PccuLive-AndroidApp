@@ -1,5 +1,6 @@
 package com.example.pccu.internet
 
+import android.util.Log
 import com.example.pccu.BuildConfig
 import java.io.Serializable
 
@@ -40,7 +41,17 @@ object CalendarAPI{
         val timeMin = Datum+"T00:00:00Z"
 
         //回傳取得的今日行事曆
-        return HttpRetrofit.createJson(HttpRetrofit.ApiService::class.java,url).getCalendar(key,timeMax,timeMin).execute().body()
+        return  try {
+            HttpRetrofit.createJson(HttpRetrofit.ApiService::class.java,url).getCalendar(
+                key,
+                timeMax,
+                timeMin
+            ).execute().body()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e("","$e")
+            null
+        }
     }
 }
 

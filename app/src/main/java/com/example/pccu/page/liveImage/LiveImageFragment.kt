@@ -48,10 +48,11 @@ class LiveImageFragment (
         /**顯示指標*/
         val outMetrics = DisplayMetrics()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            activity!!.display?.getRealMetrics(outMetrics)
+            @Suppress("DEPRECATION")
+            requireActivity().display?.getRealMetrics(outMetrics)
         } else {
             @Suppress("DEPRECATION")
-            activity!!.windowManager.defaultDisplay.getMetrics(outMetrics)
+            requireActivity().windowManager.defaultDisplay.getMetrics(outMetrics)
         }
         /**螢幕寬度 (用於計算影像長寬比)*/
         val vWidth = outMetrics.widthPixels
@@ -60,8 +61,8 @@ class LiveImageFragment (
 
             /**即時影像控件初始化 -編號資料-*/
             val cameraItem = CameraItem(
-                TextView(this.context!!),
-                ImageView(this.context!!)
+                TextView(this.requireContext()),
+                ImageView(this.requireContext())
             )
 
             //標題控件 設定
@@ -77,7 +78,7 @@ class LiveImageFragment (
                 )
 
             /**即時影像視圖組*/
-            val cameraView = LinearLayout(this.context!!)
+            val cameraView = LinearLayout(this.requireContext())
             cameraView.layoutParams =
                 ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -101,7 +102,7 @@ class LiveImageFragment (
     }
 
     /**更新即時影像內容
-     * @param periodCameras List<[CameraUrls]> 鏡頭連結資訊表
+     * @param CameraDatas List<[CameraSourceData]> 鏡頭連結資訊表
      * @param i [Int] 項目編號
      *
      * @author KILNETA

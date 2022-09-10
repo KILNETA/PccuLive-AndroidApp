@@ -1,9 +1,12 @@
 package com.example.pccu.page.liveImage
 
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewGroup.FOCUS_BLOCK_DESCENDANTS
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -17,6 +20,9 @@ import java.util.*
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.pccu.about.AboutBottomSheet
 import com.example.pccu.internet.CameraAPI
+import com.example.pccu.internet.NetWorkChangeReceiver
+import kotlinx.android.synthetic.main.live_image_page.aboutButton
+import kotlinx.android.synthetic.main.live_image_page.noNetWork
 
 /**
  * 即時影像 主頁面 頁面建構類 : "AppCompatActivity(live_image_page)"
@@ -29,12 +35,45 @@ class LiveImagePage : AppCompatActivity(R.layout.live_image_page) {
     /**頁面適配器*/
     private var pageAdapter : PageAdapter? = null
     /**顯示頁面控件 增加指定頁面*/
-    private val fragments: ArrayList<Fragment> = arrayListOf(
+    private val fragments: ArrayList<LiveImageFragment> = arrayListOf(
         LiveImageFragment(CameraAPI.CameraSource[0]),   //文化
         LiveImageFragment(CameraAPI.CameraSource[1]),   //仰德
         LiveImageFragment(CameraAPI.CameraSource[2]),   //劍潭
         LiveImageFragment(CameraAPI.CameraSource[3]),   //後山
     )
+    /**網路接收器*/
+    private var internetReceiver: NetWorkChangeReceiver? = null
+
+    /**
+     * 網路接收器初始化
+     *
+     * @author KILNETA
+     * @since Alpha_2.0
+     */
+    private fun initInternetReceiver(){
+        internetReceiver = NetWorkChangeReceiver(
+            object : NetWorkChangeReceiver.RespondNetWork{
+                override fun interruptInternet() {
+                    noNetWork.layoutParams =
+                        LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                        )
+                }
+                override fun connectedInternet() {
+                    noNetWork.layoutParams =
+                        LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            0,
+                        )
+                }
+            },
+            baseContext
+        )
+        val itFilter = IntentFilter()
+        itFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
+        this.registerReceiver(internetReceiver, itFilter)
+    }
 
     /**
      * 設置關於按鈕功能
@@ -108,6 +147,8 @@ class LiveImagePage : AppCompatActivity(R.layout.live_image_page) {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState) //創建頁面
+        //初始化網路接收器
+        initInternetReceiver()
         //初始化關於按鈕
         initAboutButton()
 
@@ -152,6 +193,17 @@ class LiveImagePage : AppCompatActivity(R.layout.live_image_page) {
                 }
             }
         )
+    }
+
+    /**
+     * 當頁面刪除時(刪除)
+     *
+     * @author KILNETA
+     * @since Alpha_5.0
+     */
+    override fun onDestroy() {
+        super.onDestroy()
+        this.unregisterReceiver(internetReceiver)
     }
 
     /**

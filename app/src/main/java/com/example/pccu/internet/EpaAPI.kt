@@ -1,8 +1,5 @@
-package com.example.pccu.page.cwb
+package com.example.pccu.internet
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import com.example.pccu.internet.*
 import kotlinx.coroutines.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -16,13 +13,10 @@ import kotlin.collections.ArrayList
  * @author KILNETA
  * @since Alpha_4.0
  */
-class EpaAPI(
-    /**呼叫API的父類*/
-    private val parent: CwbHomePage
-) {
+object EpaAPI{
 
     /**內政部環保署官網*/
-    private val epaUrl = "https://www.epa.gov.tw/Index"
+    private const val epaUrl = "https://www.epa.gov.tw/Index"
 
     /**
      * 連線獲取空污數據資料 並 重新設置視圖
@@ -31,19 +25,9 @@ class EpaAPI(
      * @since Alpha_4.0
      */
     @DelicateCoroutinesApi
-    @RequiresApi(Build.VERSION_CODES.N)
-    fun get(){
-
-        //取用協程
-        GlobalScope.launch (Dispatchers.Main) {
-            //異地連接存取空污數據資料
-            /**空污數據資料*/
-            val announcementList = withContext(Dispatchers.IO) {
-                HttpRetrofit.createHTML(epaUrl, "utf-8")
-            }
-            //重新設置空污視圖
-            parent.updatedEpaAirQuality(EpaHtmlParser.getContent(announcementList))
-        }
+    fun get():String? {
+        //空污數據資料
+        return HttpRetrofit.createHTML(epaUrl, "utf-8")
     }
 }
 
@@ -96,7 +80,7 @@ object EpaHtmlParser{
      * @author KILNETA
      * @since Alpha_4.0
      */
-    private fun pushData(classification: Element) : EpaAirQualityData{
+    private fun pushData(classification: Element) : EpaAirQualityData {
         //格式拆分
         /**空汙預報資料*/
         val data = classification.text().split(' ')

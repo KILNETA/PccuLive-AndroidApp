@@ -8,6 +8,8 @@ import com.example.pccu.R
 import kotlinx.android.synthetic.main.bus_page.*
 import androidx.annotation.RequiresApi
 import android.content.Intent
+import android.content.IntentFilter
+import android.graphics.Color
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.ViewGroup
@@ -18,13 +20,16 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.pccu.about.AboutBottomSheet
 import com.example.pccu.internet.*
 import com.example.pccu.page.bus.BusCollectFragment
-import com.example.pccu.page.bus.Dialogs.*
+import com.example.pccu.page.bus.dialogs.*
 import com.example.pccu.page.bus.search.SearchActivity
 import com.example.pccu.sharedFunctions.Object_SharedPreferences
+import com.example.pccu.sharedFunctions.PopWindows
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.bus_page.bus_fragment
 import kotlinx.android.synthetic.main.bus_page.bus_tabs
 import kotlinx.android.synthetic.main.bus_page.moreButton
+import kotlinx.android.synthetic.main.bus_page.noNetWork
+import kotlin.collections.ArrayList
 
 /**
  * 公車系統 主頁面 頁面建構類 : "Fragment(bus_page)"
@@ -32,30 +37,73 @@ import kotlinx.android.synthetic.main.bus_page.moreButton
  * @author KILNETA
  * @since Alpha_1.0
  */
-class BusPage : Fragment(R.layout.bus_page) {
+class BusPage : Fragment(R.layout.bus_page){
 
     /**頁面適配器*/
     private var pageAdapter : PageAdapter? = null
     /**最後瀏覽的頁面*/
     private var lastPageNum = 0
-    /**站牌收藏列表*/
+    /**收藏群組 站牌顯示頁面表*/
     private var collectList : ArrayList<CollectGroup> = arrayListOf()
+    /**站牌收藏頁面*/
+    private val collectFragment = arrayListOf<BusCollectFragment>()
+
+    /**網路接收器*/
+    private var internetReceiver: NetWorkChangeReceiver? = null
+
+    private val itFilter = IntentFilter()
+    init {
+        itFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
+    }
+
+    /**
+     * 網路接收器初始化
+     *
+     * @author KILNETA
+     * @since Alpha_2.0
+     */
+    private fun initInternetReceiver(){
+        internetReceiver = NetWorkChangeReceiver(
+            object : NetWorkChangeReceiver.RespondNetWork{
+                override fun interruptInternet() {
+                    noNetWork.layoutParams =
+                        LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                        )
+                }
+                override fun connectedInternet() {
+                    noNetWork.layoutParams =
+                        LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            0,
+                        )
+                    collectFragment.forEach {
+                        it.timerI = 18
+                    }
+                }
+            },
+            requireContext()
+        )
+    }
 
     /**
      * 編輯群組
-     *
      * @author KILNETA
      * @since Alpha_5.0
      */
     private fun editGroup(){
         /**編輯群組介面 (Dialog)*/
-        val editGroup = Bus_editGroup_Dialog(
-            object : Bus_editGroup_Dialog.PriorityListener {
+        val editGroup = BusEditGroupDialog (
+            object : PopWindows.Listener {
                 //回應是否需要重置站牌頁面+列表
                 override fun respond(respond: Boolean?) {
                     if (respond!!) {
+                        //設置最後瀏覽的頁面位置 (最終瀏覽頁面的名稱)
+                        resetCollectPage(collectList[bus_fragment.currentItem].GroupName)
+                    }else if(!respond){
                         //設置最後瀏覽的頁面位置
-                        lastPageNum = 0
+                        lastPageNum = bus_fragment.currentItem
                         resetCollectPage()
                     }
                 }
@@ -73,23 +121,19 @@ class BusPage : Fragment(R.layout.bus_page) {
 
     /**
      * 刪除群組
-     *
      * @author KILNETA
      * @since Alpha_5.0
      */
     private fun removeGroup() {
         /**刪除群組介面 (Dialog)*/
-        val removeGroup = Bus_removeGroup_Dialog(
-            object : Bus_removeGroup_Dialog.PriorityListener {
+        val removeGroup = BusRemoveGroupDialog(
+            object : PopWindows.Listener {
                 //回應是否需要重置站牌頁面+列表
                 override fun respond(respond: Boolean?) {
                     if(respond!!) {
-                        //設置最後瀏覽的頁面位置
-                        lastPageNum = 0
-                        resetCollectPage()
-                    }
-                }
-            }
+                        //設置最後瀏覽的頁面位置 (最終瀏覽頁面的名稱)
+                        resetCollectPage(collectList[bus_fragment.currentItem].GroupName)
+            }   }   }
         )
         //顯示刪除群組介面
         removeGroup.show(childFragmentManager,"removeGroup")
@@ -97,60 +141,44 @@ class BusPage : Fragment(R.layout.bus_page) {
 
     /**
      * 排序站牌
-     *
      * @author KILNETA
      * @since Alpha_5.0
      */
     private fun sequenceStation() {
         /**排序站牌介面 (Dialog)*/
-        val sequenceStation = Bus_sequenceStation_Dialog(
-            object : Bus_sequenceStation_Dialog.PriorityListener {
+        val sequenceStation = BusSequenceStationDialog (
+            collectList[bus_fragment.currentItem].GroupName,
+            object : PopWindows.Listener {
                 //回應是否需要重置站牌頁面+列表
                 override fun respond(respond: Boolean?) {
                     if (respond!!) {
                         //設置最後瀏覽的頁面位置
                         lastPageNum = bus_fragment.currentItem
                         resetCollectPage()
-                    }
-                }
-            }
+            }   }   }
         )
-        /**傳入介面的資料包*/
-        val args = Bundle()
-        //傳入當前站牌列表
-        args.putSerializable("CollectStation", collectList[bus_fragment.currentItem])
-        //將資料包傳入介面
-        sequenceStation.arguments = args
         //顯示編輯群組介面
         sequenceStation.show(childFragmentManager, "sequenceStation")
     }
 
     /**
      * 刪除站牌
-     *
      * @author KILNETA
      * @since Alpha_5.0
      */
     private fun removeStation(){
         /**刪除站牌介面 (Dialog)*/
-        val removeStation = Bus_removeStation_Dialog(
-            object : Bus_removeStation_Dialog.PriorityListener {
+        val removeStation = BusRemoveStationDialog(
+            collectList[bus_fragment.currentItem].GroupName,
+            object : PopWindows.Listener {
                 //回應是否需要重置站牌頁面+列表
                 override fun respond(respond: Boolean?) {
                     if(respond!!){
                         //設置最後瀏覽的頁面位置
                         lastPageNum = bus_fragment.currentItem
                         resetCollectPage()
-                    }
-                }
-            }
+            }   }   }
         )
-        /**傳入介面的資料包*/
-        val args = Bundle()
-        //傳入當前站牌列表
-        args.putSerializable("CollectStation", collectList[bus_fragment.currentItem])
-        //將資料包傳入介面
-        removeStation.arguments = args
         //顯示編輯群組介面
         removeStation.show(childFragmentManager, "removeStation")
     }
@@ -168,7 +196,7 @@ class BusPage : Fragment(R.layout.bus_page) {
             "　　公車資料若出現部分無法顯示，或是內容出現問題，可聯繫程式負責方協助修正。",
             "",
             "聲明：",
-            "　　本程式之公告系統僅是提供便捷查詢，無法保證公車班次的展示之正確性，若認為是重要訊息通知，" +
+            "　　本程式之公車系統僅是提供便捷查詢，無法保證公車班次的展示之正確性，若認為是重要資訊，" +
                     "請務必校驗官方，以確保內容正確，若造成損失本程式一概不負責。",
             "",
             "資料來源：",
@@ -188,7 +216,7 @@ class BusPage : Fragment(R.layout.bus_page) {
     private fun noStationInformation(){
         /**沒有站牌存在群組中 提示彈窗*/
         val toast =
-            Toast.makeText(parentFragment!!.context!!, "此群組沒有任何站牌", Toast.LENGTH_SHORT)
+            Toast.makeText(requireParentFragment().requireContext(), "此群組沒有任何站牌", Toast.LENGTH_SHORT)
         //設定提示彈窗位置
         toast.setGravity(Gravity.CENTER, 0, 0)
         //顯示提示彈窗
@@ -258,7 +286,7 @@ class BusPage : Fragment(R.layout.bus_page) {
             //轉換當前的頁面 至 搜索頁面
             /**新介面Activity目標*/
             val intentObj = Intent()
-            intentObj.setClass(context!!, SearchActivity::class.java )
+            intentObj.setClass(requireContext(), SearchActivity::class.java )
             startActivity(intentObj)
         }
     }
@@ -274,7 +302,7 @@ class BusPage : Fragment(R.layout.bus_page) {
 
         //取得用戶收藏資料
         /**用戶收藏資料*/
-        var saveBusList = Object_SharedPreferences["Bus", "Collects", context!!]
+        var saveBusList = Object_SharedPreferences["Bus", "Collects", requireContext()]
 
         //當收藏資料不存在 重置預設資料
         if( saveBusList == null) {
@@ -285,11 +313,12 @@ class BusPage : Fragment(R.layout.bus_page) {
                 "Bus",
                 "Collects",
                 saveBusList,
-                context!!
+                requireContext()
             )
         }
 
         //回傳收藏資料
+        @Suppress("UNCHECKED_CAST")
         return saveBusList as ArrayList<CollectGroup>
     }
 
@@ -300,27 +329,32 @@ class BusPage : Fragment(R.layout.bus_page) {
      * @author KILNETA
      * @since Alpha_5.0
      */
-    private fun createFragment(): ArrayList<Fragment>{
-        /**收藏群組 站牌顯示頁面表*/
-        val fragment = arrayListOf<Fragment>()
+    private fun createFragment(): ArrayList<BusCollectFragment>{
+        collectFragment.clear()
         for(i in collectList.indices){
             //添加 站牌顯示頁面
-            fragment.add(BusCollectFragment())
+            collectFragment.add(BusCollectFragment())
         }
         //回傳 收藏群組 站牌顯示頁面表
-        return fragment
+        return collectFragment
     }
 
     /**
      * 重置所有收藏群組頁面
+     * @param lastGroupName [String] 最後瀏覽群組名(部分編輯操作不能使用數字位置)
      *
      * @author KILNETA
      * @since Alpha_5.0
      */
-    private fun resetCollectPage(){
-
+    private fun resetCollectPage(lastGroupName:String? = null){
         //重新取得 群組站牌收藏資料
         collectList = getCollectBuses()
+
+        //如果有提供 最後瀏覽群組名 (部分編輯操作不能使用數字位置)
+        lastGroupName?.let{
+            lastPageNum = collectList.indexOfFirst { it.GroupName == lastGroupName }
+        }
+
         //創建 收藏群組 頁面
         pageAdapter = PageAdapter(
             childFragmentManager,   //子片段管理器
@@ -340,7 +374,7 @@ class BusPage : Fragment(R.layout.bus_page) {
                 TypedValue.COMPLEX_UNIT_SP,
                 TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 16f, resources.displayMetrics))
             //設置文字顏色
-            textView.setTextColor(resources.getColor(R.color.white))
+            textView.setTextColor(Color.parseColor("#FFFFFF"))
             //設置文字布局 (置中)
             textView.gravity = Gravity.CENTER
             //設置tab自定義視圖 為 Tab文字控件
@@ -377,12 +411,37 @@ class BusPage : Fragment(R.layout.bus_page) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState) //創建頁面
 
+        //網路接收器初始化
+        initInternetReceiver()
         //更多功能菜單
         initMoreMenuButton()
         //搜索介面
         initSearchBox()
         //重置所有收藏群組頁面
         resetCollectPage()
+    }
+
+    /**
+     * 頁面被啟用
+     *
+     * @author KILNETA
+     * @since Alpha_5.0
+     */
+    override fun onStart() {
+        super.onStart()
+        //初始化網路接收器
+        activity?.registerReceiver(internetReceiver, itFilter)
+    }
+
+    /**
+     * 當頁面停用時(不可見)
+     *
+     * @author KILNETA
+     * @since Alpha_5.0
+     */
+    override fun onStop(){
+        super.onStop()
+        activity?.unregisterReceiver(internetReceiver)
     }
 
     /**
@@ -398,7 +457,7 @@ class BusPage : Fragment(R.layout.bus_page) {
         fragmentManager: FragmentManager,           // 子片段管理器
         lifecycle: Lifecycle,                       // 生命週期
         /**收藏群組站牌頁面視圖*/
-        private val groupFragments: ArrayList<Fragment>
+        private val groupFragments: ArrayList<BusCollectFragment>
     ):  FragmentStateAdapter(                       // 片段狀態適配器
         fragmentManager,                            // 片段管理器
         lifecycle                                   // 生命週期
@@ -419,7 +478,7 @@ class BusPage : Fragment(R.layout.bus_page) {
             /**傳入介面的資料包*/
             val args = Bundle()
             //傳入該群組站牌列表
-            args.putSerializable("CollectList", collectList[position]);
+            args.putString("CollectListGroupName", collectList[position].GroupName)
             //將資料包傳入介面
             groupFragments[position].arguments = args
             //顯示編輯群組介面

@@ -1,11 +1,10 @@
 package com.example.pccu.page.cwb
 
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -15,9 +14,14 @@ import androidx.fragment.app.Fragment
 import com.example.pccu.about.AboutBottomSheet
 import com.example.pccu.page.cwb.CwbSource.CWB_ImageSource_Url
 import com.example.pccu.R
+import com.example.pccu.internet.NetWorkChangeReceiver
+import com.example.pccu.sharedFunctions.ViewGauge
 import com.squareup.picasso.MemoryPolicy
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.cwb_image_page.*
+import kotlinx.android.synthetic.main.cwb_image_page.aboutButton
+import kotlinx.android.synthetic.main.cwb_image_page.noNetWork
+import kotlinx.coroutines.DelicateCoroutinesApi
 
 /**
  * CWB氣象資料 圖資頁面 頁面建構類 : "Fragment(cwb_image_page)"
@@ -26,6 +30,41 @@ import kotlinx.android.synthetic.main.cwb_image_page.*
  * @since Alpha_4.0
  */
 class CwbImagePage: Fragment(R.layout.cwb_image_page) {
+    /**網路接收器*/
+    private var internetReceiver: NetWorkChangeReceiver? = null
+
+    private val itFilter = IntentFilter()
+    init {
+        itFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
+    }
+
+    /**
+     * 網路接收器初始化
+     *
+     * @author KILNETA
+     * @since Alpha_2.0
+     */
+    private fun initInternetReceiver(){
+        internetReceiver = NetWorkChangeReceiver(
+            object : NetWorkChangeReceiver.RespondNetWork{
+                override fun interruptInternet() {
+                    noNetWork.layoutParams =
+                        LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                        )
+                }
+                override fun connectedInternet() {
+                    noNetWork.layoutParams =
+                        LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            0,
+                        )
+                }
+            },
+            requireContext()
+        )
+    }
 
     /**
      * 設置關於按鈕功能
@@ -61,8 +100,8 @@ class CwbImagePage: Fragment(R.layout.cwb_image_page) {
     private fun initCameraItem(baseUrl:CwbImageUrl, vWidth:Int){
         /**即時影像控件*/ //初始化 -編號資料-
         val pictureItem = CwbImageItem(
-            TextView(this.context!!),
-            ImageView(this.context!!)
+            TextView(this.requireContext()),
+            ImageView(this.requireContext())
         )
 
         //標題控件 設定
@@ -98,7 +137,7 @@ class CwbImagePage: Fragment(R.layout.cwb_image_page) {
             .into(pictureItem.imageView) //匯入視圖
 
         /**即時影像視圖組*/ // 設定
-        val pictureView = LinearLayout(this.context!!)
+        val pictureView = LinearLayout(this.requireContext())
         pictureView.layoutParams =
             ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -129,17 +168,8 @@ class CwbImagePage: Fragment(R.layout.cwb_image_page) {
      * @since Alpha_4.0
      */
     private fun initImages(){
-
-        /**顯示指標*/
-        val outMetrics = DisplayMetrics()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            activity!!.display?.getRealMetrics(outMetrics)
-        } else {
-            @Suppress("DEPRECATION")
-            activity!!.windowManager.defaultDisplay.getMetrics(outMetrics)
-        }
         /**螢幕寬度 (用於計算影像長寬比)*/
-        val vWidth = outMetrics.widthPixels
+        val vWidth = ViewGauge.getDisplayWidth(requireActivity())
 
         //將所有影像來源具象化
         CWB_ImageSource_Url.forEach {
@@ -157,9 +187,35 @@ class CwbImagePage: Fragment(R.layout.cwb_image_page) {
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState) //創建頁面
+
+        //初始化網路接收器
+        initInternetReceiver()
         //設置關於按鈕功能
         setAboutButton()
         //初始化圖資視圖
         initImages()
+    }
+
+    /**
+     * 頁面被啟用
+     *
+     * @author KILNETA
+     * @since Alpha_1.0
+     */
+    @DelicateCoroutinesApi
+    override fun onStart() {
+        super.onStart()
+        activity?.registerReceiver(internetReceiver, itFilter)
+    }
+
+    /**
+     * 當頁面停用時(不可見)
+     *
+     * @author KILNETA
+     * @since Alpha_1.0
+     */
+    override fun onStop(){
+        super.onStop()
+        activity?.unregisterReceiver(internetReceiver)
     }
 }

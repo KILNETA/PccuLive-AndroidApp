@@ -5,8 +5,18 @@
     android:id="@+id/bus_page"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="130px"
     android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/noNetWork"
+        android:layout_weight="0"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:background="#FF4141"
+        android:textColor="#FFFFFF"
+        android:text="無法連線上網"
+        android:textSize="14sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,32 +26,32 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30px"
-            android:layout_marginBottom="20px"
-            android:layout_marginRight="20px"
-            android:layout_marginLeft="30px"
+            android:layout_height="45dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="7dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginLeft="10dp"
             android:background="@drawable/search_style"
-            app:cornerRadius="85px"
+            app:cornerRadius="32dp"
             android:orientation="horizontal">
             <com.google.android.material.button.MaterialButton
                 android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:id="@+id/searchBox"
                 app:backgroundTint="#00000000"
                 android:stateListAnimator="@null"
-                android:insetTop="0px"
-                android:insetBottom="0px"
-                android:paddingStart="50px"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingStart="20dp"
                 android:text="搜尋公車路線"
                 android:gravity="center_vertical"
                 android:textColor="#9E9E9E"
-                android:textSize="18dp"
+                android:textSize="18sp"
                 app:icon="@drawable/magnifier"
                 app:iconGravity="start"
-                app:iconSize="70px"
-                app:iconPadding="30px"
+                app:iconSize="26dp"
+                app:iconPadding="11dp"
                 app:iconTint="#9E9E9E"
                 app:cornerRadius="100dp"/>
 
@@ -49,15 +59,15 @@
                 android:id="@+id/moreButton"
                 app:backgroundTint="#00FFFFFF"
                 android:stateListAnimator="@null"
-                android:layout_width="120px"
+                android:layout_width="45dp"
                 android:layout_height="match_parent"
-                android:layout_marginRight="10px"
-                android:insetTop="10px"
-                android:insetBottom="10px"
-                android:padding="20px"
+                android:layout_marginRight="3dp"
+                android:insetTop="3dp"
+                android:insetBottom="3dp"
+                android:padding="7dp"
                 app:icon="@drawable/more"
                 app:iconGravity="start"
-                app:iconSize="80px"
+                app:iconSize="30dp"
                 app:iconTint="#9E9E9E"
                 />
         </LinearLayout>

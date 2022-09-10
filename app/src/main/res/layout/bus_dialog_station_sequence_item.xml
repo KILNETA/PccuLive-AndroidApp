@@ -3,7 +3,7 @@
     android:id="@+id/bus_dialog_station_sequence_item"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="10px"
+    android:padding="3dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -28,7 +28,7 @@
                 />
             <TextView
                 android:id="@+id/DestinationStopName"
-                android:layout_marginLeft="20px"
+                android:layout_marginLeft="7dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#5A5A5A"
@@ -41,7 +41,7 @@
             android:id="@+id/StationName"
             android:layout_weight="1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:textColor="#323232"
             android:gravity="top"
             android:textSize="18sp"

@@ -1,11 +1,13 @@
 package com.example.pccu.page.announcement
 
 import android.annotation.SuppressLint
+import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.text.method.LinkMovementMethod
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
@@ -17,6 +19,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.pccu.internet.AnnouncementContent
 import com.example.pccu.internet.ContentParser
 import com.example.pccu.internet.HttpRetrofit
+import com.example.pccu.internet.NetWorkChangeReceiver
+import kotlinx.android.synthetic.main.announcement_page.*
 import kotlinx.coroutines.*
 
 /**
@@ -26,6 +30,49 @@ import kotlinx.coroutines.*
  * @since Alpha_1.0
  */
 class AnnouncementContentPage : AppCompatActivity(R.layout.announcement_content_page){
+    /**取出數據傳遞中的公告連結 來源:Announcement_Page > List.Adapter > onBindViewHolder*/
+    private var contentUrl: String? = null
+    /**網路接收器*/
+    private var internetReceiver: NetWorkChangeReceiver? = null
+    /**第一次加載數據*/
+    private var init = true
+
+    /**
+     * 網路接收器初始化
+     *
+     * @author KILNETA
+     * @since Alpha_2.0
+     */
+    @DelicateCoroutinesApi
+    private fun initInternetReceiver(){
+        internetReceiver = NetWorkChangeReceiver(
+            object : NetWorkChangeReceiver.RespondNetWork{
+                override fun interruptInternet() {
+                    noNetWork.layoutParams =
+                        LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                        )
+                }
+                @RequiresApi(Build.VERSION_CODES.N)
+                override fun connectedInternet() {
+                    noNetWork.layoutParams =
+                        LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            0,
+                        )
+                    if(init){
+                        callPccuAnnouncementContent(contentUrl!!)
+                    }
+
+                }
+            },
+            baseContext!!
+        )
+        val itFilter = IntentFilter()
+        itFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
+        this.registerReceiver(internetReceiver, itFilter)
+    }
 
     /**
      * announcement_content_page頁面建構
@@ -39,37 +86,54 @@ class AnnouncementContentPage : AppCompatActivity(R.layout.announcement_content_
     override fun onCreate(savedInstanceState: Bundle?) {
         //呼叫頁面建置
         super.onCreate(savedInstanceState)
+        //初始化網路接收器
+        initInternetReceiver()
 
         //取出數據傳遞中的公告連結 來源:Announcement_Page > List.Adapter > onBindViewHolder
-        val contentUrl = intent.extras!!.getString("Url")
-        //取得公告內文
-        callPccuAnnouncementContent(contentUrl!!)
+        contentUrl = intent.extras!!.getString("Url")
+        if(internetReceiver!!.isConnect)
+            //取得公告內文
+            callPccuAnnouncementContent(contentUrl!!)
+
     }
 
     /**
-     * announcement_content_page頁面建構
+     * 當頁面刪除時(刪除)
+     *
+     * @author KILNETA
+     * @since Alpha_1.0
+     */
+    override fun onDestroy() {
+        super.onDestroy()
+        this.unregisterReceiver(internetReceiver)
+    }
+
+    /**
+     * 重新設置公告的數據資料
      * @param ContentData [AnnouncementContent] 公告內文資料
      *
      * @author KILNETA
      * @since Alpha_1.0
      */
     @RequiresApi(Build.VERSION_CODES.N)
-    fun reExhibit(ContentData: AnnouncementContent ){
+    fun reSetData(ContentData: AnnouncementContent? ){
 
-        // 設置主旨(標題)
-        changeTitle(ContentData.Subject!!)
-        // 設置內文
-        contentSetter(ContentData.Text)
-        // 設置附件
-        addLinkText(ContentData.Appendix,R.id.Appendix)
-        // 設置活動資訊
-        addLinkText(ContentData.ActivityInformation,R.id.ActivityInformation)
-        // 設置相關連結
-        addLinkText(ContentData.RelatedLinks,R.id.RelatedLinks)
-        // 設置公告、活動起迄時間
-        datesAnnouncement(ContentData)
-        // 設置雜項內容(公告分類、公告單位、點閱率)
-        miscellaneousDatas(ContentData)
+        ContentData?.let {
+            // 設置主旨(標題)
+            changeTitle(ContentData.Subject!!)
+            // 設置內文
+            contentSetter(ContentData.Text)
+            // 設置附件
+            addLinkText(ContentData.Appendix, R.id.Appendix)
+            // 設置活動資訊
+            addLinkText(ContentData.ActivityInformation, R.id.ActivityInformation)
+            // 設置相關連結
+            addLinkText(ContentData.RelatedLinks, R.id.RelatedLinks)
+            // 設置公告、活動起迄時間
+            datesAnnouncement(ContentData)
+            // 設置雜項內容(公告分類、公告單位、點閱率)
+            miscellaneousDatas(ContentData)
+        }
     }
 
     /**
@@ -228,19 +292,6 @@ class AnnouncementContentPage : AppCompatActivity(R.layout.announcement_content_
 
     /**
      * 重新設置公告的數據資料
-     * @param ContentData [AnnouncementContent] 公告內文資料
-     *
-     * @author KILNETA
-     * @since Alpha_1.0
-     */
-    @RequiresApi(Build.VERSION_CODES.N)
-    fun reSetData(ContentData: AnnouncementContent?){
-        //導入數據資料
-        reExhibit(ContentData!!)
-    }
-
-    /**
-     * 重新設置公告的數據資料
      * @param Content_Url [String] 公告內文的連結
      *
      * @author KILNETA
@@ -257,7 +308,10 @@ class AnnouncementContentPage : AppCompatActivity(R.layout.announcement_content_
                 HttpRetrofit.createHTML(Content_Url, "big5")
             }
             //重新設置公告的數據資料
-            reSetData(ContentParser().getContent(announcementList))
+            announcementList?.let {
+                reSetData(ContentParser().getContent(announcementList))
+                init = false
+            }
         }
     }
 }

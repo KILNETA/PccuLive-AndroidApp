@@ -27,7 +27,7 @@ object BusFunctions{
      */
     fun setEstimateTimeView(holder: RecyclerView.ViewHolder, estimateTime: EstimateTime){
         //如果剩餘時間 > 3min  {顯示剩餘時間}
-        if(estimateTime.EstimateTime>180) {
+        if(estimateTime.EstimateTime in 181..3599) {
             holder.itemView.TimeState.textSize = 22f
             holder.itemView.EstimateTime.text = (estimateTime.EstimateTime / 60).toString()
             holder.itemView.TimeMin.text = "分"
@@ -38,6 +38,16 @@ object BusFunctions{
             holder.itemView.TimeMin.text = ""
             holder.itemView.EstimateTime.text = ""
 
+            /*if(estimateTime.EstimateTime >= 3600){
+                val nextBusTimeDate =
+                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.TAIWAN)
+                        .parse(estimateTime.DataTime)
+                nextBusTimeDate.seconds += estimateTime.EstimateTime
+                holder.itemView.TimeState.setTextColor(Color.parseColor("#FFFFFF"))
+                holder.itemView.TimeState.textSize = 22f
+                holder.itemView.TimeState.text =
+                    DateFormat.format("HH:mm", nextBusTimeDate!!.time).toString()
+            }*/
             //如果剩餘時間 < 3min && 正在 0:運營中 {即將進站}
             if(estimateTime.EstimateTime in 5..180 && arrayOf(1,0).contains(estimateTime.StopStatus) ) {
                 holder.itemView.TimeState.setTextColor(Color.parseColor("#F5B939"))

@@ -1,5 +1,6 @@
 package com.example.pccu.internet
 
+import android.util.Log
 import com.example.pccu.BuildConfig.TDX_Id_API_KEY
 import com.example.pccu.BuildConfig.TDX_Secret_API_KEY
 import okhttp3.ResponseBody
@@ -96,12 +97,18 @@ object BusAPI{
      */
     fun getToken(): TdxToken? {
         val url = "https://tdx.transportdata.tw/"
-        return HttpRetrofit.createJson(HttpRetrofit.ApiService::class.java,url).getTdxToken(
-            "application/x-www-form-urlencoded",
-            "client_credentials",
-            TDX_Id_API_KEY,
-            TDX_Secret_API_KEY
-        ).execute().body()
+        return  try {
+            HttpRetrofit.createJson(HttpRetrofit.ApiService::class.java, url).getTdxToken(
+                "application/x-www-form-urlencoded",
+                "client_credentials",
+                TDX_Id_API_KEY,
+                TDX_Secret_API_KEY
+            ).execute().body()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e("","$e")
+            null
+        }
     }
 
     /**
@@ -114,7 +121,7 @@ object BusAPI{
      * @author KILNETA
      * @since Alpha_5.0
      */
-    fun get(token:TdxToken, activity:String , request :BusApiRequest): ResponseBody {
+    fun get(token:TdxToken, activity:String , request :BusApiRequest): ResponseBody? {
         //回傳 路線站點表
         return HttpRetrofit.createJson(
             HttpRetrofit.ApiService::class.java,                        //Api資料節點接口
@@ -143,10 +150,10 @@ object BusAPI{
  * @since Alpha_5.0
  */
 data class TdxToken(
-    val access_token: String,         //用於存取API服務的token，格式為JWT
+    val access_token: String?,         //用於存取API服務的token，格式為JWT
     val expires_in: Int,              //token的有效期限
     val refresh_expires_in: Int,      //
-    val token_type: String,           //token類型，固定為“Bearer”
+    val token_type: String?,           //token類型，固定為“Bearer”
     val `not-before-policy`: Int,     //
     val scope: String,                //
 ) : Serializable

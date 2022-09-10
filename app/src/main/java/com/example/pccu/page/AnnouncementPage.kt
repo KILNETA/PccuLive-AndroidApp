@@ -1,6 +1,7 @@
 package com.example.pccu.page
 
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,16 +12,15 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pccu.about.AboutBottomSheet
-import com.example.pccu.internet.AnnouncementByPULL
-import com.example.pccu.internet.AnnouncementData
-import com.example.pccu.internet.PccuAnnouncementXml
-import com.example.pccu.Menu.AnnouncementListItem_BottomMenu
+import com.example.pccu.menu.AnnouncementListItemBottomMenu
 import com.example.pccu.page.announcement.AnnouncementContentPage
 import com.example.pccu.R
+import com.example.pccu.internet.*
 import com.example.pccu.sharedFunctions.DateConvert
 import com.example.pccu.sharedFunctions.RV
 import kotlinx.android.synthetic.main.announcement_item.view.*
 import kotlinx.android.synthetic.main.announcement_page.*
+import kotlinx.android.synthetic.main.announcement_page.noNetWork
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -31,6 +31,50 @@ import java.util.*
  * @since Alpha_1.0
  */
 class AnnouncementPage : Fragment(R.layout.announcement_page){
+
+    /**announcement_list列表控件的適配器*/
+    private val adapter = Adapter()
+    /**網路接收器*/
+    private var internetReceiver: NetWorkChangeReceiver? = null
+    /**第一次加載數據*/
+    private var init = true
+
+    private val itFilter = IntentFilter()
+    init {
+        itFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
+    }
+
+    /**
+     * 網路接收器初始化
+     *
+     * @author KILNETA
+     * @since Alpha_2.0
+     */
+    @DelicateCoroutinesApi
+    private fun initInternetReceiver(){
+        internetReceiver = NetWorkChangeReceiver(
+            object : NetWorkChangeReceiver.RespondNetWork{
+                override fun interruptInternet() {
+                    noNetWork.layoutParams =
+                        LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                        )
+                }
+                override fun connectedInternet() {
+                    noNetWork.layoutParams =
+                        LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            0,
+                        )
+                    if(init){
+                        adapter.callPccuAnnouncementRSS()
+                    }
+                }
+            },
+            requireContext()
+        )
+    }
 
     /**
      * 停止載入動畫
@@ -89,11 +133,13 @@ class AnnouncementPage : Fragment(R.layout.announcement_page){
      * @author KILNETA
      * @since Alpha_1.0
      */
-    @DelicateCoroutinesApi
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         //呼叫頁面建置
         super.onViewCreated(view, savedInstanceState)
 
+        //初始化網路接收器
+        initInternetReceiver()
         //設置關於按鈕功能
         setAboutButton()
 
@@ -104,12 +150,34 @@ class AnnouncementPage : Fragment(R.layout.announcement_page){
                 LinearLayoutManager.VERTICAL,
                 false
             )
-        /**announcement_list列表控件的適配器*/
-        val adapter = Adapter()
         announcement_list.adapter = adapter
         //呼叫適配器callPccuAnnouncementAPI取得資料與建構列表
-        adapter.callPccuAnnouncementRSS()
+        if(internetReceiver!!.isConnect)
+            adapter.callPccuAnnouncementRSS()
 
+    }
+
+    /**
+     * 頁面被啟用
+     *
+     * @author KILNETA
+     * @since Alpha_1.0
+     */
+    @DelicateCoroutinesApi
+    override fun onStart() {
+        super.onStart()
+        activity?.registerReceiver(internetReceiver, itFilter)
+    }
+
+    /**
+     * 當頁面停用時(不可見)
+     *
+     * @author KILNETA
+     * @since Alpha_1.0
+     */
+    override fun onStop(){
+        super.onStop()
+        activity?.unregisterReceiver(internetReceiver)
     }
 
     /**
@@ -137,7 +205,10 @@ class AnnouncementPage : Fragment(R.layout.announcement_page){
                     AnnouncementByPULL.getAnnouncements(PccuAnnouncementXml().get())
                 }
                 //重新讀入公告XML 並重設公告列表
-                resetData(announcementList)
+                announcementList?.let {
+                    resetData(announcementList)
+                    init = !init
+                }
             }
         }
 
@@ -152,6 +223,7 @@ class AnnouncementPage : Fragment(R.layout.announcement_page){
             //導入數據資料
             this.announcementList.addAll(AnnouncementList)
             //刷新視圖列表
+            @Suppress("NotifyDataSetChanged")
             notifyDataSetChanged()
             //關閉loading動畫
             stopLoading()
@@ -325,7 +397,7 @@ class AnnouncementPage : Fragment(R.layout.announcement_page){
             //設置元素子控件的長按功能
             holder.itemView.setOnLongClickListener {
                 /**顯示底部彈窗列表*/
-                val sheetFragment = AnnouncementListItem_BottomMenu(pccuList.link!!)
+                val sheetFragment = AnnouncementListItemBottomMenu(pccuList.link!!)
                 sheetFragment.show(parentFragmentManager, sheetFragment.tag)
                 return@setOnLongClickListener true
             }

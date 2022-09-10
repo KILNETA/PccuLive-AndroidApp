@@ -1,5 +1,6 @@
 package com.example.pccu.internet
 
+import android.util.Log
 import com.example.pccu.BuildConfig
 import java.io.Serializable
 import java.text.SimpleDateFormat
@@ -11,7 +12,7 @@ import java.util.*
  * @author KILNETA
  * @since Alpha_4.0
  */
-class CwbAPI{
+object CwbAPI{
     /**
      * 36小時內天氣預報
      * @return CWB_API氣象預報資料 : [CwbWeatherSource]
@@ -26,11 +27,19 @@ class CwbAPI{
         val key = BuildConfig.CWB_API_KEY
 
         //回傳取得的CWB 36小時天氣預報資料
-        return HttpRetrofit.createJson(HttpRetrofit.ApiService::class.java,url).getCWB(key).execute().body()
+        return  try {
+            HttpRetrofit.createJson(HttpRetrofit.ApiService::class.java,url).getCWB(
+                key
+            ).execute().body()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e("","$e")
+            null
+        }
     }
 
     //CWB_API時間格式
-    private val timeFormat = "yyyy-MM-dd HH:mm:ss"
+    private const val timeFormat = "yyyy-MM-dd HH:mm:ss"
 
     /**
      * 重構天氣預報資料
@@ -43,6 +52,8 @@ class CwbAPI{
     fun refactorCwbSource(Source:CwbWeatherSource):CwbForecastSave{
         /**格式化 全台各縣市 各三筆預報*/
         val cwbForecastSaveState = CwbForecastSave(
+            SimpleDateFormat(timeFormat, Locale.TAIWAN)
+                .parse(Source.records.location[0].weatherElement[0].time[0].startTime)!!,
             SimpleDateFormat(timeFormat, Locale.TAIWAN)
                 .parse(Source.records.location[0].weatherElement[0].time[0].endTime)!!,
             arrayListOf()
@@ -243,6 +254,7 @@ data class CwbForecast(
  * @since Alpha_4.0
  */
 data class CwbForecastSave(
+    val stratTime : Date,                   //最早開始時間
     val endTime : Date,                     //最早結束時間
     val CwbForecast : ArrayList<CwbForecast>//地區預報資料表
 ) : Serializable

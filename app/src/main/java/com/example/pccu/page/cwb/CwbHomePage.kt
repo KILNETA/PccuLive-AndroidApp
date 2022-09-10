@@ -1,11 +1,15 @@
 package com.example.pccu.page.cwb
 
+import android.content.IntentFilter
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.format.DateFormat
+import android.util.DisplayMetrics
 import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.example.pccu.R
@@ -16,9 +20,10 @@ import com.example.pccu.about.AboutBottomSheet
 import kotlinx.android.synthetic.main.cwb_home_page.*
 import java.util.*
 import com.example.pccu.internet.*
-import com.example.pccu.Menu.MoreLocation_BottomMenu
+import com.example.pccu.menu.MoreLocationBottomMenu
 import com.example.pccu.sharedFunctions.Object_SharedPreferences
 import com.example.pccu.sharedFunctions.OffsetPageTransformer
+import kotlinx.android.synthetic.main.cwb_home_page.aboutButton
 import kotlinx.coroutines.*
 import kotlin.collections.ArrayList
 
@@ -36,6 +41,51 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
     private var weatherForecast : CwbForecastSave? = null
     /**暫存空汙指標(全縣市)*/
     private var airQualityData : EpaAirQuality? = null
+    /**CWB第一次加載數據*/
+    private var initCwb = true
+    /**CWB第一次加載數據*/
+    private var initEpa = true
+    /**網路接收器*/
+    private var internetReceiver: NetWorkChangeReceiver? = null
+
+    private val itFilter = IntentFilter()
+    init {
+        itFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
+    }
+    /**
+     * 網路接收器初始化
+     *
+     * @author KILNETA
+     * @since Alpha_2.0
+     */
+    @DelicateCoroutinesApi
+    private fun initInternetReceiver(){
+        internetReceiver = NetWorkChangeReceiver(
+            object : NetWorkChangeReceiver.RespondNetWork{
+                override fun interruptInternet() {
+                    noNetWork.layoutParams =
+                        LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                        )
+                }
+                override fun connectedInternet() {
+                    noNetWork.layoutParams =
+                        LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            0,
+                        )
+                    if(initCwb)
+                        //首次調用展示天氣預報資料
+                        initCwbForecastPageView()
+                    if(initEpa)initEpa
+                        //取得空污預報資料
+                        initEpaAirQuality()
+                }
+            },
+            requireContext()
+        )
+    }
 
     /**
      * 設置選擇縣市列表按鈕功能
@@ -47,7 +97,7 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
         //當 選擇縣市列表按鈕 被按下
         Cwb_moreLocation.setOnClickListener{
             /**選擇縣市列表 底部彈窗*/
-            val moreLocationSheetFragment = MoreLocation_BottomMenu(view!!,this)
+            val moreLocationSheetFragment = MoreLocationBottomMenu(requireView(),this)
             moreLocationSheetFragment.show(parentFragmentManager, moreLocationSheetFragment.tag)
         }
     }
@@ -87,7 +137,7 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
             "Cwb",
             "TargetLocation",
             newLocation,
-            context!!
+            requireContext()
         )
     }
 
@@ -99,7 +149,7 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
      */
     private fun getTargetLocation(){
         /**得到用戶最後選擇的縣市*/
-        val sP = Object_SharedPreferences["Cwb", "TargetLocation", context!!]
+        val sP = Object_SharedPreferences["Cwb", "TargetLocation", requireContext()]
 
         //如果沒有資料 則 使用預設值(臺北市)
         if(sP != null)
@@ -140,7 +190,7 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
      * @author KILNETA
      * @since Alpha_4.0
      */
-    private fun epaFilterLocation(epaForecast : EpaAirQuality):EpaAirQualityData? {
+    private fun epaFilterLocation(epaForecast : EpaAirQuality): EpaAirQualityData? {
         /**EPA地區*/
         var epaArea: String? = null
         //換算Cwb縣市 對應之 EPA地區
@@ -197,12 +247,26 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
      * @since Alpha_4.0
      */
     private fun setCwbForecastPageAdapter(fragments : ArrayList<Fragment>){
+        /**顯示指標*/
+        val outMetrics = DisplayMetrics()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            @Suppress("DEPRECATION")
+            requireActivity().display?.getRealMetrics(outMetrics)
+        } else {
+            @Suppress("DEPRECATION")
+            requireActivity().windowManager.defaultDisplay.getMetrics(outMetrics)
+        }
+        /**螢幕寬度 (用於計算影像長寬比)*/
+        val vWidth = outMetrics.widthPixels
+
         //創建CWBForecast頁面資料
         val pageAdapter = PageAdapter(childFragmentManager, lifecycle, fragments)
         //CWBForecast頁面 適配器
         Cwb_value_page.adapter = pageAdapter
         //重新調整頁面邊界與動畫
-        Cwb_value_page.setPageTransformer(OffsetPageTransformer(350, -350))
+        val scale = resources.displayMetrics.density
+        val x = (vWidth-(280*scale)).toInt()
+        Cwb_value_page.setPageTransformer(OffsetPageTransformer(x, -x))
         //同時加載最大頁面為3
         Cwb_value_page.offscreenPageLimit = 3
     }
@@ -217,20 +281,24 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
     private fun updatedCwbForecast(){
         //使用協程調用CWB_API天氣預報資料
         GlobalScope.launch ( Dispatchers.Main ) {
-            //調用CWB_API取得天氣預報資料 並經過制式重構資料->( CwbForecast_Save 存儲用氣象預報資料)
-            weatherForecast = withContext(Dispatchers.IO) {
-                CwbAPI().refactorCwbSource(
-                    CwbAPI().getWeatherForecast()!!
-                )
+            val wF = withContext(Dispatchers.IO) {
+                CwbAPI.getWeatherForecast()
             }
-            //天氣預報資料存儲到APP中
-            Object_SharedPreferences.save(
-                "Cwb_Forecast",
-                "All_LocationForecast",
-                weatherForecast!!,
-                context!!
-            )
-            resetCwbForecast()
+            wF?.let {
+                //調用CWB_API取得天氣預報資料 並經過制式重構資料->( CwbForecast_Save 存儲用氣象預報資料)
+                weatherForecast =
+                    CwbAPI.refactorCwbSource( wF )
+                //協程調用 天氣預報資料存儲到APP中
+                withContext(Dispatchers.IO) {
+                    Object_SharedPreferences.save(
+                        "Cwb_Forecast",
+                        "All_LocationForecast",
+                        weatherForecast!!,
+                        requireContext()
+                    )
+                }
+                resetCwbForecast()
+            }
         }
     }
 
@@ -241,10 +309,14 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
      * @since Alpha_4.0
      */
     fun resetCwbForecast(){
-        //選出用戶選擇之地區天氣預報
-        val forecastOfLocation = cwbFilterLocation(weatherForecast!!.CwbForecast,targetLocation)
-        //重設展示頁面 顯示該地區之天氣預報
-        setCwbForecastPageAdapter(upDataCwbForecast(forecastOfLocation))
+        weatherForecast?.let {
+            //選出用戶選擇之地區天氣預報
+            val forecastOfLocation = cwbFilterLocation(weatherForecast!!.CwbForecast, targetLocation)
+            //重設展示頁面 顯示該地區之天氣預報
+            setCwbForecastPageAdapter(upDataCwbForecast(forecastOfLocation))
+
+            initCwb = false
+        }
     }
 
     /**
@@ -261,12 +333,14 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
         )
 
         //測試用-----VVV-----
-        Object_SharedPreferences.clear("Cwb_Forecast", context!!)
+        //Object_SharedPreferences.clear("Cwb_Forecast", context!!)
 
         //嘗試取得存儲的天氣預報資料
-        val sP = Object_SharedPreferences["Cwb_Forecast", "All_LocationForecast", context!!]
+        val sP = Object_SharedPreferences["Cwb_Forecast", "All_LocationForecast", requireContext()]
         //存儲天氣預報資料 最早結束時間 (預設null確保無資料時一定會更新天氣預報)
         var saveEndDate : Date? = null
+        //存儲天氣預報資料 最早開始時間 (預設null確保無資料時一定會更新天氣預報)
+        var saveStartDate : Date? = null
         //當前時間
         val presentDate = Calendar.getInstance().time
 
@@ -274,12 +348,19 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
         if(sP!=null) {
             //將取得的Any類別套用至CwbForecast_Save資料結構中使用
             weatherForecast = sP as CwbForecastSave
+            //將比較時間設置為 存儲的天氣預報資料中 最早開始時間
+            saveStartDate = sP.stratTime
             //將比較時間設置為 存儲的天氣預報資料中 最早結束時間
             saveEndDate = sP.endTime
         }
 
         //比較存儲預報時間是否 < 當前時間
-        if( saveEndDate == null || saveEndDate < presentDate )
+        if( saveEndDate == null ||
+            saveStartDate == null ||
+            saveEndDate < presentDate ||
+            ( arrayListOf(6,18).contains(saveStartDate.hours) &&
+                arrayListOf(12,24).contains(presentDate.hours+1) )
+        )
             //(是則表示資料過期 需重新請求預報資料)
             updatedCwbForecast()
         else
@@ -294,10 +375,20 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
      * @author KILNETA
      * @since Alpha_4.0
      */
-    @RequiresApi(Build.VERSION_CODES.N)
-    fun updatedEpaAirQuality(airQuality : EpaAirQuality){
-        airQualityData = airQuality
-        resetEpaView()
+    @DelicateCoroutinesApi
+    fun initEpaAirQuality(){
+        //取用協程
+        GlobalScope.launch (Dispatchers.Main) {
+            /**EpaHtmlString*/
+            val ehs = withContext(Dispatchers.IO) {
+                EpaAPI.get()
+            }
+            ehs?.let {
+                airQualityData = EpaHtmlParser.getContent(it)
+                resetEpaView()
+                initEpa = false
+            }
+        }
     }
 
     /**
@@ -306,9 +397,8 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
      * @author KILNETA
      * @since Alpha_4.0
      */
-    @RequiresApi(Build.VERSION_CODES.N)
     fun resetEpaView(){
-        if(view != null) {
+        if(view != null && airQualityData!= null) {
             val airQuality = epaFilterLocation(airQualityData!!)!!
 
             //發布日期：－/－/－ －:－ (vvv 避免系統警告的寫法 vvv)
@@ -325,11 +415,11 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
             if (airQuality.airQualityValue == null) {
                 //數值為空
                 EPA_AirQuality_value.text = "－"
-                EPA_AirQuality_progressbar.setProgress(0, false)
+                EPA_AirQuality_progressbar.progress = 0
             } else {
                 //數值不為空
                 EPA_AirQuality_value.text = airQuality.airQualityValue.toString()
-                EPA_AirQuality_progressbar.setProgress(airQuality.airQualityValue, false)
+                EPA_AirQuality_progressbar.progress = airQuality.airQualityValue
             }
 
             //設置空汙對應指標圖示
@@ -388,16 +478,44 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState) //創建頁面
 
+        //初始化網路接收器
+        initInternetReceiver()
         //取得存儲中的目標縣市
         getTargetLocation()
         //設置關於按鈕功能
         setAboutButton()
         //設置選擇縣市列表按鈕功能
         setMoreLocation()
+
         //首次調用展示天氣預報資料
         initCwbForecastPageView()
         //取得空污預報資料
-        EpaAPI(this).get()
+        initEpaAirQuality()
+    }
+
+    /**
+     * 頁面被啟用
+     *
+     * @author KILNETA
+     * @since Alpha_1.0
+     */
+    @DelicateCoroutinesApi
+    override fun onStart() {
+        super.onStart()
+        activity?.registerReceiver(internetReceiver, itFilter)
+    }
+
+    /**
+     * 當頁面停用時(不可見)
+     *
+     * @author KILNETA
+     * @since Alpha_1.0
+     */
+    override fun onStop(){
+        super.onStop()
+        activity?.unregisterReceiver(internetReceiver)
+        initCwb = true
+        initEpa = true
     }
 
     /**

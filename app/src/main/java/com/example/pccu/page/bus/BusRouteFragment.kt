@@ -18,7 +18,7 @@ import com.example.pccu.R
 import kotlinx.android.synthetic.main.bus_route_item.view.*
 import kotlinx.android.synthetic.main.bus_route_fragment.*
 import com.example.pccu.internet.*
-import com.example.pccu.Menu.BusStationItem_BottomMenu
+import com.example.pccu.menu.BusStationItemBottomMenu
 import com.example.pccu.sharedFunctions.BusFunctions
 import com.example.pccu.sharedFunctions.JsonFunctions
 import com.example.pccu.sharedFunctions.PopWindows
@@ -46,7 +46,7 @@ class BusRouteFragment(
     /**倒計時器*/
     private var countdownTimer: Timer? = null
     /**計時器計數*/
-    private var timerI = 18 //計數
+    var timerI = 18 //計數
     /**列表適配器*/
     private var adapter = Adapter()
 
@@ -132,6 +132,8 @@ class BusRouteFragment(
         private var stations = arrayListOf<Stop>()
         /**路線費用(取得緩衝區資料)*/
         private var fare : RouteFare? = null
+        /**沒有路線費用資料*/
+        private var noFare = false
         /**完整單站點顯示資料 (站牌資料、到站時間、車輛位置)*/
         private var stationDataList = arrayListOf<StationData>()
 
@@ -143,21 +145,25 @@ class BusRouteFragment(
          * @author KILNETA
          * @since Alpha_5.0
          */
-        private suspend fun getDisplayStation(tdxToken:TdxToken):List<RouteStation> {
-            return withContext(Dispatchers.IO) {
-                JsonFunctions.fromJson(
-                    BusAPI.get(
-                        tdxToken,
-                        if(BusAPI.DisplayStopOfRoute_Locations.any{it==routeData.City})
-                            "DisplayStopOfRoute"
-                        else
-                            "StopOfRoute",
-                        BusApiRequest(
-                            routeData.City,
-                            null,
-                            "RouteUID eq '${routeData.RouteUID}' and Direction eq '${direction}'"
-                        )
-                    ),
+        private suspend fun getDisplayStation(tdxToken:TdxToken):List<RouteStation>? {
+            val ds = withContext(Dispatchers.IO) {
+                BusAPI.get(
+                    tdxToken,
+                    if (BusAPI.DisplayStopOfRoute_Locations.any { it == routeData.City })
+                        "DisplayStopOfRoute"
+                    else
+                        "StopOfRoute",
+                    BusApiRequest(
+                        routeData.City,
+                        null,
+                        "RouteUID eq '${routeData.RouteUID}' and Direction eq '${direction}'"
+                    )
+                )
+            }
+
+            return  ds?.let{
+                JsonFunctions.fromJson<List<RouteStation>>(
+                    it,
                     object : TypeToken<List<RouteStation>>() {}.type
                 )
             }
@@ -171,18 +177,22 @@ class BusRouteFragment(
          * @author KILNETA
          * @since Alpha_5.0
          */
-        private suspend fun getRouteFare(tdxToken:TdxToken):List<RouteFare> {
-            return withContext(Dispatchers.IO) {
-                JsonFunctions.fromJson(
-                    BusAPI.get(
-                        tdxToken,
-                        "RouteFare",
-                        BusApiRequest(
-                            routeData.City,
-                            null,
-                            "SubRouteID eq '${routeData.SubRoutes.first { it.Direction == direction }.SubRouteID}'"
-                        )
-                    ),
+        private suspend fun getRouteFare(tdxToken:TdxToken):List<RouteFare>? {
+            val rf = withContext(Dispatchers.IO) {
+                BusAPI.get(
+                    tdxToken,
+                    "RouteFare",
+                    BusApiRequest(
+                        routeData.City,
+                        null,
+                        "SubRouteID eq '${routeData.SubRoutes.first { it.Direction == direction }.SubRouteID}'"
+                    )
+                )
+            }
+
+            return rf?.let{
+                JsonFunctions.fromJson<List<RouteFare>>(
+                    it,
                     object : TypeToken<List<RouteFare>>() {}.type
                 )
             }
@@ -196,30 +206,38 @@ class BusRouteFragment(
          * @since Alpha_5.0
          */
         private suspend fun getStationData(tdxToken:TdxToken) {
-            withContext(Dispatchers.IO) {
+            val eta = withContext(Dispatchers.IO) {
+                BusAPI.get(
+                    tdxToken,
+                    "EstimatedTimeOfArrival",
+                    BusApiRequest(
+                        routeData.City,
+                        null,
+                        "RouteUID eq '${routeData.RouteUID}'"
+                    )
+                )
+            }
+
+            val rtns = withContext(Dispatchers.IO) {
+                BusAPI.get(
+                    tdxToken,
+                    "RealTimeNearStop",
+                    BusApiRequest(
+                        routeData.City,
+                        null,
+                        "RouteUID eq '${routeData.RouteUID}'"
+                    )
+                )
+            }
+
+            if(eta != null && rtns != null) {
                 tidyStationDataList(
                     JsonFunctions.fromJson(
-                        BusAPI.get(
-                            tdxToken,
-                            "EstimatedTimeOfArrival",
-                            BusApiRequest(
-                                routeData.City,
-                                null,
-                                "RouteUID eq '${routeData.RouteUID}'"
-                            )
-                        ),
+                        eta,
                         object : TypeToken<ArrayList<EstimateTime>>() {}.type
                     ),
                     JsonFunctions.fromJson(
-                        BusAPI.get(
-                            tdxToken,
-                            "RealTimeNearStop",
-                            BusApiRequest(
-                                routeData.City,
-                                null,
-                                "RouteUID eq '${routeData.RouteUID}'"
-                            )
-                        ),
+                        rtns,
                         object : TypeToken<ArrayList<BusA2>>() {}.type
                     )
                 )
@@ -234,41 +252,55 @@ class BusRouteFragment(
         @DelicateCoroutinesApi
         fun upData(){
             GlobalScope.launch ( Dispatchers.Main ) {
-
                 /**取得TDX Token協定*/
                 val tdxToken = withContext(Dispatchers.IO) {
                     BusAPI.getToken()
                 }
 
-                //確認有取得tdxToken協定
-                tdxToken?.let {
+                //確認有取得tdxToken協定 (判斷access_token是否有取得即可)
+                tdxToken?.access_token?.let {
                     if (isInit) {
+                        //避免重複操作出錯
+                        stationDataList.clear()
                         //取得站務資料 並初始化 站牌數據列表
-                        stations = getDisplayStation(tdxToken)[0].Stops
+                        stations = getDisplayStation(tdxToken)?.get(0)?.Stops!!
                         stations.forEach { stationDataList.add(StationData(it)) }
 
                         //取得路線收費規定 (如果欲取得需縣市符合API要求 是否支援其縣市)
                         if (BusAPI.RouteFare.contains(routeData.City)) {
-                            fare = getRouteFare(tdxToken)[0]
+                            val rf = getRouteFare(tdxToken)
+                            rf?.let{
+                                if (rf.isNotEmpty())
+                                    fare = rf[0]
+                                else
+                                    noFare = true
+                            }
                         }
                         //由於前面經過大量網路請求
                         //需檢查視窗尚未被關閉 則初始化列表控件繪圖
-                        if (view != null) setBufferZone()
+                        if (stations.isNotEmpty()  && view != null && (fare!=null || noFare)) {
+                            setBufferZone()
+                            //刷新視圖列表
+                            @Suppress("NotifyDataSetChanged")
+                            notifyDataSetChanged()
+                            bus_StationList.post {
+                                //轉移到定位站牌
+                                if (goalStationUID != null) {
+                                    moveToPosition(
+                                        stationDataList.indexOfFirst { goalStationUID == it.Station.StopUID }
+                                    )
+                                }
+                            }
+                            isInit = false
+                        }
                     }
 
                     //取得公車列表展示之 站牌數據
                     getStationData(tdxToken)
 
                     //刷新視圖列表
+                    @Suppress("NotifyDataSetChanged")
                     notifyDataSetChanged()
-                    //轉移到定位站牌
-                    if (view != null && goalStationUID != null && isInit) {
-                        moveToPosition(
-                            stationDataList.indexOfFirst { goalStationUID == it.Station.StopUID }
-                        )
-                    }
-                    //不再是首次操作
-                    if (isInit) isInit = !isInit
                 //取得tdxToken協定失敗 回報錯誤
                 } ?: PopWindows.popLongHint(context!!,"Error:無法取得TdxAPI的Token")
             }
@@ -286,7 +318,7 @@ class BusRouteFragment(
             EstimateTime:ArrayList<EstimateTime> ,
             BusData:ArrayList<BusA2>
         ){
-            stationDataList.forEach {
+            stationDataList.forEachIndexed { index, it ->
 
                 for( i in EstimateTime.indices ){
                     //找到匹配的站點 到站時間資訊
@@ -296,8 +328,10 @@ class BusRouteFragment(
                     ){
                         //帶入到站時間資料
                         it.EstimateTime = EstimateTime[i]
-                        //清除已套用的車站資料 (減少重複查找的時間)
-                        EstimateTime.removeAt(i)
+                        //有些迴圈路線 首尾站相同會缺少顯示
+                        if(index != 0)
+                            //清除已套用的車站資料 (減少重複查找的時間)
+                            EstimateTime.removeAt(i)
                         break
                     }
                 }
@@ -452,7 +486,7 @@ class BusRouteFragment(
             //設置元素子控件的點擊功能
             holder.itemView.setOnClickListener {
                 /**顯示底部彈窗列表*/
-                val sheetFragment = BusStationItem_BottomMenu(
+                val sheetFragment = BusStationItemBottomMenu(
                     routeData,
                     station.StopUID,
                     station.StopName,
@@ -476,7 +510,7 @@ class BusRouteFragment(
      */
     inner class ItemDecoration : RecyclerView.ItemDecoration {
         /**站牌資料表*/
-        private var station : List<Stop>? = null
+        private var station = arrayListOf<Stop>()
         /**緩衝區列表*/
         private val bufferZoneList = arrayListOf<BufferZoneData>()
         /**緩衝區標示大小*/
@@ -484,10 +518,16 @@ class BusRouteFragment(
         /**有緩衝區*/
         private var hasBufferZone = false
 
+        /**繪圖 目標站牌*/
         private val paintGoal = Paint(Paint.ANTI_ALIAS_FLAG)
+        /**繪圖 緩衝區*/
         private val paintBufferZone = Paint(Paint.ANTI_ALIAS_FLAG)
+        /**繪圖 一般站牌*/
         private val paintUniversal = Paint(Paint.ANTI_ALIAS_FLAG)
+        /**繪圖 文字*/
         private val paintText = Paint(Paint.ANTI_ALIAS_FLAG)
+
+        /**初始化參數*/
         init {
             paintGoal.color = Color.parseColor("#f7f752")
             paintGoal.style = Paint.Style.FILL
@@ -510,7 +550,7 @@ class BusRouteFragment(
          * @param station List<[Stop]>  站牌資料
          */
         constructor(
-            station : List<Stop>) {
+            station : ArrayList<Stop>) {
             this.station = station
         }
 
@@ -519,7 +559,7 @@ class BusRouteFragment(
          * @param bufferZones ArrayList<[BufferZone]>  緩衝區資料
          */
         constructor(
-            station : List<Stop>,
+            station : ArrayList<Stop>,
             bufferZones : ArrayList<BufferZone>,
         ) {
             hasBufferZone = true
@@ -567,10 +607,10 @@ class BusRouteFragment(
                 // 要減去sectionSize的大小
                 bufferZoneList.forEach{
                     //紀錄緩衝區起始具體Item座標 (初始化完就不會再操作了)
-                    if(it.start_position == -1 && station!![position].StopID == it.start_SationID){
+                    if(it.start_position == -1 && station[position].StopID == it.start_StationID){
                         it.start_position = position
                     }
-                    else if(it.end_position == -1 && station!![position].StopID == it.end_SationID){
+                    else if(it.end_position == -1 && station[position].StopID == it.end_StationID){
                         it.end_position = position
                     }
 
@@ -587,7 +627,7 @@ class BusRouteFragment(
                 }
             }
             //該站若為目標站牌 則需設置擺放提示邊框 (不會與緩衝區重疊)
-            if(station!![position].StopUID == goalStationUID){
+            if(station[position].StopUID == goalStationUID){
                 outRect.top += 2
                 outRect.bottom += 2
             }
@@ -634,7 +674,7 @@ class BusRouteFragment(
         override fun onDraw(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State) {
             super.onDraw(canvas, parent, state)
 
-            //獲取父類適配器
+            /**獲取父類適配器*/
             val manager = parent.layoutManager
             // 適配器 === 線性佈局管理器
             if (manager is LinearLayoutManager) {
@@ -659,111 +699,129 @@ class BusRouteFragment(
          * @since Alpha_5.0
          */
         private fun drawBufferZone(canvas: Canvas, parent: RecyclerView) {
-            //參數計算
-            val childCount = parent.childCount
-            val left = parent.paddingLeft
-            val right = parent.width - parent.paddingRight - 150
             //遍歷子類計數
-            for (i in 0 until childCount) {
+            for (i in 0 until parent.childCount) {
+                /**item控件*/
                 val child = parent.getChildAt(i)
-                val params = child.layoutParams as RecyclerView.LayoutParams
+                /**item座標*/
                 val position = parent.getChildAdapterPosition(child)
-                val top = child.top
-                val bottom = child.bottom
 
-                //是 類別首位
+                var top = child.top
+                var bottom = child.bottom
+                if(drawGoalJudge(position)){
+                    top -= 2
+                    bottom += 2
+                }
+
+                //根據條件繪製圖形
                 when {
+                /**分界點*/
                     bufferZoneList.any {drawBZJudge(1,it,position)} -> {
                         //畫布繪製矩形
                         canvas.drawRect(
-                            left.toFloat(),
-                            (child.top - sectionSize + params.topMargin - if(station!![position].StopUID == goalStationUID) 2 else 0).toFloat(),
-                            right.toFloat(),
-                            (child.bottom + sectionSize-sectionSize + if(station!![position].StopUID == goalStationUID) 2 else 0 ).toFloat(),
-                            paintUniversal
+                            child.left.toFloat(),
+                            (top - sectionSize).toFloat(),
+                            (child.right - 150).toFloat(),
+                            bottom.toFloat(),
+                            paintUniversal                                             //畫布
                         )
                         //畫布繪製矩形
                         canvas.drawRect(
-                            left.toFloat(),
-                            (child.bottom + sectionSize-sectionSize + if(station!![position].StopUID == goalStationUID) 2 else 0 ).toFloat(),
-                            right.toFloat(),
-                            (child.bottom + sectionSize + if(station!![position].StopUID == goalStationUID) 2 else 0 ).toFloat(),
-                            paintBufferZone
+                            child.left.toFloat(),
+                            bottom.toFloat(),
+                            (child.right - 150).toFloat(),
+                            (bottom + sectionSize ).toFloat(),
+                            paintBufferZone                                             //畫布
                         )
                         canvas.drawText(
-                            "分段點",        //類別名稱
-                            (right / 2).toFloat(),                                 //X座標
-                            (child.bottom + sectionSize - sectionSize / 5).toFloat(),   //Y座標
-                            paintText                            //畫布
+                            "分段點",                                               //類別名稱
+                            ((child.right - 150) / 2).toFloat(),                        //X座標
+                            (child.bottom + sectionSize - (sectionSize / 5)).toFloat(), //Y座標
+                            paintText                                                   //畫布
                         )
                     }
+                /**緩衝區開始*/
                     bufferZoneList.any {drawBZJudge(2,it,position)} -> {
                         //畫布繪製矩形
                         canvas.drawRect(
-                            left.toFloat(),
-                            (child.top - sectionSize + params.topMargin - if(station!![position].StopUID == goalStationUID) 2 else 0).toFloat(),
-                            right.toFloat(),
-                            bottom.toFloat(),
-                            paintBufferZone
+                            child.left.toFloat(),
+                            (child.top - sectionSize  -
+                                    if(drawGoalJudge(position)) 2 else 0).toFloat(),
+                            (child.right - 150).toFloat(),
+                            child.bottom.toFloat(),
+                            paintBufferZone                                             //畫布
                         )
                         canvas.drawText(
-                            "緩衝區開始",        //類別名稱
-                            (right / 2).toFloat(),                                 //X座標
-                            (child.top - sectionSize + params.topMargin + sectionSize / 1.2).toFloat(),   //Y座標
-                            paintText                            //畫布
+                            "緩衝區開始",                                            //類別名稱
+                            ((child.right - 150) / 2).toFloat(),                        //X座標
+                            (child.top - sectionSize + (sectionSize / 1.2)).toFloat(),  //Y座標
+                            paintText                                                   //畫布
                         )
                     }
+                /**緩衝區結束*/
                     bufferZoneList.any {drawBZJudge(3,it,position)} -> {
                         //畫布繪製矩形
                         canvas.drawRect(
-                            left.toFloat(),
-                            top.toFloat(),
-                            right.toFloat(),
-                            (child.bottom + sectionSize + if(station!![position].StopUID == goalStationUID) 2 else 0 ).toFloat(),
-                            paintBufferZone
+                            child.left.toFloat(),
+                            child.top.toFloat(),
+                            (child.right - 150).toFloat(),
+                            (bottom + sectionSize).toFloat(),
+                            paintBufferZone                                             //畫布
                         )
                         canvas.drawText(
-                            "緩衝區結束",        //類別名稱
-                            (right / 2).toFloat(),                                 //X座標
-                            (child.bottom + sectionSize - sectionSize / 5).toFloat(),   //Y座標
-                            paintText                            //畫布
+                            "緩衝區結束",                                            //類別名稱
+                            ((child.right - 150) / 2).toFloat(),                         //X座標
+                            (child.bottom + sectionSize - (sectionSize / 5)).toFloat(), //Y座標
+                            paintText                                                   //畫布
                         )
                     }
+                /**緩衝區中間*/
                     bufferZoneList.any { drawBZJudge(4,it,position) } -> {
                         //畫布繪製矩形
                         canvas.drawRect(
-                            left.toFloat(),
-                            (child.top - if(station!![position].StopUID == goalStationUID) 2 else 0).toFloat(),
-                            right.toFloat(),
-                            (child.bottom + if(station!![position].StopUID == goalStationUID) 2 else 0 ).toFloat(),
-                            paintBufferZone
+                            child.left.toFloat(),
+                            child.top.toFloat(),
+                            (child.right - 150).toFloat(),
+                            bottom.toFloat(),
+                            paintBufferZone                                             //畫布
                         )
                     }
+                /**非緩衝區*/
                     else -> {
                         //非緩衝區站牌 (單純填色)
                         canvas.drawRect(
-                            left.toFloat(),
-                            (top - if(station!![position].StopUID == goalStationUID) 2 else 0).toFloat(),
-                            right.toFloat(),
-                            (bottom + if(station!![position].StopUID == goalStationUID) 2 else 0 ).toFloat(),
-                            paintUniversal
+                            child.left.toFloat(),
+                            child.top.toFloat(),
+                            (child.right - 150).toFloat(),
+                            child.bottom.toFloat(),
+                            paintUniversal                                             //畫布
                         )
                     }
                 }
 
-                if(station!![position].StopUID == goalStationUID){
+                if(drawGoalJudge(position)){
                     //目標站牌
                     canvas.drawRect(
-                        (left).toFloat(),
-                        (child.top-2).toFloat(),
-                        (right+2).toFloat(),
-                        (child.bottom+2).toFloat(),
-                        paintGoal
+                        child.left.toFloat(),
+                        top.toFloat(),
+                        (child.right - 150 + 2).toFloat(),
+                        bottom.toFloat(),
+                        paintGoal                                                       //畫布
                     )
                 }
             }
         }
 
+        /**
+         * 繪製緩衝區條件判斷
+         * @param mode [Canvas]             篩選模式(編號)
+         * @param it [BufferZoneData]       單個緩衝區資料
+         * @param position [Int]            Item座標
+         * @return 篩選結果(是、否) : [Boolean]
+         *
+         * @author KILNETA
+         * @since Alpha_5.0
+         */
         private fun drawBZJudge ( mode:Int ,it:BufferZoneData ,position:Int ) : Boolean{
             return when(mode) {
                 1 ->    it.isSame &&
@@ -779,6 +837,18 @@ class BusRouteFragment(
                         ))
                 else -> false
             }
+        }
+
+        /**
+         * 繪製目標站牌條件判斷
+         * @param position [Int]            Item座標
+         * @return 篩選結果(是、否) : [Boolean]
+         *
+         * @author KILNETA
+         * @since Alpha_5.0
+         */
+        private fun drawGoalJudge (position:Int) : Boolean{
+            return station[position].StopUID == goalStationUID
         }
 
         /**
@@ -799,7 +869,7 @@ class BusRouteFragment(
 
 
                 //畫布繪製矩形
-                if(station!![position].StopUID == goalStationUID){
+                if(station[position].StopUID == goalStationUID){
                     //目標站牌
                     canvas.drawRect(
                         child.left                  .toFloat(),
@@ -823,18 +893,40 @@ class BusRouteFragment(
         }
     }
 
+    /**
+     * 完整單站點顯示資料 -數據結構
+     * @param Station       [Stop]              站牌資料
+     * @param EstimateTime  [EstimateTime]      到站時間
+     * @param innerBuses    ArrayList<[BusA2]>  車輛位置
+     *
+     * @author KILNETA
+     * @since Alpha_5.0
+     */
     data class StationData(
         val Station: Stop,
         var EstimateTime : EstimateTime? = null,
         val innerBuses: ArrayList<BusA2> = arrayListOf(),
     )
 
+    /**
+     * 緩衝區範圍 -數據結構
+     * @param isSame            [Boolean] 是同一站
+     * @param start_StationID    [String]  起始站ID
+     * @param start_StationName  [String]  起始站名
+     * @param end_StationID      [String]  結束站ID
+     * @param end_StationName    [String]  結束站名
+     * @param start_position    [Int]     起始站座標
+     * @param end_position      [Int]     結束站座標
+     *
+     * @author KILNETA
+     * @since Alpha_5.0
+     */
     data class BufferZoneData(
         val isSame : Boolean,
-        val start_SationID : String,
-        val start_SationName : String,
-        val end_SationID : String,
-        val end_SationName : String,
+        val start_StationID : String,
+        val start_StationName : String,
+        val end_StationID : String,
+        val end_StationName : String,
 
         var start_position : Int = -1,
         var end_position : Int = -1

@@ -9,6 +9,17 @@
     android:orientation="vertical"
     tools:context=".page.announcement.AnnouncementContentPage">
 
+    <TextView
+        android:id="@+id/noNetWork"
+        android:layout_weight="0"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:background="#FF4141"
+        android:textColor="#FFFFFF"
+        android:text="無法連線上網"
+        android:textSize="14sp"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,36 +31,29 @@
             android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-                <LinearLayout
+                <TextView
+                    android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <TextView
-                        android:id="@+id/title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/PCCU_yellow"
-                        android:gravity="center_vertical"
-                        android:padding="20px"
-                        android:textSize="18dp"
-                        android:text="\n"/>
-                </LinearLayout>
+                    android:background="@color/PCCU_yellow"
+                    android:gravity="center_vertical"
+                    android:padding="8dp"
+                    android:textSize="18sp"
+                    android:text=""/>
+            </LinearLayout>
 
-                <!--公告內文 Content-->
-                <LinearLayout
-                    android:id="@+id/Content"
-                    android:layout_width="match_parent"
-                    android:layout_height="fill_parent"
-                    android:orientation="vertical">
-                </LinearLayout>
+            <!--公告內文 Content-->
+            <LinearLayout
+                android:id="@+id/Content"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="vertical">
             </LinearLayout>
 
             <LinearLayout
-                android:layout_alignParentBottom="true"
                 android:background="#DBE2E6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -62,7 +66,7 @@
                     <TextView
                         android:layout_width="60dp"
                         android:layout_height="match_parent"
-                        android:layout_margin="10px"
+                        android:layout_margin="3dp"
                         android:gravity="center"
                         android:text="附　件"/>
                     <LinearLayout
@@ -77,7 +81,7 @@
                 <LinearLayout
                     android:background="#FFFFFF"
                     android:layout_width="match_parent"
-                    android:layout_height="3px"/>
+                    android:layout_height="1dp"/>
                 <!--活動資訊 ActivityInformation-->
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -87,7 +91,7 @@
                         android:layout_width="60dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:layout_margin="10px"
+                        android:layout_margin="3dp"
                         android:text="活動資訊"/>
                     <LinearLayout
                         android:id="@+id/ActivityInformation"
@@ -101,7 +105,7 @@
                 <LinearLayout
                     android:background="#FFFFFF"
                     android:layout_width="match_parent"
-                    android:layout_height="3px"/>
+                    android:layout_height="1dp"/>
                 <!--相關連結 RelatedLinks-->
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -111,7 +115,7 @@
                         android:layout_width="60dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:layout_margin="10px"
+                        android:layout_margin="3dp"
                         android:text="相關連結"/>
                     <LinearLayout
                         android:id="@+id/RelatedLinks"
@@ -125,7 +129,7 @@
                 <LinearLayout
                     android:background="#FFE5C9"
                     android:layout_width="match_parent"
-                    android:layout_height="5px"/>
+                    android:layout_height="1dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -146,7 +150,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="20dp"
                                 android:gravity="center"
-                                android:layout_margin="10px"
+                                android:layout_margin="3dp"
                                 android:text="公告起訖"/>
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -174,7 +178,7 @@
                         <!--分割線-->
                         <LinearLayout
                             android:background="#FFE5C9"
-                            android:layout_width="3px"
+                            android:layout_width="1dp"
                             android:layout_height="match_parent"/>
 
                         <LinearLayout
@@ -186,7 +190,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="20dp"
                                 android:gravity="center"
-                                android:layout_margin="10px"
+                                android:layout_margin="3dp"
                                 android:text="活動起訖"/>
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -218,10 +222,9 @@
                     <LinearLayout
                         android:background="#FFE5C9"
                         android:layout_width="match_parent"
-                        android:layout_height="3px"/>
+                        android:layout_height="1dp"/>
 
                     <LinearLayout
-                        android:layout_alignParentBottom="true"
                         android:layout_width="match_parent"
                         android:background="@color/PCCU_yellow"
                         android:layout_height="wrap_content"
@@ -236,7 +239,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:layout_margin="10px"
+                                android:layout_margin="3dp"
                                 android:text="公告分類"/>
 
                             <TextView
@@ -253,7 +256,7 @@
                         <!--分割線-->
                         <LinearLayout
                             android:background="#FFE5C9"
-                            android:layout_width="3px"
+                            android:layout_width="1dp"
                             android:layout_height="match_parent"/>
 
                         <LinearLayout
@@ -265,7 +268,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:layout_margin="10px"
+                                android:layout_margin="3dp"
                                 android:text="公告單位"/>
 
                             <TextView
@@ -280,7 +283,7 @@
                         <!--分割線-->
                         <LinearLayout
                             android:background="#FFE5C9"
-                            android:layout_width="3px"
+                            android:layout_width="1dp"
                             android:layout_height="match_parent"/>
 
                         <LinearLayout
@@ -293,7 +296,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:layout_margin="10px"
+                                android:layout_margin="3dp"
                                 android:text="點閱率"/>
 
                             <TextView

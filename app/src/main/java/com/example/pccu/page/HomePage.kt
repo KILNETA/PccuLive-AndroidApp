@@ -5,17 +5,17 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.home_page.*
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pccu.internet.*
-import com.example.pccu.Menu.FastLinks_BottomMenu
+import com.example.pccu.menu.FastLinksBottomMenu
 import com.example.pccu.R
 import kotlinx.coroutines.*
 import java.util.*
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
 import android.net.Uri
 import android.text.format.DateFormat
@@ -32,7 +32,9 @@ import com.example.pccu.sharedFunctions.DateConvert
 import com.example.pccu.sharedFunctions.Object_SharedPreferences
 import com.example.pccu.sharedFunctions.RV
 import com.example.pccu.appStart.CwbMainActivity
+import com.example.pccu.sharedFunctions.ViewGauge
 import kotlinx.android.synthetic.main.weather_item.view.*
+import android.util.Log
 
 /**
  * 程式主頁面 : "Fragment(home_page)"
@@ -48,8 +50,61 @@ class HomePage : Fragment(R.layout.home_page){
     private var timer = 58
     /**weather適配器*/
     private val weatherAdapter = WeatherAdapter()
+    /**行事曆適配器*/
+    private val calendarAdapter = CalendarAdapter()
     /**首頁影片視圖表*/
     private val cameraList : ArrayList<CameraItem> = arrayListOf()
+    /**網路接收器*/
+    private var internetReceiver: NetWorkChangeReceiver? = null
+
+    private val itFilter = IntentFilter()
+
+    private var initCalendar = true
+
+    init{
+        itFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
+    }
+
+    /**
+     * 網路接收器初始化
+     *
+     * @author KILNETA
+     * @since Alpha_2.0
+     */
+    @DelicateCoroutinesApi
+    private fun initInternetReceiver(){
+        internetReceiver = NetWorkChangeReceiver(
+            object : NetWorkChangeReceiver.RespondNetWork{
+                override fun interruptInternet() {
+                    noNetWork.layoutParams =
+                        LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                        )
+                }
+                override fun connectedInternet() {
+                    timer = 58
+
+                    noNetWork.layoutParams =
+                        LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            0,
+                        )
+
+                    if(initCalendar) {
+                        /**當前日期*/
+                        val presentDate = DateFormat.format(
+                            "yyyy-MM-dd",
+                            Calendar.getInstance().time
+                        ).toString()
+
+                        calendarAdapter.upDates(presentDate)
+                    }
+                }
+            },
+            requireContext()
+        )
+    }
 
     /**
      * 日曆圖示初始化
@@ -91,9 +146,6 @@ class HomePage : Fragment(R.layout.home_page){
             )
         //行事曆列表 關閉滑動
         calendar_list.isNestedScrollingEnabled = false
-
-        /**行事曆適配器*/
-        val calendarAdapter = CalendarAdapter()
         //行事曆列表 連接適配器
         calendar_list.adapter = calendarAdapter
         //首次更新數據
@@ -127,7 +179,7 @@ class HomePage : Fragment(R.layout.home_page){
        //快速連結按鈕被點下 開啟快速連結列表 底部彈窗
         FastLink.setOnClickListener{
             /**快速連結底部彈窗*/
-            val fastLinkSheetFragment = FastLinks_BottomMenu()
+            val fastLinkSheetFragment = FastLinksBottomMenu()
             fastLinkSheetFragment.show(parentFragmentManager, fastLinkSheetFragment.tag)
         }
     }
@@ -141,21 +193,13 @@ class HomePage : Fragment(R.layout.home_page){
         //清空曾創建的即時影像視圖
         cameraList.clear()
         for(i in 0 until CameraAPI.PeriodSize) {
-            /**顯示指標*/
-            val outMetrics = DisplayMetrics()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                activity!!.display?.getRealMetrics(outMetrics)
-            } else {
-                @Suppress("DEPRECATION")
-                activity!!.windowManager.defaultDisplay.getMetrics(outMetrics)
-            }
             /**螢幕寬度 (用於計算影像長寬比)*/
-            val vWidth = outMetrics.widthPixels
+            val vWidth = ViewGauge.getDisplayWidth(requireActivity())
 
             /**即時影像控件初始化 -編號資料-*/
             val cameraItem = CameraItem(
-                TextView(this.context!!),
-                ImageView(this.context!!)
+                TextView(this.requireContext()),
+                ImageView(this.requireContext())
             )
 
             //標題控件 設定
@@ -171,7 +215,7 @@ class HomePage : Fragment(R.layout.home_page){
                 )
 
             /**即時影像視圖組*/
-            val cameraView = LinearLayout(this.context!!)
+            val cameraView = LinearLayout(this.requireContext())
             cameraView.layoutParams =
                 ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -251,7 +295,7 @@ class HomePage : Fragment(R.layout.home_page){
     private fun initMoreLiveImage(){
         moreLiveImage_Button.setOnClickListener{
             //轉換當前的頁面 至 公告內文頁面
-            startActivity(Intent().setClass(context!!, LiveImagePage::class.java))
+            startActivity(Intent().setClass(requireContext(), LiveImagePage::class.java))
         }
     }
 
@@ -304,7 +348,8 @@ class HomePage : Fragment(R.layout.home_page){
     @DelicateCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState) //創建頁面
-
+        //網路接收器初始化
+        initInternetReceiver()
         //設定氣溫列表
         initWeather()
         //初始化即時影像控件
@@ -325,6 +370,10 @@ class HomePage : Fragment(R.layout.home_page){
      */
     override fun onStart() {
         super.onStart()
+
+        //初始化網路接收器
+        activity?.registerReceiver(internetReceiver, itFilter)
+
         //重新計數
         timer = 58
         //初始化計時器
@@ -345,6 +394,8 @@ class HomePage : Fragment(R.layout.home_page){
      */
     override fun onStop(){
         super.onStop()
+        activity?.unregisterReceiver(internetReceiver)
+        //關閉計時器 (避免持續計時導致APP崩潰)
         //關閉計時器 (避免持續計時導致APP崩潰)
         countdownTimer!!.cancel()
         countdownTimer = null //如果不重新new，會報異常
@@ -367,6 +418,10 @@ class HomePage : Fragment(R.layout.home_page){
          */
         @DelicateCoroutinesApi
         fun upDates(){
+            Log.e("","${internetReceiver!!.isConnect}")
+            //判斷網路能否使用
+            if(!internetReceiver!!.isConnect) return
+
             GlobalScope.launch(Dispatchers.Main) {
                 /**取得氣溫資料*/
                 val weather = withContext(Dispatchers.IO) {
@@ -386,6 +441,7 @@ class HomePage : Fragment(R.layout.home_page){
         private fun resetData(weather:List<WeatherData>?){
             weatherData = (weather as MutableList<WeatherData>?)!!
             //刷新視圖列表
+            @Suppress("NotifyDataSetChanged")
             notifyDataSetChanged()
         }
 
@@ -529,14 +585,14 @@ class HomePage : Fragment(R.layout.home_page){
         private fun checkCalendarDate(startDate:String, endDate:String, presentDate:String): Boolean{
             //換算為 Date 單位 用於比較日期先後關係
             /**公告 起始時間*/
-            val startDates = SimpleDateFormat("yyyy-MM-dd", Locale.TAIWAN).parse(startDate)
+            val startDates  = SimpleDateFormat("yyyy-MM-dd", Locale.TAIWAN).parse(startDate)
             /**公告 結束時間*/
-            val endDates   = SimpleDateFormat("yyyy-MM-dd", Locale.TAIWAN).parse(endDate)
+            val endDates    = SimpleDateFormat("yyyy-MM-dd", Locale.TAIWAN).parse(endDate)
             /**當前時間*/
-            val presentDate= SimpleDateFormat("yyyy-MM-dd", Locale.TAIWAN).parse(presentDate)
+            val presentDates= SimpleDateFormat("yyyy-MM-dd", Locale.TAIWAN).parse(presentDate)
 
             //行事曆內容 是 今天的行程
-            return (startDates!! <= presentDate) && (presentDate!! < endDates)
+            return (startDates!! <= presentDates) && (presentDates!! < endDates)
         }
 
         /**更新資料
@@ -565,39 +621,39 @@ class HomePage : Fragment(R.layout.home_page){
             }
             //日期與今日不相符
             else {
+                //判斷網路能否使用
+                if(!internetReceiver!!.isConnect) return
                 //取用協程
                 GlobalScope.launch {
                     /**調用行事曆API (Google-Calendar) 取得當日活動*/
                     val calendarSource = CalendarAPI.get(Datum)
                     /**存儲用檔案格式宣告*/
                     val calendarData = ToDayCalendar(Datum)
-                    //開始編寫存儲格式 (TodayCalendar)
-                    //使用資料結構方式存儲
-                    for (i in calendarSource!!.items.indices) {
-                        //確認公告時間是本日 (API連接設置條件限制有時會失效)
-                        if (checkCalendarDate(
-                                calendarSource.items[i].start.date,
-                                calendarSource.items[i].end.date,
-                                Datum)
-                        ) {
-                            calendarData.items.add(calendarSource.items[i])
+                    calendarSource?.let {
+                        //開始編寫存儲格式 (TodayCalendar)
+                        //使用資料結構方式存儲
+                        for (i in calendarSource.items.indices) {
+                            //確認公告時間是本日 (API連接設置條件限制有時會失效)
+                            if (checkCalendarDate(
+                                    calendarSource.items[i].start.date,
+                                    calendarSource.items[i].end.date,
+                                    Datum)
+                            ) {
+                                calendarData.items.add(calendarSource.items[i])
+                            }
                         }
-                    }
-                    //紀錄當日活動存儲到APP中
-                    Object_SharedPreferences.save(
-                        "Calendar",
-                        "TodayCalendar",
-                        calendarData,
-                        context!!)
+                        //紀錄當日活動存儲到APP中
+                        Object_SharedPreferences.save(
+                            "Calendar",
+                            "TodayCalendar",
+                            calendarData,
+                            context!!)
 
-                    //返回主線程
-                    withContext(Dispatchers.Main) {
-                        //重新設置公告的數據資料
-                        resetData(calendarData)
-                    }
-                }
-            }
-        }
+                        //返回主線程
+                        withContext(Dispatchers.Main) {
+                            //重新設置公告的數據資料
+                            resetData(calendarData)
+        }   }   }   }   }
 
         /**
          * 重製列表並導入新數據
@@ -611,7 +667,10 @@ class HomePage : Fragment(R.layout.home_page){
             for( i in 0 until calendarData.items.size)
                 this.calendarData.add(calendarData.items[i].summary)
             //刷新視圖列表
+            @Suppress("NotifyDataSetChanged")
             notifyDataSetChanged()
+
+            initCalendar = false
         }
 
         /**
@@ -665,7 +724,4 @@ class HomePage : Fragment(R.layout.home_page){
                 calendar_list.smoothScrollToPosition(
                     currentPosition
                 )
-            }
-        }
-    }
-}
+}   }   }   }

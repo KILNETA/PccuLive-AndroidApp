@@ -1,6 +1,7 @@
 package com.example.pccu.page.bus.search
 
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Paint
@@ -26,6 +27,7 @@ import android.widget.LinearLayout
 import com.example.pccu.sharedFunctions.JsonFunctions.fromJson
 import com.example.pccu.page.bus.BusRoutePage
 import com.example.pccu.sharedFunctions.RV
+import kotlinx.android.synthetic.main.bus_search_main.noNetWork
 import java.io.Serializable
 import kotlin.math.max
 
@@ -41,6 +43,39 @@ class SearchActivity : AppCompatActivity(R.layout.bus_search_main) {
     private val routeAdapter = ResultListAdapter()
     /**filter_list 列表適配器*/
     private val filterAdapter = FilterListAdapter()
+    /**網路接收器*/
+    private var internetReceiver: NetWorkChangeReceiver? = null
+
+    /**
+     * 網路接收器初始化
+     *
+     * @author KILNETA
+     * @since Alpha_2.0
+     */
+    private fun initInternetReceiver(){
+        internetReceiver = NetWorkChangeReceiver(
+            object : NetWorkChangeReceiver.RespondNetWork{
+                override fun interruptInternet() {
+                    noNetWork.layoutParams =
+                        LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                        )
+                }
+                override fun connectedInternet() {
+                    noNetWork.layoutParams =
+                        LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            0,
+                        )
+                }
+            },
+            baseContext
+        )
+        val itFilter = IntentFilter()
+        itFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
+        this.registerReceiver(internetReceiver, itFilter)
+    }
 
     /**
      * PCCU_APP主框架建構
@@ -53,6 +88,8 @@ class SearchActivity : AppCompatActivity(R.layout.bus_search_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         //建構主框架
         super.onCreate(savedInstanceState)
+        //初始化網路接收器
+        initInternetReceiver()
         //掛載 route_list 列表適配器
         route_list.adapter = routeAdapter
         //列表控件 route_list 的設置佈局管理器 (列表)
@@ -73,19 +110,30 @@ class SearchActivity : AppCompatActivity(R.layout.bus_search_main) {
     }
 
     /**
+     * 當頁面刪除時(刪除)
+     *
+     * @author KILNETA
+     * @since Alpha_5.0
+     */
+    override fun onDestroy() {
+        super.onDestroy()
+        this.unregisterReceiver(internetReceiver)
+    }
+
+    /**
      * SearchView 搜索控件 事件重構
      * @author KILNETA
      * @since Alpha_5.0
      */
     @DelicateCoroutinesApi
     private val searchViewOnQueryTextListener = object : SearchView.OnQueryTextListener {
+
         /**上一次搜索目標*/
         private var lastQuery = ""
         //當 點擊搜索按鈕 時觸發該方法
         override fun onQueryTextSubmit(query: String): Boolean {
             //如果輸入目標跟上次搜索目標一樣 則不執行搜索
             if(lastQuery == query)  return false
-            else                    lastQuery = query
             //清除上次搜索結果
             clearSearchResult()
 
@@ -99,31 +147,47 @@ class SearchActivity : AppCompatActivity(R.layout.bus_search_main) {
                 /**Bus_API_token 權限*/
                 val token = withContext(Dispatchers.IO) { BusAPI.getToken() }
 
-                //依序爬取全台各縣市公車資料
-                for (i in BusAPI.Locations.indices) {
-                    /**取得Bus_Route 資料*/
-                    val busRoute = withContext(Dispatchers.IO) {
-                        fromJson<Array<BusRoute>>(
+                token?.let {
+                    //啟用Loading動畫
+                    startLoading()
+
+                    //依序爬取全台各縣市公車資料
+                    for (i in BusAPI.Locations.indices) {
+                        /**取得Bus_Route 資料*/
+                        val bR = withContext(Dispatchers.IO) {
                             BusAPI.get(
-                                token!!,                    //token 權限
+                                token,                    //token 權限
                                 "Route",             //調用公車路線API
                                 BusApiRequest(
                                     BusAPI.Locations[i].En,//英文縣市名
                                     query                   //查詢關鍵字
                                 )
-                            ),
-                            object : TypeToken<Array<BusRoute>>() {}.type
-                        )
+                            )
+                        }
+                        bR?.let {
+                            /**取得Bus_Route to Json 資料*/
+                            val busRoute =
+                                fromJson<Array<BusRoute>>(
+                                    bR,
+                                    object : TypeToken<Array<BusRoute>>() {}.type
+                                )
+                            //存入取回之資料
+                            if (busRoute.isNotEmpty()) {
+                                location.add(FilterOption(BusAPI.Locations[i]))
+                                route.addAll(busRoute)
+                            }
+                        }
                     }
-                    //存入取回之資料
-                    if (busRoute.isNotEmpty()) {
-                        location.add(FilterOption(BusAPI.Locations[i]))
-                        route.addAll(busRoute)
-                    }
+                    //重新讀取資料並展示
+                    filterAdapter.resetData(location)
+                    routeAdapter.resetData(route)
+                    //修改為上次搜索 避免重複搜索
+                    lastQuery = query
+                }?: run{
+                    lastQuery = ""
                 }
-                //重新讀取資料並展示
-                filterAdapter.resetData(location)
-                routeAdapter.resetData(route)
+                //停止加載動畫
+                stopLoading()
             }
             //清除焦點，收軟鍵盤
             _searchView.clearFocus()
@@ -136,8 +200,6 @@ class SearchActivity : AppCompatActivity(R.layout.bus_search_main) {
          * @since Alpha_5.0
          */
         private fun clearSearchResult(){
-            //啟用Loading動畫
-            startLoading()
 
             //清空上次搜索的結果
             if (filter_list.childCount > 0 ) {
@@ -176,6 +238,7 @@ class SearchActivity : AppCompatActivity(R.layout.bus_search_main) {
         fun clearItems(){
             this.locationList.clear()
             //刷新視圖列表
+            @Suppress("NotifyDataSetChanged")
             notifyDataSetChanged()
         }
 
@@ -187,6 +250,7 @@ class SearchActivity : AppCompatActivity(R.layout.bus_search_main) {
         fun resetData(LocationList: ArrayList<FilterOption>){
             this.locationList = LocationList
             //刷新視圖列表
+            @Suppress("NotifyDataSetChanged")
             notifyDataSetChanged()
         }
 
@@ -281,6 +345,7 @@ class SearchActivity : AppCompatActivity(R.layout.bus_search_main) {
         fun clearItems(){
             displayRoute.clear()
             //刷新視圖列表
+            @Suppress("NotifyDataSetChanged")
             notifyDataSetChanged()
         }
 
@@ -293,9 +358,9 @@ class SearchActivity : AppCompatActivity(R.layout.bus_search_main) {
             route_list.addItemDecoration(
                 ResultListItemDecoration(
                     object : ResultListItemDecoration.LinearSectionCallback {
-                        override fun getItemStr(poisition: Int): String {
+                        override fun getItemStr(position: Int): String {
                             // 回傳每個Item的地區 (已轉中文)
-                            return BusAPI.Locations.first{ it.En == displayRoute[poisition].City }.Zh_tw
+                            return BusAPI.Locations.first{ it.En == displayRoute[position].City }.Zh_tw
                         }
                     }
                 )
@@ -316,9 +381,8 @@ class SearchActivity : AppCompatActivity(R.layout.bus_search_main) {
             //顯示查詢結果數
             resultNum.text = displayRoute.size.toString()
             //刷新視圖列表
+            @Suppress("NotifyDataSetChanged")
             notifyDataSetChanged()
-            //停止加載動畫
-            stopLoading()
         }
 
         /**
@@ -344,6 +408,7 @@ class SearchActivity : AppCompatActivity(R.layout.bus_search_main) {
             //顯示查詢結果數
             resultNum.text = displayRoute.size.toString()
             //刷新視圖列表
+            @Suppress("NotifyDataSetChanged")
             notifyDataSetChanged()
         }
 
@@ -585,7 +650,7 @@ class SearchActivity : AppCompatActivity(R.layout.bus_search_main) {
             val right = parent.width - parent.paddingRight
 
             /**上個Item分組的標誌*/
-            var preGroupId = ""
+            var preGroupId: String
             /**現在Item分組的標誌*/
             var nowGroupId = "-1"
             for (i in 0 until childCount) {

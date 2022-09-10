@@ -12,9 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pccu.internet.*
 import com.example.pccu.R
-import com.example.pccu.sharedFunctions.BusFunctions
-import com.example.pccu.sharedFunctions.JsonFunctions
-import com.example.pccu.sharedFunctions.RV
+import com.example.pccu.sharedFunctions.*
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.bus_route_fragment.*
 import kotlinx.android.synthetic.main.bus_station_item.view.*
@@ -30,6 +28,8 @@ import kotlin.collections.ArrayList
  */
 class BusCollectFragment : Fragment(R.layout.bus_route_fragment) {
 
+    /**收藏的群組名*/
+    private var groupName : String? = null
     /**收藏的群組*/
     var stationList : CollectGroup? = null
     /**倒計時器*/
@@ -37,7 +37,7 @@ class BusCollectFragment : Fragment(R.layout.bus_route_fragment) {
     /**計時器計數*/
     var timerI = 18 //計數
     /**列表適配器*/
-    var adapter = Adapter()
+    private var adapter = Adapter()
 
     /**
      * 更新內容用計時器 20s/次
@@ -63,7 +63,19 @@ class BusCollectFragment : Fragment(R.layout.bus_route_fragment) {
     }
 
     /**
-     * bus_route_fragment建構頁面
+     * 取得該頁面顯示之收藏站牌
+     * @author KILNETA
+     * @since Alpha_5.0
+     */
+    private fun initCollectGroup(){
+        //取得收藏群組列表
+        @Suppress("UNCHECKED_CAST")
+        val sp = Object_SharedPreferences["Bus", "Collects", requireContext()] as ArrayList<CollectGroup>
+        stationList = sp.first { it.GroupName == groupName }
+    }
+
+    /**
+     * 建構頁面
      * @param view [View] 該頁面的父類
      * @param savedInstanceState [Bundle] 傳遞的資料
      *
@@ -73,9 +85,8 @@ class BusCollectFragment : Fragment(R.layout.bus_route_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         //創建頁面
         super.onViewCreated(view, savedInstanceState)
-
-        stationList = arguments!!.getSerializable("CollectList") as CollectGroup
-
+        //取得該頁展示之收藏群組名
+        groupName = requireArguments().getString("CollectListGroupName")
         //創建Bus列表
         bus_StationList.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -92,6 +103,7 @@ class BusCollectFragment : Fragment(R.layout.bus_route_fragment) {
      */
     override fun onStart() {
         super.onStart()
+        initCollectGroup()
         //重新計數
         timerI = 18
         //初始化計時器
@@ -119,9 +131,7 @@ class BusCollectFragment : Fragment(R.layout.bus_route_fragment) {
      * @since Alpha_5.0
      */
     inner class Adapter : RecyclerView.Adapter<RV.ViewHolder>() {
-
-        private var tdxToken : TdxToken? = null
-        val estimateTime = arrayListOf<EstimateTime>()
+        private val estimateTime = arrayListOf<EstimateTime?>()
 
         @DelicateCoroutinesApi
         fun upData(){
@@ -130,35 +140,42 @@ class BusCollectFragment : Fragment(R.layout.bus_route_fragment) {
                 estimateTime.clear()
 
                 //TDX 取得協定
-                tdxToken = withContext(Dispatchers.IO) {
+                val tdxToken = withContext(Dispatchers.IO) {
                     BusAPI.getToken()
                 }
+                tdxToken?.let{
+                    //依序取得收藏群組中的各站牌到站時間資料
+                    for (i in stationList!!.SaveStationList.indices) {
+                        /**指定位置的 路線資料*/
+                        val station = stationList!!.SaveStationList[i]
 
-                //依序取得收藏群組中的各站牌到站時間資料
-                for (i in stationList!!.SaveStationList.indices){
-                    /**指定位置的 路線資料*/
-                    val station = stationList!!.SaveStationList[i]
-                    /**到站時間表*/
-                    val mEstimateTime : ArrayList<EstimateTime> =
-                        withContext(Dispatchers.IO) {
-                            JsonFunctions.fromJson(
-                                BusAPI.get(
-                                    tdxToken!!,
-                                    "EstimatedTimeOfArrival",
-                                    BusApiRequest(
-                                        station.RouteData.City,
-                                        null,
-                                        "RouteUID eq '${station.RouteData.RouteUID}' and StopUID eq '${station.StationUID}'"
-                                    )
-                                ),
-                                object : TypeToken<ArrayList<EstimateTime>>() {}.type
+                        /**到站時間表*/
+                        val eT = withContext(Dispatchers.IO) {
+                            BusAPI.get(
+                                tdxToken,
+                                "EstimatedTimeOfArrival",
+                                BusApiRequest(
+                                    station.RouteData.City,
+                                    null,
+                                    "RouteUID eq '${station.RouteData.RouteUID}' and StopUID eq '${station.StationUID}'"
+                                )
                             )
                         }
-                    //取得最首項添入 到站時間表資料
-                    estimateTime.add(mEstimateTime[0])
+                        eT?.let {
+                            val mEstimateTime: ArrayList<EstimateTime> =
+                                JsonFunctions.fromJson(
+                                    eT,
+                                    object : TypeToken<ArrayList<EstimateTime>>() {}.type
+                                )
+                            //取得最首項添入 到站時間表資料
+                            estimateTime.add(mEstimateTime[0])
+                        }?: run {
+                            estimateTime.add(null)
+                        }
+                        //刷新視圖列表
+                        notifyItemChanged(i)
+                    }
                 }
-                //刷新視圖列表
-                notifyDataSetChanged()
             }
         }
 
@@ -215,7 +232,7 @@ class BusCollectFragment : Fragment(R.layout.bus_route_fragment) {
                 /**到站時間*/
                 val estimateTime = estimateTime[position]
                 //按公車統一條件設置到站時間
-                BusFunctions.setEstimateTimeView(holder,estimateTime)
+                estimateTime?.let{BusFunctions.setEstimateTimeView(holder,estimateTime)}
             }
 
             //設置元素子控件的點擊功能

@@ -6,20 +6,20 @@
     android:backgroundTint="#BABABA"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginRight="5px"
-    android:layout_marginLeft="5px"
+    android:layout_marginRight="2dp"
+    android:layout_marginLeft="2dp"
     android:id="@+id/filterItem">
 
     <TextView
         android:id="@+id/filterItem_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="10px"
-        android:paddingBottom="10px"
-        android:paddingLeft="30px"
-        android:paddingRight="30px"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:textColor="#FFFFFF"
-        android:textSize="16dp"
-        android:text="台北市"/>
+        android:textSize="16sp"
+        android:text="　　　"/>
 
 </LinearLayout>

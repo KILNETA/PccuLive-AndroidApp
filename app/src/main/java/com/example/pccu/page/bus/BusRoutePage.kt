@@ -1,5 +1,6 @@
 package com.example.pccu.page.bus
 
+import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.TextView
@@ -18,6 +19,9 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import com.example.pccu.about.AboutBottomSheet
+import kotlinx.android.synthetic.main.bus_route_page.aboutButton
+import kotlinx.android.synthetic.main.bus_route_page.noNetWork
 
 /**
  * Cwb主框架建構類 : "AppCompatActivity"
@@ -31,18 +35,83 @@ class BusRoutePage : AppCompatActivity(R.layout.bus_route_page) {
     private var routeData : BusRoute? = null
     /**頁面適配器*/
     private var pageAdapter : PageAdapter? = null
+    /**網路接收器*/
+    private var internetReceiver: NetWorkChangeReceiver? = null
+    /**路線站牌頁面*/
+    private var busRouteFragment = arrayListOf<BusRouteFragment>()
+
+    /**
+     * 網路接收器初始化
+     *
+     * @author KILNETA
+     * @since Alpha_2.0
+     */
+    private fun initInternetReceiver(){
+        internetReceiver = NetWorkChangeReceiver(
+            object : NetWorkChangeReceiver.RespondNetWork{
+                override fun interruptInternet() {
+                    noNetWork.layoutParams =
+                        LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                        )
+                }
+                override fun connectedInternet() {
+                    noNetWork.layoutParams =
+                        LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            0,
+                        )
+                    busRouteFragment.forEach {
+                        it.timerI = 18
+                    }
+                }
+            },
+            baseContext
+        )
+        val itFilter = IntentFilter()
+        itFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
+        this.registerReceiver(internetReceiver, itFilter)
+    }
+
+    /**
+     * 設置關於按鈕功能
+     * @author KILNETA
+     * @since Alpha_4.0
+     */
+    private fun initAboutButton(){
+        /**關於介面 內文*/
+        val content = arrayOf(
+            "提醒：",
+            "　　公車資料若出現部分無法顯示，或是內容出現問題，可聯繫程式負責方協助修正。",
+            "",
+            "聲明：",
+            "　　本程式之公車系統僅是提供便捷查詢，無法保證公車班次的展示之正確性，若認為是重要資訊，" +
+                    "請務必校驗官方，以確保內容正確，若造成損失本程式一概不負責。",
+            "",
+            "資料來源：",
+            "　　TDX運輸資料流通服務"
+        )
+
+        //當 關於按鈕 被按下
+        aboutButton.setOnClickListener{
+            /**關於介面 底部彈窗*/
+            val aboutSheetFragment = AboutBottomSheet(content)
+            aboutSheetFragment.show(supportFragmentManager, aboutSheetFragment.tag)
+        }
+    }
 
     /**
      * Cwb主框架建構類 : "AppCompatActivity"
      * @param goalDirection [Int] 目標去返程方向 (定位用)
      * @param goalStation [String] 目標站牌 (定位用)
-     * @return 欲展示頁面 : ArrayList<[Fragment]>
+     * @return 欲展示頁面 : ArrayList<[BusRouteFragment]>
      *
      * @author KILNETA
      * @since Alpha_5.0
      */
-    private fun createFragment(goalDirection:Int?, goalStation:String?) : ArrayList<Fragment>{
-        return if(routeData!!.HasSubRoutes && routeData!!.SubRoutes.any{it.Direction==1}) {
+    private fun createFragment(goalDirection:Int?, goalStation:String?) : ArrayList<BusRouteFragment>{
+        busRouteFragment = if(routeData!!.HasSubRoutes && routeData!!.SubRoutes.any{it.Direction==1}) {
             //擁有其他子路線 且 存在回程路線 (創建雙頁面 去返程)
             arrayListOf(
                 BusRouteFragment(0, routeData!!,
@@ -57,6 +126,7 @@ class BusRoutePage : AppCompatActivity(R.layout.bus_route_page) {
                     if(goalDirection==0) goalStation else null)
             )
         }
+        return busRouteFragment
     }
 
     /**
@@ -82,7 +152,10 @@ class BusRoutePage : AppCompatActivity(R.layout.bus_route_page) {
     override fun onCreate(savedInstanceState: Bundle?) {
         //建構主框架
         super.onCreate(savedInstanceState)
-
+        //初始化網路接收器
+        initInternetReceiver()
+        //初始化關於按鈕
+        initAboutButton()
         //設置返回按鈕
         initBackButton()
 
@@ -154,10 +227,21 @@ class BusRoutePage : AppCompatActivity(R.layout.bus_route_page) {
     }
 
     /**
+     * 當頁面刪除時(刪除)
+     *
+     * @author KILNETA
+     * @since Alpha_5.0
+     */
+    override fun onDestroy() {
+        super.onDestroy()
+        this.unregisterReceiver(internetReceiver)
+    }
+
+    /**
      * bus_page頁面控件適配器
      * @param fragmentManager [FragmentManager] 子片段管理器
      * @param lifecycle [Lifecycle] 生命週期
-     * @param fragments ArrayList<[Fragment]> 欲展視的片段視圖
+     * @param fragments ArrayList<[BusRouteFragment]> 欲展視的片段視圖
      *
      * @author KILNETA
      * @since Alpha_5.0
@@ -165,7 +249,7 @@ class BusRoutePage : AppCompatActivity(R.layout.bus_route_page) {
     inner class PageAdapter(
         fragmentManager: FragmentManager,   // 子片段管理器
         lifecycle: Lifecycle,               // 生命週期
-        private val fragments: ArrayList<Fragment>
+        private val fragments: ArrayList<BusRouteFragment>
 
     ):  FragmentStateAdapter( // 片段狀態適配器
         fragmentManager, // 片段管理器

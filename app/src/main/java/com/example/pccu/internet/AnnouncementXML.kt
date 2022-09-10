@@ -20,7 +20,7 @@ class PccuAnnouncementXml {
      * @author KILNETA
      * @since Alpha_1.0
      */
-    fun get(): InputStream {
+    fun get(): InputStream? {
         val url = "https://ap2.pccu.edu.tw/postrss/createrss.aspx"
         return HttpRetrofit.createXML(url)
     }
@@ -43,11 +43,13 @@ object AnnouncementByPULL {
      * @since Alpha_1.0
      */
     @Throws(Throwable::class)
-    fun getAnnouncements(inputStream: InputStream?): Vector<AnnouncementData> {
+    fun getAnnouncements(inputStream: InputStream?): Vector<AnnouncementData>? {
         //最終輸出的公告資訊列表
         val announcementDatas: Vector<AnnouncementData> = Vector<AnnouncementData>()
         //擷取單個公告資訊
         var mAnnouncementData: AnnouncementData? = null
+
+        if(inputStream==null) return null
 
         //創建XmlPullParser
         val xmlPullParser = Xml.newPullParser()
@@ -75,18 +77,20 @@ object AnnouncementByPULL {
                     }
                     //如過 mAnnouncement_Data 已經重製過 開始解析公告列表
                     if (mAnnouncementData != null) {
-                        if (xmlPullParser.name == "title")      //公告標題
-                            mAnnouncementData.SetTitle(xmlPullParser.nextText())
-                        if (xmlPullParser.name == "link")       //公告連結
-                            mAnnouncementData.SetLink(xmlPullParser.nextText())
-                        if (xmlPullParser.name == "source")     //外部資源
-                            mAnnouncementData.SetSource(xmlPullParser.nextText())
-                        if (xmlPullParser.name == "enclosure")  //顯示資源
-                            mAnnouncementData.SetEnclosure(xmlPullParser.nextText())
-                        if (xmlPullParser.name == "author")     //公告處室
-                            mAnnouncementData.SetAuthor(xmlPullParser.nextText())
-                        if (xmlPullParser.name == "pubDate")    //公告時間
-                            mAnnouncementData.SetPubDate(xmlPullParser.nextText())
+                        when(xmlPullParser.name) {
+                            "title"->      //公告標題
+                                mAnnouncementData.setupTitle(xmlPullParser.nextText())
+                            "link"->       //公告連結
+                                mAnnouncementData.setupLink(xmlPullParser.nextText())
+                            "source"->     //外部資源
+                                mAnnouncementData.setupSource(xmlPullParser.nextText())
+                            "enclosure"->  //顯示資源
+                                mAnnouncementData.setupEnclosure(xmlPullParser.nextText())
+                            "author"->     //公告處室
+                                mAnnouncementData.setupAuthor(xmlPullParser.nextText())
+                            "pubDate"->    //公告時間
+                                mAnnouncementData.setupPubDate(xmlPullParser.nextText())
+                        }
                     }
                 }
                 //如果遇到結束標籤 -> 存儲擷取的資料到 回傳用的Vector<Announcement_Data>中
@@ -130,28 +134,28 @@ data class AnnouncementData (
     /**存儲公告標題
      * @param title    [String] 公告標題
      */
-    fun SetTitle(title: String?) {
+    fun setupTitle(title: String?) {
         this.title = title
     }
 
     /**存儲公告連結
      * @param link    [String] 公告連結
      */
-    fun SetLink(link: String?) {
+    fun setupLink(link: String?) {
         this.link = link
     }
 
     /**存儲外部資源
      * @param source    [String] 外部資源
      */
-    fun SetSource(source: String?) {
+    fun setupSource(source: String?) {
         this.source = source
     }
 
     /**存儲顯示資源
      * @param enclosure    [String] 顯示資源
      */
-    fun SetEnclosure(enclosure: String?) {
+    fun setupEnclosure(enclosure: String?) {
         if( enclosure!=null )
             this.enclosure = true
     }
@@ -159,14 +163,14 @@ data class AnnouncementData (
     /**存儲公告處室
      * @param author    [String] 公告處室
      */
-    fun SetAuthor(author: String?) {
+    fun setupAuthor(author: String?) {
         this.author = author
     }
 
     /**存儲公告時間
      * @param pubDate    [String] 公告時間
      */
-    fun SetPubDate(pubDate: String?) {
+    fun setupPubDate(pubDate: String?) {
         this.pubDate = pubDate
     }
 }

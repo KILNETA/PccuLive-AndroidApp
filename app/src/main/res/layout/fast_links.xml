@@ -9,9 +9,6 @@
     android:paddingBottom="8dp"
     android:paddingTop="8dp">
 
-    <!-- NOTE: This list should be displayed in a list
-    instead of nested layouts -->
-
     <LinearLayout
         android:id="@+id/FastLink_Course_assistance_system"
         android:gravity="center"
@@ -21,8 +18,9 @@
         android:foreground="?attr/selectableItemBackground"
         android:orientation="horizontal"
         android:paddingBottom="8dp"
-        android:paddingRight="50px"
-        android:paddingTop="8dp">
+        android:paddingRight="20dp"
+        android:paddingTop="8dp"
+        android:focusable="true">
 
         <ImageView
             android:layout_width="24dp"
@@ -50,8 +48,9 @@
         android:foreground="?attr/selectableItemBackground"
         android:orientation="horizontal"
         android:paddingBottom="8dp"
-        android:paddingRight="50px"
-        android:paddingTop="8dp">
+        android:paddingRight="20dp"
+        android:paddingTop="8dp"
+        android:focusable="true">
 
         <ImageView
             android:layout_width="24dp"
@@ -79,8 +78,9 @@
         android:foreground="?attr/selectableItemBackground"
         android:orientation="horizontal"
         android:paddingBottom="8dp"
-        android:paddingRight="50px"
-        android:paddingTop="8dp">
+        android:paddingRight="20dp"
+        android:paddingTop="8dp"
+        android:focusable="true">
 
         <ImageView
             android:layout_width="24dp"
@@ -108,8 +108,9 @@
         android:foreground="?attr/selectableItemBackground"
         android:orientation="horizontal"
         android:paddingBottom="8dp"
-        android:paddingRight="50px"
-        android:paddingTop="8dp">
+        android:paddingRight="20dp"
+        android:paddingTop="8dp"
+        android:focusable="true">
 
         <ImageView
             android:layout_width="24dp"
@@ -137,8 +138,9 @@
         android:foreground="?attr/selectableItemBackground"
         android:orientation="horizontal"
         android:paddingBottom="8dp"
-        android:paddingRight="50px"
-        android:paddingTop="8dp">
+        android:paddingRight="20dp"
+        android:paddingTop="8dp"
+        android:focusable="true">
 
         <ImageView
             android:layout_width="24dp"

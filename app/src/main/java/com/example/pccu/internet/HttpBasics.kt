@@ -1,8 +1,7 @@
 package com.example.pccu.internet
 
 import android.content.Context
-import android.view.Gravity
-import android.widget.Toast
+import android.net.ConnectivityManager
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -13,6 +12,11 @@ import java.io.InputStream
 import okhttp3.OkHttpClient
 import retrofit2.http.*
 import retrofit2.http.Headers
+import android.content.Intent
+import android.content.BroadcastReceiver
+import android.os.Build
+import android.util.Log
+
 
 /**
  * 更好的網路數據解析 "object"
@@ -55,25 +59,51 @@ object HttpRetrofit{
 
         return retrofit.create(clazz) //回傳 獲取的 :Retrofit 函數
     }
-
+    /*
     /**
      * 連線 取出網頁文字檔(XML)
-     *
      * @param Url [String] 目標網址
-     * @return XML文字 : [InputStream]
+     * @param R [IInputStream] 回調函數
      *
      * @author KILNETA
      * @since Alpha_1.0
      */
-    fun createXML(Url:String): InputStream{
-        //建立Request，設置連線資訊
-        val response = client.newCall(
+    fun createXML(Url:String ,R:IInputStream){
+
+        /**建立Request，設置連線資訊*/
+        val call = client.newCall(
             Request.Builder()       //連線資訊建構
                 .url(Url)           //輸入網址
                 .build()            //建構連線
-        ).execute()                 //執行
+        )
+        //連線 (連線失敗不會閃退 單純報錯)
+        call.enqueue(object : Callback {
+            //連線失敗
+            override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
+                Log.e("連線錯誤", "onFailure: $e")
+                R.respond(null)
+            }
+            //連線成功
+            override fun onResponse(call: okhttp3.Call, response: Response) {
+                R.respond(response.body?.byteStream())
+            }
+        })
+    }*/
+    fun createXML(Url:String): InputStream? {
+        return try {
+            //建立Request，設置連線資訊
+            val response = client.newCall(
+                Request.Builder()       //連線資訊建構
+                    .url(Url)           //輸入網址
+                    .build()            //建構連線
+            ).execute()                 //執行
 
-        return response.body!!.byteStream()
+            response.body!!.byteStream()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e("","$e")
+            null
+        }
     }
 
     /**
@@ -86,16 +116,21 @@ object HttpRetrofit{
      * @author KILNETA
      * @since Alpha_1.0
      */
-    fun createHTML(Url:String,charset:String): String {
+    fun createHTML(Url:String,charset:String): String? {
         //建立Request，設置連線資訊
-        val response = client.newCall(
-            Request.Builder()           //連線資訊建構
-                .url(Url)               //輸入網址
-                .build()                //建構連線
-        ).execute()                     //執行
+        return try {
+            val response = client.newCall(
+                Request.Builder()           //連線資訊建構
+                    .url(Url)               //輸入網址
+                    .build()                //建構連線
+            ).execute()                     //執行
 
-        //返還修復特定字元集後的HTML文字檔
-        return String(response.body!!.bytes(), charset(charset))
+            String(response.body!!.bytes(), charset(charset))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e("","$e")
+            null
+        }
     }
 
     /**
@@ -186,4 +221,67 @@ object HttpRetrofit{
             @Query("\$format") format:String,
         ): Call<ResponseBody>
     }
+}
+
+class NetWorkChangeReceiver(
+    val respond:RespondNetWork,
+    context:Context
+    ) : BroadcastReceiver() {
+    var isConnect = false
+
+    init{
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            connectivityManager.activeNetwork
+        }else{
+            connectivityManager.activeNetworkInfo
+        }
+
+        if (network == null) {
+            isConnect = false
+            respond.interruptInternet()
+        } else {
+            isConnect = true
+        }
+    }
+
+    override fun onReceive(context: Context, intent: Intent)  {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            connectivityManager.activeNetwork
+        }else{
+            connectivityManager.activeNetworkInfo
+        }
+
+        if (network == null && isConnect) {
+            respond.interruptInternet()
+            isConnect = false
+        } else if ( network != null && !isConnect ) {
+            respond.connectedInternet()
+            isConnect = true
+        }
+    }
+
+    /**
+     * ItemTouchHelperViewHolder (項目觸控助手視圖支架)
+     * @author KILNETA
+     * @since Alpha_5.0
+     */
+    interface RespondNetWork {
+        /**
+         * 中斷網路
+         * @author KILNETA
+         * @since Alpha_5.0
+         */
+        fun interruptInternet()
+        /**
+         * 連接到網路
+         * @author KILNETA
+         * @since Alpha_5.0
+         */
+        fun connectedInternet()
+    }
+
 }

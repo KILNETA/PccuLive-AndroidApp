@@ -8,6 +8,17 @@
     android:layout_height="match_parent"
     tools:context=".page.liveImage.LiveImagePage">
 
+    <TextView
+        android:id="@+id/noNetWork"
+        android:layout_weight="0"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:background="#FF4141"
+        android:textColor="#FFFFFF"
+        android:text="無法連線上網"
+        android:textSize="14sp"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -21,33 +32,33 @@
             <LinearLayout
                 android:background="@color/PCCU_yellow"
                 android:layout_width="match_parent"
-                android:layout_height="140px"
+                android:layout_height="50dp"
                 android:orientation="horizontal">
                 <TextView
                     android:layout_weight="1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:textColor="#575757"
                     android:text="即時影像"
-                    android:textSize="18dp"
-                    android:paddingLeft="70px"/>
+                    android:textSize="18sp"
+                    android:paddingLeft="26dp"/>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/aboutButton"
                     app:backgroundTint="#00FFFFFF"
                     android:stateListAnimator="@null"
-                    android:layout_width="140px"
-                    android:insetTop="10px"
-                    android:insetRight="10px"
-                    android:insetBottom="10px"
-                    android:insetLeft="10px"
+                    android:layout_width="53dp"
+                    android:insetTop="3dp"
+                    android:insetRight="3dp"
+                    android:insetBottom="3dp"
+                    android:insetLeft="3dp"
                     android:layout_height="match_parent"
-                    android:padding="20px"
-                    app:cornerRadius="350px"
+                    android:padding="7dp"
+                    app:cornerRadius="133dp"
                     app:icon="@drawable/about"
                     app:iconGravity="top"
-                    app:iconSize="80px"
+                    app:iconSize="30dp"
                     app:iconTint="#575757"
                     />
             </LinearLayout>
@@ -58,10 +69,8 @@
                 android:orientation="vertical">
                 <com.google.android.material.tabs.TabLayout
                     android:id="@+id/camera_tabs"
-                    android:layout_marginRight="80px"
-                    android:layout_marginLeft="80px"
                     android:layout_width="match_parent"
-                    android:layout_height="100px"
+                    android:layout_height="35dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -69,29 +78,31 @@
                     app:tabSelectedTextColor="#FFFFFF"
                     app:tabTextColor="#99FFFFFF"
                     app:tabIndicatorColor="#FFFFFF"
+                    app:tabGravity="center"
+                    app:tabMode="scrollable"
                     android:background="@color/PCCU_yellow">
 
                     <com.google.android.material.tabs.TabItem
                         android:id="@+id/tabA"
-                        android:text="文化"
+                        android:text=" 文化 "
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"/>
 
                     <com.google.android.material.tabs.TabItem
                         android:id="@+id/tabB"
-                        android:text="仰德"
+                        android:text=" 仰德 "
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"/>
 
                     <com.google.android.material.tabs.TabItem
                         android:id="@+id/tabC"
-                        android:text="劍潭"
+                        android:text=" 劍潭 "
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"/>
 
                     <com.google.android.material.tabs.TabItem
                         android:id="@+id/tabD"
-                        android:text="後山"
+                        android:text=" 後山 "
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"/>
 
@@ -101,7 +112,7 @@
                 android:layout_weight="1"
                 android:id="@+id/LiveCameras_fragment"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="0dp"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

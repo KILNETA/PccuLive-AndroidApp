@@ -7,6 +7,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/noNetWork"
+        android:layout_weight="0"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:background="#FF4141"
+        android:textColor="#FFFFFF"
+        android:text="無法連線上網"
+        android:textSize="14sp"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,38 +26,38 @@
         android:fillViewport="true">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
             <LinearLayout
                 android:background="#187ac8"
                 android:layout_width="match_parent"
-                android:layout_height="140px"
+                android:layout_height="50dp"
                 android:orientation="horizontal">
                 <TextView
                     android:layout_weight="1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:textColor="#D7FFFFFF"
                     android:text="氣象圖資"
                     android:textSize="18sp"
-                    android:paddingLeft="70px"/>
+                    android:paddingLeft="26dp"/>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/aboutButton"
                     app:backgroundTint="#00FFFFFF"
                     android:stateListAnimator="@null"
-                    android:layout_width="140px"
-                    android:insetTop="10px"
-                    android:insetRight="10px"
-                    android:insetBottom="10px"
-                    android:insetLeft="10px"
+                    android:layout_width="50dp"
+                    android:insetTop="3dp"
+                    android:insetRight="3dp"
+                    android:insetBottom="3dp"
+                    android:insetLeft="3dp"
                     android:layout_height="match_parent"
-                    android:padding="20px"
-                    app:cornerRadius="350px"
+                    android:padding="7dp"
+                    app:cornerRadius="133dp"
                     app:icon="@drawable/about"
                     app:iconGravity="top"
-                    app:iconSize="80px"
+                    app:iconSize="30dp"
                     app:iconTint="#D7FFFFFF"/>
             </LinearLayout>
 

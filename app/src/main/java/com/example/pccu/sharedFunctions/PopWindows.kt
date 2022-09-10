@@ -38,4 +38,14 @@ object PopWindows {
         //顯示提示彈窗
         toast.show()
     }
+
+    /**
+     * 自定義Dialog監聽器
+     * @author KILNETA
+     * @since Alpha_5.0
+     */
+    interface Listener {
+        /**回調函數，用於在Dialog的監聽事件觸發後刷新Activity的UI顯示*/
+        fun respond(respond: Boolean?)
+    }
 }
