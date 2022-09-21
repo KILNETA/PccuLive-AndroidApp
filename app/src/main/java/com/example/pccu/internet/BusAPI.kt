@@ -793,7 +793,7 @@ data class BusODFare(
 ) : Serializable
 
 /**
- * 取得指定"縣市","路線名稱"的公車預估到站資料(N1)"批次更新" -數據結構
+ * 取得指定"縣市","路線名稱"的收費資料"批次更新" -數據結構
  * @param RouteID           [String] 機關定義路線代號
  * @param RouteName         [String] 路線名稱
  * @param OperatorID        [String] 營運業者代碼

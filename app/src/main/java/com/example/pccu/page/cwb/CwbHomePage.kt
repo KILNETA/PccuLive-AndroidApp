@@ -435,25 +435,25 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
                     )//普通 51~100
                     EPA_AirQuality_icon.setImageResource(R.drawable.air_quality_2)
                 }
-                in 101..200 -> {    //對敏感族群不健康 101~150
+                in 101..150 -> {    //對敏感族群不健康 101~150
                     EPA_AirQuality_progressbar.progressTintList =
                         ColorStateList.valueOf(Color.parseColor("#ff9734")
                     )//對敏感族群不健康 101~150
                     EPA_AirQuality_icon.setImageResource(R.drawable.air_quality_3)
                 }
-                in 201..300 -> {    //對所有族群不健康 151~200
+                in 151..200 -> {    //對所有族群不健康 151~200
                     EPA_AirQuality_progressbar.progressTintList =
                         ColorStateList.valueOf(Color.parseColor("#ca0034")
                     )//對所有族群不健康 151~200
                     EPA_AirQuality_icon.setImageResource(R.drawable.air_quality_4)
                 }
-                in 301..400 -> {    //非常不健康 201~300
+                in 201..300 -> {    //非常不健康 201~300
                     EPA_AirQuality_progressbar.progressTintList =
                         ColorStateList.valueOf(Color.parseColor("#670099")
                     )//非常不健康 201~300
                     EPA_AirQuality_icon.setImageResource(R.drawable.air_quality_5)
                 }
-                in 401..500 -> {    //危害 301~500
+                in 301..500 -> {    //危害 301~500
                     EPA_AirQuality_progressbar.progressTintList =
                         ColorStateList.valueOf(Color.parseColor("#7e0123")
                     )//危害 301~500

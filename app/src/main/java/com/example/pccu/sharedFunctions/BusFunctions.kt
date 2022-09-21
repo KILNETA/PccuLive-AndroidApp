@@ -38,18 +38,18 @@ object BusFunctions{
             holder.itemView.TimeMin.text = ""
             holder.itemView.EstimateTime.text = ""
 
-            /*if(estimateTime.EstimateTime >= 3600){
+            if(estimateTime.EstimateTime >= 3600){
                 val nextBusTimeDate =
                     SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.TAIWAN)
-                        .parse(estimateTime.DataTime)
+                        .parse(estimateTime.UpdateTime)
                 nextBusTimeDate.seconds += estimateTime.EstimateTime
                 holder.itemView.TimeState.setTextColor(Color.parseColor("#FFFFFF"))
                 holder.itemView.TimeState.textSize = 22f
                 holder.itemView.TimeState.text =
                     DateFormat.format("HH:mm", nextBusTimeDate!!.time).toString()
-            }*/
+            }
             //如果剩餘時間 < 3min && 正在 0:運營中 {即將進站}
-            if(estimateTime.EstimateTime in 5..180 && arrayOf(1,0).contains(estimateTime.StopStatus) ) {
+            else if(estimateTime.EstimateTime in 5..180 && arrayOf(1,0).contains(estimateTime.StopStatus) ) {
                 holder.itemView.TimeState.setTextColor(Color.parseColor("#F5B939"))
                 holder.itemView.TimeState.textSize = 18f
                 holder.itemView.TimeState.text = "將到站"
