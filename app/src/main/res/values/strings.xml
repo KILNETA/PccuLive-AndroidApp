@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PCCU</string>
+    <string name="app_name">文化生活通</string>
 
     <string name="app_label">search</string>
     <string name="search_hint">search</string>

@@ -56,10 +56,10 @@ class HomePage : Fragment(R.layout.home_page){
     private val cameraList : ArrayList<CameraItem> = arrayListOf()
     /**網路接收器*/
     private var internetReceiver: NetWorkChangeReceiver? = null
-
-    private val itFilter = IntentFilter()
-
+    /**初始化行事曆*/
     private var initCalendar = true
+    /**活動濾波器(監測斷線問題)*/
+    private val itFilter = IntentFilter()
 
     init{
         itFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
@@ -603,6 +603,7 @@ class HomePage : Fragment(R.layout.home_page){
          */
         @DelicateCoroutinesApi
         fun upDates(Datum:String){
+
             /**取用APP中儲存的當日活動*/
             var lestCalendar : ToDayCalendar? = null
             /**嘗試取得存儲的天氣預報資料*/
@@ -663,7 +664,9 @@ class HomePage : Fragment(R.layout.home_page){
          * @since Alpha_2.0
          */
         private fun resetData(calendarData: ToDayCalendar){
-            //導入數據資料
+            //清空數據資料
+            this.calendarData.clear()
+            //重新導入數據資料
             for( i in 0 until calendarData.items.size)
                 this.calendarData.add(calendarData.items[i].summary)
             //刷新視圖列表
