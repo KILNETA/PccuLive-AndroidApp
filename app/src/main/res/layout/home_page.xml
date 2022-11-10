@@ -43,7 +43,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:textColor="#575757"
-                    android:text="Home"
+                    android:text="歡迎使用文化生活通"
                     android:textSize="18sp"
                     android:paddingLeft="26dp"/>
 
