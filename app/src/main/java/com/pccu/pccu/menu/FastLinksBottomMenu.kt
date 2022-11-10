@@ -56,7 +56,8 @@ class FastLinksBottomMenu : BottomSheetDialogFragment() {
             "https://ecampus.pccu.edu.tw/ecampus/default.aspx?usertype=student",
             "https://www.pccu.edu.tw/",
             "https://mycourse.pccu.edu.tw/",
-            "https://www.pccu.edu.tw/fever/fever.html"
+            "https://www.pccu.edu.tw/fever/fever.html",
+            "https://docs.google.com/forms/d/e/1FAIpQLScAOJnqIZOspwZCGv0hq2zSoucugq2kiMp3NzlIZ8npGfymgg/viewform"
         )
         /**Uri*/
         var uri: Uri
@@ -89,6 +90,12 @@ class FastLinksBottomMenu : BottomSheetDialogFragment() {
         view.findViewById<LinearLayout>(R.id.FastLink_Epidemic_Prevention_Zone)
             .setOnClickListener{
                 uri = Uri.parse(url[4])
+                startActivity(Intent(Intent.ACTION_VIEW, uri))
+            }
+        /**反 饋 問 卷*/
+        view.findViewById<LinearLayout>(R.id.FastLink_Feedback_Questionnaire)
+            .setOnClickListener{
+                uri = Uri.parse(url[5])
                 startActivity(Intent(Intent.ACTION_VIEW, uri))
             }
     }

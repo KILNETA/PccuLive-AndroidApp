@@ -158,4 +158,34 @@
             android:textSize="16sp" />
 
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/FastLink_Feedback_Questionnaire"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:orientation="horizontal"
+        android:paddingBottom="8dp"
+        android:paddingRight="20dp"
+        android:paddingTop="8dp"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginRight="24dp"
+            android:src="@drawable/fastlink"
+            app:tint="#737373" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/FastLink_Feedback_Questionnaire"
+            android:textColor="#737373"
+            android:textSize="16sp" />
+
+    </LinearLayout>
 </LinearLayout>
