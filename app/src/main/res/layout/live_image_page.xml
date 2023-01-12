@@ -23,7 +23,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#000000"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:overScrollMode="never"
+        android:scrollbars="none">
         <LinearLayout
             android:id="@+id/Livepage"
             android:layout_width="match_parent"
@@ -81,30 +83,6 @@
                     app:tabGravity="center"
                     app:tabMode="scrollable"
                     android:background="@color/PCCU_yellow">
-
-                    <com.google.android.material.tabs.TabItem
-                        android:id="@+id/tabA"
-                        android:text=" 文化 "
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"/>
-
-                    <com.google.android.material.tabs.TabItem
-                        android:id="@+id/tabB"
-                        android:text=" 仰德 "
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"/>
-
-                    <com.google.android.material.tabs.TabItem
-                        android:id="@+id/tabC"
-                        android:text=" 劍潭 "
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"/>
-
-                    <com.google.android.material.tabs.TabItem
-                        android:id="@+id/tabD"
-                        android:text=" 後山 "
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"/>
 
                 </com.google.android.material.tabs.TabLayout>
             </LinearLayout>

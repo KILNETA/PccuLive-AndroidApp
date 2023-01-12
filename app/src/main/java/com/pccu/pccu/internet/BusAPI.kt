@@ -829,6 +829,50 @@ data class RouteFare(
                                                     // ( ISO8601格式:yyyy-MM-ddTHH:mm:sszzz )
 ) : Serializable
 
+/**
+ * 取得指定"縣市"的市區公車車輛資料 -數據結構
+ * @param PlateNumb             [String] 車牌號碼
+ * @param OperatorID            [String] 營運業者代碼
+ * @param OperatorCode          [String] 營運業者簡碼
+ * @param VehicleClass          [Int] 車輛種類 (
+                                            1:大型巴士 2:中型巴士 3:小型巴士 4:雙層巴士 5:雙節巴士 6:計程車 )
+ * @param VehicleType           [Int] 車輛種類 (
+                                            0:一般 1:無障礙公車 2:復康巴士 3:小型巴士 4:專車 5:其他 )
+ * @param CardReaderLayout      [Int] 讀卡機配置 (
+                                            0:無讀卡機配置 1:前門刷卡 2:前後門刷卡 )
+ * @param IsElectric            [Boolean] 是否為電動公車
+ * @param IsHybrid              [Boolean] 是否為油電混合公車
+ * @param IsLowFloor            [Boolean] 是否為低地板
+ * @param HasLiftOrRamp         [Boolean] 是否有活動坡道
+ * @param HasWifi               [Boolean] 是否有提供Wifi服務
+ * @param InBoxID               [String] 車機代號
+ * @param UpdateTime            [String] 本平台資料更新時間
+ *
+ * @author KILNETA
+ * @since Beta_1.2.0
+ */
+data class Vehicle(
+    val PlateNumb : String,                 //車牌號碼
+    val OperatorID : String,                //營運業者代碼
+    val OperatorCode : String,              //營運業者簡碼
+    val VehicleClass : Int,                 //車輛種類 {
+                                                // 1:大型巴士 2:中型巴士 3:小型巴士 4:雙層巴士
+                                                // 5:雙節巴士 6:計程車 }
+    val VehicleType : Int,                  //車輛種類 {
+                                                // 0:一般 1:無障礙公車 2:復康巴士 3:小型巴士
+                                                // 4:專車 5:其他 }
+    val CardReaderLayout : Int,             //讀卡機配置 {
+                                                // 0:無讀卡機配置 1:前門刷卡 2:前後門刷卡 }
+    val IsElectric : Boolean,               //是否為電動公車
+    val IsHybrid : Boolean,                 //是否為油電混合公車
+    val IsLowFloor : Boolean,               //是否為低地板
+    val HasLiftOrRamp : Boolean,            //是否有活動坡道
+    val HasWifi : Boolean,                  //是否有提供Wifi服務
+    val InBoxID : String,                   //車機代號
+    val UpdateTime : String,                //本平台資料更新時間
+                                                // ( ISO8601格式:yyyy-MM-ddTHH:mm:sszzz )
+) : Serializable
+
 /*-----------------------存儲用資料結構-----------------------*/
 
 /**

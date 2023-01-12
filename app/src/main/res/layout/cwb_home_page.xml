@@ -21,6 +21,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:overScrollMode="never"
+        android:scrollbars="none"
         android:fillViewport="true">
 
         <LinearLayout

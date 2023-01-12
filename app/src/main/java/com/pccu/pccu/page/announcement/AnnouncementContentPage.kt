@@ -3,14 +3,13 @@ package com.pccu.pccu.page.announcement
 import android.annotation.SuppressLint
 import android.content.IntentFilter
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.text.method.LinkMovementMethod
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import org.jsoup.nodes.Element
 import java.util.*
 import com.pccu.pccu.R
@@ -54,7 +53,6 @@ class AnnouncementContentPage : AppCompatActivity(R.layout.announcement_content_
                             ViewGroup.LayoutParams.WRAP_CONTENT,
                         )
                 }
-                @RequiresApi(Build.VERSION_CODES.N)
                 override fun connectedInternet() {
                     noNetWork.layoutParams =
                         LinearLayout.LayoutParams(
@@ -82,10 +80,11 @@ class AnnouncementContentPage : AppCompatActivity(R.layout.announcement_content_
      * @since Alpha_1.0
      */
     @DelicateCoroutinesApi
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         //呼叫頁面建置
         super.onCreate(savedInstanceState)
+        //更改公車站牌列表控件(用於配合淡入淡出動畫)
+        findViewById<LinearLayout>(R.id.Content).visibility = View.GONE
         //初始化網路接收器
         initInternetReceiver()
 
@@ -94,7 +93,8 @@ class AnnouncementContentPage : AppCompatActivity(R.layout.announcement_content_
         if(internetReceiver!!.isConnect)
             //取得公告內文
             callPccuAnnouncementContent(contentUrl!!)
-
+        //首次加載成功後進行crossfade(淡入淡出)動畫
+        crossfade(findViewById(R.id.Content))
     }
 
     /**
@@ -115,8 +115,7 @@ class AnnouncementContentPage : AppCompatActivity(R.layout.announcement_content_
      * @author KILNETA
      * @since Alpha_1.0
      */
-    @RequiresApi(Build.VERSION_CODES.N)
-    fun reSetData(ContentData: AnnouncementContent? ){
+    private fun reSetData(ContentData: AnnouncementContent? ){
 
         ContentData?.let {
             // 設置主旨(標題)
@@ -157,7 +156,6 @@ class AnnouncementContentPage : AppCompatActivity(R.layout.announcement_content_
      * @author KILNETA
      * @since Alpha_1.0
      */
-    @RequiresApi(Build.VERSION_CODES.N)
     private fun contentSetter(ContentData: Vector<Element>) {
         //逐一讀取內文表
         for (i in 0 until ContentData.size) {
@@ -174,7 +172,6 @@ class AnnouncementContentPage : AppCompatActivity(R.layout.announcement_content_
      * @since Alpha_1.0
      */
     @SuppressLint("SetJavaScriptEnabled")
-    @RequiresApi(Build.VERSION_CODES.N)
     private fun addContentText(ContentData: Element){
         //取得內文的控件
         val lin = findViewById<LinearLayout>(R.id.Content)
@@ -267,8 +264,7 @@ class AnnouncementContentPage : AppCompatActivity(R.layout.announcement_content_
      * @author KILNETA
      * @since Alpha_1.0
      */
-    @RequiresApi(Build.VERSION_CODES.N)
-    fun addLinkText(linkList: Vector<String>, linkLayout: Int){
+    private fun addLinkText(linkList: Vector<String>, linkLayout: Int){
         //取得 放連結的控件
         val link = findViewById<LinearLayout>(linkLayout)
 
@@ -298,7 +294,6 @@ class AnnouncementContentPage : AppCompatActivity(R.layout.announcement_content_
      * @since Alpha_1.0
      */
     @DelicateCoroutinesApi
-    @RequiresApi(Build.VERSION_CODES.N)
     fun callPccuAnnouncementContent(Content_Url: String){
 
         //取用協程
@@ -312,6 +307,29 @@ class AnnouncementContentPage : AppCompatActivity(R.layout.announcement_content_
                 reSetData(ContentParser().getContent(announcementList))
                 init = false
             }
+        }
+    }
+
+    /**
+     * RecyclerView(淡入淡出)動畫
+     * @param linearLayout [LinearLayout] LinearLayout控件
+     *
+     * @author KILNETA
+     * @since Beta_1.2.0
+     */
+    private fun crossfade(linearLayout:LinearLayout) {
+        linearLayout.apply {
+            // 將內容視圖設置為 0% 不透明度但可見，以便它可見
+            // 在動畫期間完全透明。
+            alpha = 0f
+            visibility = View.VISIBLE
+
+            // 將內容視圖設置為 100% 不透明度，並清除任何動畫
+            // 在視圖上設置監聽器。
+            animate()
+                .alpha(1f)
+                .setDuration(resources.getInteger(android.R.integer.config_shortAnimTime).toLong())
+                .setListener(null)
         }
     }
 }

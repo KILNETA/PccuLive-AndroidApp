@@ -10,7 +10,6 @@ import android.util.DisplayMetrics
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.pccu.pccu.R
 import androidx.fragment.app.FragmentManager
@@ -121,7 +120,7 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
         //當 關於按鈕 被按下
         aboutButton.setOnClickListener{
             /**關於介面 底部彈窗*/
-            val aboutSheetFragment = com.pccu.pccu.about.AboutBottomSheet(content)
+            val aboutSheetFragment = AboutBottomSheet(content)
             aboutSheetFragment.show(parentFragmentManager, aboutSheetFragment.tag)
         }
     }
@@ -475,9 +474,10 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
      * @since Alpha_4.0
      */
     @DelicateCoroutinesApi
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState) //創建頁面
+        //關閉左右托拽時的Android預設動畫
+        Cwb_value_page.getChildAt(0)?.overScrollMode = View.OVER_SCROLL_NEVER
 
         //初始化網路接收器
         initInternetReceiver()

@@ -11,7 +11,7 @@ import com.pccu.pccu.sharedFunctions.Object_SharedPreferences
 import kotlinx.android.synthetic.main.bus_dialog.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.pccu.pccu.sharedFunctions.PopWindows
+import com.pccu.pccu.sharedFunctions.PToast
 import com.pccu.pccu.sharedFunctions.RV
 import com.pccu.pccu.sharedFunctions.ViewGauge
 import kotlinx.android.synthetic.main.bus_dialog_station_addition_item.view.*
@@ -128,7 +128,7 @@ class BusAddStationDialog : DialogFragment(R.layout.bus_dialog)  {
                                 it.Direction == stationData!!.Direction
                         }){ /**已存在此站牌*/
                             //提示彈窗
-                            PopWindows.popLongHint(
+                            PToast.popLongHint(
                                 requireActivity().baseContext,
                                 "${allCollectList!![index].GroupName} 已存在此站牌"
                             )
@@ -136,7 +136,7 @@ class BusAddStationDialog : DialogFragment(R.layout.bus_dialog)  {
                             /**成功添加站牌*/
                             allCollectList!![index].SaveStationList.add(stationData!!)
                             //提示彈窗
-                            PopWindows.popLongHint(
+                            PToast.popLongHint(
                                 requireActivity().baseContext,
                                 "成功添加至 ${allCollectList!![index].GroupName}"
                             )

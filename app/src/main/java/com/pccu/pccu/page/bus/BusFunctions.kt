@@ -1,10 +1,8 @@
-package com.pccu.pccu.sharedFunctions
+package com.pccu.pccu.page.bus
 
 import android.graphics.Color
 import android.text.format.DateFormat
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.pccu.pccu.R
 import com.pccu.pccu.internet.EstimateTime
 import kotlinx.android.synthetic.main.bus_station_item.view.*
 import java.text.SimpleDateFormat
@@ -29,6 +27,7 @@ object BusFunctions{
         //如果剩餘時間 > 3min  {顯示剩餘時間}
         if(estimateTime.EstimateTime in 181..3599) {
             holder.itemView.TimeState.textSize = 22f
+            holder.itemView.EstimateTime.setTextColor(Color.parseColor("#FFFFFF"))
             holder.itemView.EstimateTime.text = (estimateTime.EstimateTime / 60).toString()
             holder.itemView.TimeMin.text = "分"
             holder.itemView.TimeState.text = ""
@@ -49,13 +48,13 @@ object BusFunctions{
                     DateFormat.format("HH:mm", nextBusTimeDate!!.time).toString()
             }
             //如果剩餘時間 < 3min && 正在 0:運營中 {即將進站}
-            else if(estimateTime.EstimateTime in 5..180 && arrayOf(1,0).contains(estimateTime.StopStatus) ) {
+            else if(estimateTime.EstimateTime in 20..180 && arrayOf(1,0).contains(estimateTime.StopStatus) ) {
                 holder.itemView.TimeState.setTextColor(Color.parseColor("#F5B939"))
                 holder.itemView.TimeState.textSize = 18f
                 holder.itemView.TimeState.text = "將到站"
             }
             //如果剩餘時間 < 5s && 正在 0:運營中 {進站中}
-            else if(estimateTime.EstimateTime in 0..4 && arrayOf(0).contains(estimateTime.StopStatus) ) {
+            else if(estimateTime.EstimateTime in 0..19 && arrayOf(0).contains(estimateTime.StopStatus) ) {
                 holder.itemView.TimeState.setTextColor(Color.parseColor("#ff6363"))
                 holder.itemView.TimeState.textSize = 18f
                 holder.itemView.TimeState.text = "進站中"

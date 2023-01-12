@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/drawable/2.xml" value="0.1655" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/drawable/bus.xml" value="0.2828125" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/drawable/bus_estimate_time.xml" value="0.2828125" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/drawable/bus_menu.xml" value="0.38229166666666664" />
@@ -13,6 +14,10 @@
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/drawable/cwb_weather_item.xml" value="0.21197916666666666" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/drawable/horizontal_progress.xml" value="0.21979166666666666" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/drawable/ic_launcher_background.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/drawable/platenumb_popwindow_background.xml" value="0.1655" />
+        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/drawable/platenumb_popwindow_rotate.xml" value="0.1655" />
+        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/drawable/platenumb_pw_background.xml" value="0.1655" />
+        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/drawable/platenumb_pw_icon.xml" value="0.1655" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/drawable/search_style.xml" value="0.321875" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout-v23/announcement_item_menu.xml" value="0.22395833333333334" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout-v23/fast_links.xml" value="0.36614583333333334" />
@@ -38,10 +43,11 @@
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/bus_item.xml" value="0.5" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/bus_list_page.xml" value="0.21228583368157125" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/bus_page.xml" value="0.33" />
-        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/bus_route_fragment.xml" value="0.265625" />
-        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/bus_route_item.xml" value="0.6629834254143646" />
+        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/bus_popwindow.xml" value="0.67" />
+        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/bus_route_fragment.xml" value="0.5" />
+        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/bus_route_item.xml" value="0.5933609958506224" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/bus_route_item_menu.xml" value="0.265625" />
-        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/bus_route_page.xml" value="0.28940217391304346" />
+        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/bus_route_page.xml" value="0.25" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/bus_search_main.xml" value="0.33" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/bus_search_result_item.xml" value="0.33" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/bus_station_fragment.xml" value="0.36614583333333334" />
@@ -56,9 +62,9 @@
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/cwb_page.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/cwb_weather_item.xml" value="0.33" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/fast_links.xml" value="0.36614583333333334" />
-        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/home_page.xml" value="0.5669354838709677" />
+        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/home_page.xml" value="0.33" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/live_image_fragment.xml" value="0.36614583333333334" />
-        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/live_image_page.xml" value="0.28125" />
+        <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/live_image_page.xml" value="0.5" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/search_filter_item.xml" value="0.5" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/tab_change.xml" value="0.2640625" />
         <entry key="..\:/Users/KUO/AndroidStudioProjects/PCCU/app/src/main/res/layout/test.xml" value="0.20208333333333334" />

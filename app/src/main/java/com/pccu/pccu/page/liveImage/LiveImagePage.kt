@@ -1,12 +1,15 @@
 package com.pccu.pccu.page.liveImage
 
 import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.FOCUS_BLOCK_DESCENDANTS
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -98,7 +101,7 @@ class LiveImagePage : AppCompatActivity(R.layout.live_image_page) {
         //當關於按鈕被按下 開啟關於介面 底部彈窗
         aboutButton.setOnClickListener{
             /**關於介面 底部彈窗*/
-            val aboutSheetFragment = com.pccu.pccu.about.AboutBottomSheet(content)
+            val aboutSheetFragment = AboutBottomSheet(content)
             aboutSheetFragment.show(supportFragmentManager, aboutSheetFragment.tag)
         }
     }
@@ -147,6 +150,8 @@ class LiveImagePage : AppCompatActivity(R.layout.live_image_page) {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState) //創建頁面
+        //關閉左右托拽時的Android預設動畫
+        LiveCameras_fragment.getChildAt(0)?.overScrollMode = View.OVER_SCROLL_NEVER
         //初始化網路接收器
         initInternetReceiver()
         //初始化關於按鈕
@@ -163,8 +168,30 @@ class LiveImagePage : AppCompatActivity(R.layout.live_image_page) {
 
         //套用至LiveCameras頁面的標題
         TabLayoutMediator(camera_tabs, LiveCameras_fragment) { tab, position ->
-            //Tab文字 = 即時影像分類地區
-            tab.text = CameraAPI.CameraSource[position].locationName
+            /**Tab文字控件*/
+            val textView = TextView(baseContext)
+
+            //設置文字大小
+            textView.setTextSize(
+                TypedValue.COMPLEX_UNIT_SP,
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 18f, resources.displayMetrics))
+            //設置文字顏色
+            textView.setTextColor(Color.parseColor("#FFFFFF"))
+            //設置文字布局 (置中)
+            textView.gravity = Gravity.CENTER
+            //設置tab自定義視圖 為 Tab文字控件
+            tab.customView = textView
+            //設置文字內容 (收藏群組名稱)
+            textView.text = CameraAPI.CameraSource[position].locationName
+
+            /**外部布局適配*/
+            val params = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                0f)
+            //套用 外部布局適配 至 Tab & Tab文字控件
+            textView.layoutParams = params
+            tab.view.layoutParams = params
         }.attach()
         //設置View覆蓋子類控件而直接獲得焦點 (避免ViewPage2跳轉頁面位置)
         LiveCameras_fragment.descendantFocusability = FOCUS_BLOCK_DESCENDANTS
@@ -188,7 +215,6 @@ class LiveImagePage : AppCompatActivity(R.layout.live_image_page) {
                     if (view != null) {
                         //重置ViewPage2控件的高度適配子視圖
                         updatePagerHeightForChild(view, LiveCameras_fragment)
-                        Log.e("","nice")
                     }
                 }
             }

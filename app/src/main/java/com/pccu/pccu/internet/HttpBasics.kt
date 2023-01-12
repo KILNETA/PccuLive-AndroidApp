@@ -14,8 +14,6 @@ import retrofit2.http.*
 import retrofit2.http.Headers
 import android.content.Intent
 import android.content.BroadcastReceiver
-import android.os.Build
-import android.util.Log
 
 
 /**
@@ -101,7 +99,6 @@ object HttpRetrofit{
             response.body!!.byteStream()
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.e("","$e")
             null
         }
     }
@@ -128,7 +125,6 @@ object HttpRetrofit{
             String(response.body!!.bytes(), charset(charset))
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.e("","$e")
             null
         }
     }
@@ -232,11 +228,8 @@ class NetWorkChangeReceiver(
     init{
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val network = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val network =
             connectivityManager.activeNetwork
-        }else{
-            connectivityManager.activeNetworkInfo
-        }
 
         if (network == null) {
             isConnect = false
@@ -249,11 +242,8 @@ class NetWorkChangeReceiver(
     override fun onReceive(context: Context, intent: Intent)  {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val network = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val network =
             connectivityManager.activeNetwork
-        }else{
-            connectivityManager.activeNetworkInfo
-        }
 
         if (network == null && isConnect) {
             respond.interruptInternet()

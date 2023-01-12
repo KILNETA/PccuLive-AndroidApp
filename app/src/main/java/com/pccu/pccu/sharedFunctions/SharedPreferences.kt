@@ -26,7 +26,7 @@ object Object_SharedPreferences {
      */
     private fun Object2String(`object`: Any): String? {
         val byteArrayOutputStream = ByteArrayOutputStream()
-        var objectOutputStream: ObjectOutputStream? = null
+        val objectOutputStream: ObjectOutputStream?
         return try {
             objectOutputStream = ObjectOutputStream(byteArrayOutputStream)
             objectOutputStream.writeObject(`object`)
@@ -49,7 +49,7 @@ object Object_SharedPreferences {
     private fun String2Object(objectString: String): Any? {
         val mobileBytes = Base64.decode(objectString.toByteArray(), Base64.DEFAULT)
         val byteArrayInputStream = ByteArrayInputStream(mobileBytes)
-        var objectInputStream: ObjectInputStream? = null
+        val objectInputStream: ObjectInputStream?
         return try {
             objectInputStream = ObjectInputStream(byteArrayInputStream)
             val `object` = objectInputStream.readObject()
@@ -73,7 +73,7 @@ object Object_SharedPreferences {
     fun save(fileKey: String?, key: String?, saveObject: Any, context: Context) {
         //創建SharedPreferences
         val sharedPreferences: SharedPreferences =
-            context.getApplicationContext().getSharedPreferences(fileKey, Activity.MODE_PRIVATE)
+            context.applicationContext.getSharedPreferences(fileKey, Activity.MODE_PRIVATE)
         //取得SharedPreferences.Editor編輯內容
         val editor = sharedPreferences.edit()
         //用Base64.encode將字節文件轉換成Base64編碼保存在String中
@@ -96,7 +96,7 @@ object Object_SharedPreferences {
     operator fun get(fileKey: String?, key: String?, context: Context): Any? {
         //創建SharedPreferences
         val sharedPreferences: SharedPreferences =
-            context.getApplicationContext().getSharedPreferences(fileKey, Activity.MODE_PRIVATE)
+            context.applicationContext.getSharedPreferences(fileKey, Activity.MODE_PRIVATE)
 
         //回傳在"Saved"索引之下的資料；若無儲存則回傳"未存任何資料"
         val string = sharedPreferences.getString(key, null)
@@ -126,16 +126,6 @@ object Object_SharedPreferences {
         editor.apply()
     }
 }
-
-
-
-
-
-
-
-
-
-
 
 /**
  * SharedPreferences 資料本地存儲類別 (已棄用僅能存儲String格式 備存用)

@@ -4,7 +4,12 @@ import android.content.Context
 import android.view.Gravity
 import android.widget.Toast
 
-object PopWindows {
+/**
+ * 螢幕中間的提示用(Toast)彈窗 Object
+ * @author KILNETA
+ * @since Alpha_5.0
+ */
+object PToast {
     /**
      * 小提示彈窗 持續3s
      * @param context [Context] 上下文

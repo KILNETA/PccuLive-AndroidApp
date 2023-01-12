@@ -50,7 +50,7 @@
                         android:id="@+id/EstimateTime"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:textColor="@color/white"
+                        android:textColor="#7d7d7d"
                         android:gravity="center"
                         android:textSize="27sp"
                         android:text="－"/>
@@ -97,12 +97,14 @@
                     android:layout_marginBottom="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="23dp"
-                    android:src="@drawable/bus_1"/>
+                    android:src="@drawable/bus_1"
+                    android:clipChildren="false"/>
                 <ImageView
                     android:id="@+id/BusIcon_after"
                     android:layout_width="match_parent"
                     android:layout_height="23dp"
-                    android:src="@drawable/bus_1"/>
+                    android:src="@drawable/bus_1"
+                    android:clipChildren="false"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_marginTop="16dp"

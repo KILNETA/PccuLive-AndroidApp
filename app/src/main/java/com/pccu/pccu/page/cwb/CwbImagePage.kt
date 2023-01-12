@@ -85,7 +85,7 @@ class CwbImagePage: Fragment(R.layout.cwb_image_page) {
         //當 關於按鈕 被按下
         aboutButton.setOnClickListener{
             /**關於介面 底部彈窗*/
-            val aboutSheetFragment = com.pccu.pccu.about.AboutBottomSheet(context)
+            val aboutSheetFragment = AboutBottomSheet(context)
             aboutSheetFragment.show(parentFragmentManager, aboutSheetFragment.tag)
         }
     }

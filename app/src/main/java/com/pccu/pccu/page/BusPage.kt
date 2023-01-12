@@ -1,12 +1,10 @@
 package com.pccu.pccu.page
 
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.pccu.pccu.R
 import kotlinx.android.synthetic.main.bus_page.*
-import androidx.annotation.RequiresApi
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
@@ -17,18 +15,18 @@ import android.widget.*
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.pccu.pccu.about.AboutBottomSheet
 import com.pccu.pccu.internet.*
 import com.pccu.pccu.page.bus.BusCollectFragment
 import com.pccu.pccu.page.bus.dialogs.*
 import com.pccu.pccu.page.bus.search.SearchActivity
 import com.pccu.pccu.sharedFunctions.Object_SharedPreferences
-import com.pccu.pccu.sharedFunctions.PopWindows
+import com.pccu.pccu.sharedFunctions.PToast
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.bus_page.bus_fragment
 import kotlinx.android.synthetic.main.bus_page.bus_tabs
 import kotlinx.android.synthetic.main.bus_page.moreButton
 import kotlinx.android.synthetic.main.bus_page.noNetWork
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlin.collections.ArrayList
 
 /**
@@ -46,6 +44,7 @@ class BusPage : Fragment(R.layout.bus_page){
     /**收藏群組 站牌顯示頁面表*/
     private var collectList : ArrayList<CollectGroup> = arrayListOf()
     /**站牌收藏頁面*/
+    @OptIn(DelicateCoroutinesApi::class)
     private val collectFragment = arrayListOf<BusCollectFragment>()
 
     /**網路接收器*/
@@ -62,6 +61,7 @@ class BusPage : Fragment(R.layout.bus_page){
      * @author KILNETA
      * @since Alpha_2.0
      */
+    @OptIn(DelicateCoroutinesApi::class)
     private fun initInternetReceiver(){
         internetReceiver = NetWorkChangeReceiver(
             object : NetWorkChangeReceiver.RespondNetWork{
@@ -95,7 +95,7 @@ class BusPage : Fragment(R.layout.bus_page){
     private fun editGroup(){
         /**編輯群組介面 (Dialog)*/
         val editGroup = BusEditGroupDialog (
-            object : PopWindows.Listener {
+            object : PToast.Listener {
                 //回應是否需要重置站牌頁面+列表
                 override fun respond(respond: Boolean?) {
                     if (respond!!) {
@@ -127,7 +127,7 @@ class BusPage : Fragment(R.layout.bus_page){
     private fun removeGroup() {
         /**刪除群組介面 (Dialog)*/
         val removeGroup = BusRemoveGroupDialog(
-            object : PopWindows.Listener {
+            object : PToast.Listener {
                 //回應是否需要重置站牌頁面+列表
                 override fun respond(respond: Boolean?) {
                     if(respond!!) {
@@ -148,7 +148,7 @@ class BusPage : Fragment(R.layout.bus_page){
         /**排序站牌介面 (Dialog)*/
         val sequenceStation = BusSequenceStationDialog (
             collectList[bus_fragment.currentItem].GroupName,
-            object : PopWindows.Listener {
+            object : PToast.Listener {
                 //回應是否需要重置站牌頁面+列表
                 override fun respond(respond: Boolean?) {
                     if (respond!!) {
@@ -170,7 +170,7 @@ class BusPage : Fragment(R.layout.bus_page){
         /**刪除站牌介面 (Dialog)*/
         val removeStation = BusRemoveStationDialog(
             collectList[bus_fragment.currentItem].GroupName,
-            object : PopWindows.Listener {
+            object : PToast.Listener {
                 //回應是否需要重置站牌頁面+列表
                 override fun respond(respond: Boolean?) {
                     if(respond!!){
@@ -329,6 +329,7 @@ class BusPage : Fragment(R.layout.bus_page){
      * @author KILNETA
      * @since Alpha_5.0
      */
+    @OptIn(DelicateCoroutinesApi::class)
     private fun createFragment(): ArrayList<BusCollectFragment>{
         collectFragment.clear()
         for(i in collectList.indices){
@@ -346,6 +347,7 @@ class BusPage : Fragment(R.layout.bus_page){
      * @author KILNETA
      * @since Alpha_5.0
      */
+    @OptIn(DelicateCoroutinesApi::class)
     private fun resetCollectPage(lastGroupName:String? = null){
         //重新取得 群組站牌收藏資料
         collectList = getCollectBuses()
@@ -407,9 +409,10 @@ class BusPage : Fragment(R.layout.bus_page){
      * @author KILNETA
      * @since Alpha_1.0
      */
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState) //創建頁面
+        //關閉左右托拽時的Android預設動畫
+        bus_fragment.getChildAt(0)?.overScrollMode = View.OVER_SCROLL_NEVER
 
         //網路接收器初始化
         initInternetReceiver()
@@ -453,7 +456,7 @@ class BusPage : Fragment(R.layout.bus_page){
      * @author KILNETA
      * @since Alpha_1.0
      */
-    inner class PageAdapter(
+    inner class PageAdapter @OptIn(DelicateCoroutinesApi::class) constructor(
         fragmentManager: FragmentManager,           // 子片段管理器
         lifecycle: Lifecycle,                       // 生命週期
         /**收藏群組站牌頁面視圖*/
@@ -466,6 +469,7 @@ class BusPage : Fragment(R.layout.bus_page){
         /**頁面數量
          * @return 頁面數量 : [Int]
          */
+        @OptIn(DelicateCoroutinesApi::class)
         override fun getItemCount(): Int {
             return groupFragments.size
         }

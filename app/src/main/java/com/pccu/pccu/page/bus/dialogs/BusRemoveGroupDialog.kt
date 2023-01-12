@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.pccu.pccu.internet.CollectGroup
 import com.pccu.pccu.R
 import com.pccu.pccu.sharedFunctions.Object_SharedPreferences
-import com.pccu.pccu.sharedFunctions.PopWindows
+import com.pccu.pccu.sharedFunctions.PToast
 import com.pccu.pccu.sharedFunctions.RV
 import com.pccu.pccu.sharedFunctions.ViewGauge
 import kotlinx.android.synthetic.main.bus_dialog.*
@@ -21,14 +21,14 @@ import kotlinx.coroutines.*
 
 /**
  * 站牌收藏群組 添加站牌
- * @param listener      [PopWindows.Listener] 回傳函式
+ * @param listener      [PToast.Listener] 回傳函式
  *
  * @author KILNETA
  * @since Alpha_5.0
  */
 class BusRemoveGroupDialog(
     /**回傳函式*/
-    private val listener : PopWindows.Listener
+    private val listener : PToast.Listener
 ): DialogFragment(R.layout.bus_dialog) {
     /**所有收藏群組*/
     private var allCollectList : ArrayList<CollectGroup>? = null
@@ -136,7 +136,7 @@ class BusRemoveGroupDialog(
                     )
                 }
                 //提示彈窗
-                PopWindows.popLongHint(
+                PToast.popLongHint(
                     requireActivity().baseContext,
                     "已刪除 $removeGroupNum 個群組"
                 )
@@ -169,7 +169,7 @@ class BusRemoveGroupDialog(
             if(onChecks.any{it}) {
                 /**刪除群組 再次確認框*/
                 val respond = BusRemoveGroupCheckDialog(
-                    object : PopWindows.Listener {
+                    object : PToast.Listener {
                         override fun respond(respond: Boolean?) {
                             respond?.let{ saveCollectGroup(it) }
                         }

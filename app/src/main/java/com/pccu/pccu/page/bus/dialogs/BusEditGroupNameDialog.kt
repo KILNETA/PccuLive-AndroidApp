@@ -8,7 +8,7 @@ import androidx.fragment.app.DialogFragment
 import com.pccu.pccu.internet.CollectGroup
 import com.pccu.pccu.R
 import com.pccu.pccu.sharedFunctions.Object_SharedPreferences
-import com.pccu.pccu.sharedFunctions.PopWindows
+import com.pccu.pccu.sharedFunctions.PToast
 import com.pccu.pccu.sharedFunctions.ViewGauge
 import kotlinx.android.synthetic.main.bus_dialog.*
 import kotlinx.coroutines.*
@@ -16,7 +16,7 @@ import kotlinx.coroutines.*
 /**
  * 站牌收藏群組 名稱輸入框
  * @param mode              [Int] 對話框功能 (0:更改群組名 1:新建群組)
- * @param listener          [PopWindows.Listener] 回傳函式
+ * @param listener          [PToast.Listener] 回傳函式
  * @param originalGroupName [String] 要改變的群組名 (可為空)
  *
  * @author KILNETA
@@ -25,7 +25,7 @@ import kotlinx.coroutines.*
 class BusEditGroupNameDialog(
     /**對話框功能標題*/
     private val mode : Int,
-    private val listener: PopWindows.Listener,
+    private val listener: PToast.Listener,
     /**要改變的群組名 (可為空)*/
     private val originalGroupName : String? = null
 ) : DialogFragment(R.layout.bus_dialog) {
@@ -121,11 +121,11 @@ class BusEditGroupNameDialog(
             when {
                 editText?.text == null ->
                     //輸入為空
-                    PopWindows.popShortHint(requireParentFragment().requireContext(),"輸入不能為空")
+                    PToast.popShortHint(requireParentFragment().requireContext(),"輸入不能為空")
 
                 collectList!!.any { it.GroupName == editText?.text.toString() } ->
                     //已有相同群組存在
-                    PopWindows.popShortHint(requireParentFragment().requireContext(),"已有相同群組存在")
+                    PToast.popShortHint(requireParentFragment().requireContext(),"已有相同群組存在")
 
                 else -> {
                     val newGroupName = editText?.text.toString()
@@ -149,7 +149,7 @@ class BusEditGroupNameDialog(
                         }
 
                         //提示彈窗
-                        PopWindows.popShortHint(
+                        PToast.popShortHint(
                             requireActivity().baseContext,
                             when(mode){
                                 0 -> "群組名稱 ${editText?.text} 更改成功"

@@ -1,13 +1,11 @@
 package com.pccu.pccu.page
 
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.home_page.*
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.pccu.pccu.internet.*
 import com.pccu.pccu.menu.FastLinksBottomMenu
@@ -34,7 +32,6 @@ import com.pccu.pccu.sharedFunctions.RV
 import com.pccu.pccu.appStart.CwbMainActivity
 import com.pccu.pccu.sharedFunctions.ViewGauge
 import kotlinx.android.synthetic.main.weather_item.view.*
-import android.util.Log
 
 /**
  * 程式主頁面 : "Fragment(home_page)"
@@ -326,7 +323,6 @@ class HomePage : Fragment(R.layout.home_page){
          * @since Alpha_1.0
          */
         @DelicateCoroutinesApi
-        @RequiresApi(Build.VERSION_CODES.N)
         override fun run() {
             //增加計時緩衝條數值
             WeatherUpdataProgressBar.setProgress(++timer, false)

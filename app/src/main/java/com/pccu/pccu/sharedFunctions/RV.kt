@@ -1,6 +1,7 @@
 package com.pccu.pccu.sharedFunctions
 
 import android.view.View
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
@@ -10,6 +11,29 @@ import androidx.recyclerview.widget.RecyclerView
  * @since Alpha_5.0
  */
 object RV{
+
+    /**
+     * RecyclerView(淡入淡出)動畫
+     * @param recyclerView [RecyclerView] RecyclerView控件
+     *
+     * @author KILNETA
+     * @since Beta_1.2.0
+     */
+    fun crossfade(recyclerView:RecyclerView) {
+        recyclerView.apply {
+            // 將內容視圖設置為 0% 不透明度但可見，以便它可見
+            // 在動畫期間完全透明。
+            alpha = 0f
+            visibility = View.VISIBLE
+
+            // 將內容視圖設置為 100% 不透明度，並清除任何動畫
+            // 在視圖上設置監聽器。
+            animate()
+                .alpha(1f)
+                .setDuration(resources.getInteger(android.R.integer.config_shortAnimTime).toLong())
+                .setListener(null)
+        }
+    }
 
     /**
      * 當前持有者 "內部類"

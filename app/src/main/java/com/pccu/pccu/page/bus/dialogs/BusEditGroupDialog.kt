@@ -22,14 +22,14 @@ import kotlinx.coroutines.*
 import java.util.*
 import kotlin.collections.ArrayList
 import android.view.MotionEvent
-import com.pccu.pccu.sharedFunctions.PopWindows
+import com.pccu.pccu.sharedFunctions.PToast
 import kotlinx.android.synthetic.main.bus_dialog_group_addition_item.view.*
 import kotlinx.android.synthetic.main.bus_dialog_group_edit_item.view.GroupName
 import kotlinx.android.synthetic.main.bus_dialog_group_edit_item.view.bar
 
 class BusEditGroupDialog(
     /**回傳函式*/
-    private val listener: PopWindows.Listener
+    private val listener: PToast.Listener
 ) : DialogFragment(R.layout.bus_dialog) {
     /**要調整的收藏群組名*/
     private var collectList : ArrayList<CollectGroup>? = null
@@ -144,7 +144,7 @@ class BusEditGroupDialog(
                     )
                 }
                 //提示彈窗
-                PopWindows.popLongHint(
+                PToast.popLongHint(
                     requireActivity().baseContext,
                     "群組編輯完成"
                 )

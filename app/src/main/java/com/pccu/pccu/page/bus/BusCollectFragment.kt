@@ -1,24 +1,24 @@
 package com.pccu.pccu.page.bus
 
 import android.content.Intent
-import android.os.Build
-import android.os.Bundle
+import android.os.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.pccu.pccu.internet.*
-import com.pccu.pccu.R
-import com.pccu.pccu.sharedFunctions.*
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.gson.reflect.TypeToken
+import com.pccu.pccu.R
+import com.pccu.pccu.internet.*
+import com.pccu.pccu.sharedFunctions.JsonFunctions
+import com.pccu.pccu.sharedFunctions.Object_SharedPreferences
+import com.pccu.pccu.sharedFunctions.RV
 import kotlinx.android.synthetic.main.bus_route_fragment.*
 import kotlinx.android.synthetic.main.bus_station_item.view.*
 import kotlinx.coroutines.*
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  *
@@ -26,6 +26,7 @@ import kotlin.collections.ArrayList
  * @author KILNETA
  * @since Alpha_5.0
  */
+@DelicateCoroutinesApi
 class BusCollectFragment : Fragment(R.layout.bus_route_fragment) {
 
     /**收藏的群組名*/
@@ -51,7 +52,6 @@ class BusCollectFragment : Fragment(R.layout.bus_route_fragment) {
          * @since Alpha_1.0
          */
         @DelicateCoroutinesApi
-        @RequiresApi(Build.VERSION_CODES.N)
         override fun run() {
             //增加計時緩衝條數值
             BusUpdataProgressBar.setProgress(++timerI, false)
@@ -82,15 +82,19 @@ class BusCollectFragment : Fragment(R.layout.bus_route_fragment) {
      * @author KILNETA
      * @since Alpha_5.0
      */
+    @DelicateCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         //創建頁面
         super.onViewCreated(view, savedInstanceState)
+
+        (bus_StationList.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         //取得該頁展示之收藏群組名
         groupName = requireArguments().getString("CollectListGroupName")
         //創建Bus列表
         bus_StationList.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         //掛載 列表適配器
+
         bus_StationList.adapter = adapter
 
     }
@@ -130,9 +134,122 @@ class BusCollectFragment : Fragment(R.layout.bus_route_fragment) {
      * @author KILNETA
      * @since Alpha_5.0
      */
+    @DelicateCoroutinesApi
     inner class Adapter : RecyclerView.Adapter<RV.ViewHolder>() {
-        private val estimateTime = arrayListOf<EstimateTime?>()
+        /**各站牌到站時間*/
+        private var estimateTime = arrayListOf<EstimateTime?>()
+        /**與主線程聯繫的Handler*/
+        @Suppress("DEPRECATION")
+        val mainHandler = Handler()
+        /**HandlerThread實例化 線程名稱為(handlerThread)*/
+        val mHandlerThread = HandlerThread("handlerThread")
+        /**線程任務Handler*/
+        private var workHandler : Handler
 
+        init {
+            //啟用HandlerThread
+            mHandlerThread.start()
+            //(須確保啟用HandlerThread後才可以執行mHandlerThread.looper的handleMessage定義)
+            //workHandler定義
+            workHandler = object : Handler(mHandlerThread.looper) {
+                /**線程任務訊息處理*/
+                override fun handleMessage(msg: Message) {
+                    //判斷線程任務選擇
+                    if(msg.what == 1) {
+                        /**站牌Index*/
+                        val stationIndex = msg.obj.toString().toInt()
+                        /**取出站牌資訊*/
+                        val station = stationList!!.SaveStationList[stationIndex]
+                        /**TDX Token*/
+                        val tdxToken = msg.data.getSerializable("tdxToken") as TdxToken
+
+                        /**到站時間表*/
+                        GlobalScope.launch(Dispatchers.Main) {
+                            //IO線程獲取到站時間資料原始檔
+                            /**到站時間原始檔*/
+                            val eT = withContext(Dispatchers.IO) {
+                                BusAPI.get(
+                                    tdxToken,
+                                    "EstimatedTimeOfArrival",
+                                    BusApiRequest(
+                                        station.RouteData.City,
+                                        null,
+                                        "RouteUID eq '${station.RouteData.RouteUID}' and StopUID eq '${station.StationUID}'"
+                                    )
+                                )
+                            }
+                            eT?.let {
+                                //序列化到站時間資料Json檔
+                                /**到站時間(Json檔)*/
+                                val mEstimateTime: ArrayList<EstimateTime> =
+                                    JsonFunctions.fromJson(
+                                        eT,
+                                        object :
+                                            TypeToken<ArrayList<EstimateTime>>() {}.type
+                                    )
+                                //取得最首項添入 到站時間表資料
+                                estimateTime[stationIndex] = mEstimateTime[0]
+                            } ?: run {
+                                //到站時間表資料為空
+                                estimateTime[stationIndex] = null
+                            }
+                            //回傳主線程執行UI更改任務
+                            mainHandler.post { notifyItemChanged(stationIndex) }
+                        }
+                    }
+                }
+            }
+        }
+
+        /**
+         * 更新各站牌即時到站時間資料 (多線程分散式查詢)
+         * @author KILNETA
+         * @since Beta_1.2.0
+         */
+        @DelicateCoroutinesApi
+        fun upData() {
+            GlobalScope.launch ( Dispatchers.Main ) {
+                //清除舊資料
+                estimateTime.clear()
+                //預建構各站牌資料欄位
+                for (i in stationList!!.SaveStationList.indices) {
+                    estimateTime.add(null)
+                }
+
+                /**TDX Token*/
+                val tdxToken = withContext(Dispatchers.IO) {
+                    BusAPI.getToken()
+                }
+
+                //確定Token成功取得
+                tdxToken?.let {
+                    //依序取得收藏群組中的各站牌到站時間資料
+                    for (i in stationList!!.SaveStationList.indices) {
+                        /**Bundle 用於傳遞tdxToken*/
+                        val bundle = Bundle()
+                        bundle.putSerializable("tdxToken", tdxToken)
+                        /**Message 用於傳遞部分參數*/
+                        val msg = Message.obtain()
+                        msg.what = 1        //線程任務模式
+                        msg.obj = i         //站牌Index
+                        msg.data = bundle   //Token
+                        //加入異線程執行序列
+                        workHandler.sendMessage(msg)
+                    }
+                }
+            }
+        }
+
+        /**
+         * 舊的各站牌到站時間更新 upData()
+         * 逐個站牌單線程線性查詢 (較耗時 且 更新緩慢)
+         */
+        /*
+        /**
+         * 更新各站牌即時到站時間資料 (單線程線性查詢)
+         * @author KILNETA
+         * @since Alpha_1.0
+         */
         @DelicateCoroutinesApi
         fun upData(){
             GlobalScope.launch ( Dispatchers.Main ) {
@@ -177,7 +294,7 @@ class BusCollectFragment : Fragment(R.layout.bus_route_fragment) {
                     }
                 }
             }
-        }
+        }*/
 
         /**
          * 重構 創建視圖持有者 (連結bus_station_item顯示物件)
@@ -232,7 +349,7 @@ class BusCollectFragment : Fragment(R.layout.bus_route_fragment) {
                 /**到站時間*/
                 val estimateTime = estimateTime[position]
                 //按公車統一條件設置到站時間
-                estimateTime?.let{BusFunctions.setEstimateTimeView(holder,estimateTime)}
+                estimateTime?.let{ BusFunctions.setEstimateTimeView(holder,estimateTime)}
             }
 
             //設置元素子控件的點擊功能

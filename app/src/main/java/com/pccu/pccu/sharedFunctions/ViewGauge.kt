@@ -16,6 +16,32 @@ import android.view.WindowManager
 object ViewGauge {
 
     /**
+     * Px 轉 Dp
+     * @param context [Context]
+     * @param px [Float] Px長度
+     *
+     * @author KILNETA
+     * @since Alpha_5.0
+     */
+    fun PX_DP(context:Context, px:Float) : Float {
+        val density = context.resources.displayMetrics.density
+        return px / density
+    }
+
+    /**
+     * Dp 轉 Px
+     * @param context [Context]
+     * @param dp [Float] Dp長度
+     *
+     * @author KILNETA
+     * @since Alpha_5.0
+     */
+    fun DP_PX(context:Context, dp:Float) : Float {
+        val density = context.resources.displayMetrics.density
+        return dp * density
+    }
+
+    /**
      * 取得螢幕寬度
      * @param activity [Activity] 活動
      * @return 螢幕寬度 : [Point]

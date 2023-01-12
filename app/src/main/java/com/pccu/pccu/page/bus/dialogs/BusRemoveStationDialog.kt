@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.bus_dialog.*
 import android.view.LayoutInflater
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.pccu.pccu.sharedFunctions.PopWindows
+import com.pccu.pccu.sharedFunctions.PToast
 import com.pccu.pccu.sharedFunctions.RV
 import com.pccu.pccu.sharedFunctions.ViewGauge
 import kotlinx.android.synthetic.main.bus_dialog_station_remove_item.view.*
@@ -21,7 +21,7 @@ import kotlinx.coroutines.*
 /**
  * 站牌收藏群組 刪除站牌
  * @param editGroupName [String] 要調整的收藏群組名
- * @param listener      [PopWindows.Listener] 回傳函式
+ * @param listener      [PToast.Listener] 回傳函式
  *
  * @author KILNETA
  * @since Alpha_5.0
@@ -30,7 +30,7 @@ class BusRemoveStationDialog (
     /**要調整的收藏群組名*/
     private val editGroupName : String,
     /**回傳函式*/
-    private val listener: PopWindows.Listener
+    private val listener: PToast.Listener
 ): DialogFragment(R.layout.bus_dialog) {
     /**所有收藏群組*/
     private var allCollectList : ArrayList<CollectGroup>? = null
@@ -151,7 +151,7 @@ class BusRemoveStationDialog (
                         )
                     }
                     //提示彈窗
-                    PopWindows.popLongHint(
+                    PToast.popLongHint(
                         requireActivity().baseContext,
                         "已刪除 $removeGroupNum 個站牌"
                     )

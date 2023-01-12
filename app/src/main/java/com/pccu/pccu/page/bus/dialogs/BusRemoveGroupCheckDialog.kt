@@ -6,20 +6,20 @@ import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
 import com.pccu.pccu.R
-import com.pccu.pccu.sharedFunctions.PopWindows
+import com.pccu.pccu.sharedFunctions.PToast
 import kotlinx.android.synthetic.main.bus_dialog.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 
 /**
  * 站牌收藏群組 刪除群組
- * @param listener      [PopWindows.Listener] 回傳函式
+ * @param listener      [PToast.Listener] 回傳函式
  *
  * @author KILNETA
  * @since Alpha_5.0
  */
 class BusRemoveGroupCheckDialog(
     /**回傳函式*/
-    private val listener : PopWindows.Listener
+    private val listener : PToast.Listener
 ) : DialogFragment(R.layout.bus_dialog) {
 
     /**

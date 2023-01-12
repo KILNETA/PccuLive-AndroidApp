@@ -17,8 +17,10 @@ import kotlinx.coroutines.*
 import kotlin.collections.ArrayList
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.viewpager2.widget.ViewPager2
 import com.pccu.pccu.about.AboutBottomSheet
 import kotlinx.android.synthetic.main.bus_route_page.aboutButton
 import kotlinx.android.synthetic.main.bus_route_page.noNetWork
@@ -63,7 +65,7 @@ class BusRoutePage : AppCompatActivity(R.layout.bus_route_page) {
                             0,
                         )
                     busRouteFragment.forEach {
-                        it.timerI = 18
+                        it.timerI = 19
                     }
                 }
             },
@@ -96,7 +98,7 @@ class BusRoutePage : AppCompatActivity(R.layout.bus_route_page) {
         //當 關於按鈕 被按下
         aboutButton.setOnClickListener{
             /**關於介面 底部彈窗*/
-            val aboutSheetFragment = com.pccu.pccu.about.AboutBottomSheet(content)
+            val aboutSheetFragment = AboutBottomSheet(content)
             aboutSheetFragment.show(supportFragmentManager, aboutSheetFragment.tag)
         }
     }
@@ -152,6 +154,9 @@ class BusRoutePage : AppCompatActivity(R.layout.bus_route_page) {
     override fun onCreate(savedInstanceState: Bundle?) {
         //建構主框架
         super.onCreate(savedInstanceState)
+        //關閉左右托拽時的Android預設動畫
+        bus_fragment.getChildAt(0)?.overScrollMode = View.OVER_SCROLL_NEVER
+
         //初始化網路接收器
         initInternetReceiver()
         //初始化關於按鈕
@@ -255,6 +260,34 @@ class BusRoutePage : AppCompatActivity(R.layout.bus_route_page) {
         fragmentManager, // 片段管理器
         lifecycle // 生命週期
     ){
+        init {
+            //設置頁面切換檢測器
+            bus_fragment.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                /**當頁面被滑動
+                 * (清除所有顯示的車牌PopupWindow、設當前用戶可見的頁面座標為-1，阻止移動中顯示車牌)
+                 */
+                override fun onPageScrollStateChanged(state: Int) {
+                    super.onPageScrollStateChanged(state)
+                    //被拖拽時
+                    if(state == ViewPager2.SCROLL_STATE_DRAGGING)
+                        fragments.forEach {
+                            it.adapter.clearBusPlateNumbPopWindow()
+                            it.fragmentPositionInView = -1
+                        }
+                }
+                /**當頁面被切換
+                 * (清除所有顯示的車牌PopupWindow、更新當前用戶可見的頁面座標)
+                 */
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    fragments.forEach {
+                        it.adapter.clearBusPlateNumbPopWindow()
+                        it.fragmentPositionInView = position
+                    }
+                }
+            })
+        }
+
         /**頁面數量
          * @return 頁面數量 : [Int]
          */
@@ -268,6 +301,8 @@ class BusRoutePage : AppCompatActivity(R.layout.bus_route_page) {
          * @return 頁面 : [Fragment]
          */
         override fun createFragment(position: Int): Fragment {
+            //指示該 Fragment 是第幾個位置
+            fragments[position].fragmentPosition = position
             return fragments[position]
         }
     }
