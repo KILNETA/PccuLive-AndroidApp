@@ -1,0 +1,179 @@
+body{
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    font-size:0px;
+    font-family: 微軟正黑體;
+    min-width: 1200px;
+}
+a{
+    text-decoration:none
+}
+div.Body{
+    margin: auto;
+    width: 1200px;
+    background-position: center;
+    display: flex;
+}
+div#Header{
+    background-color: rgb(197, 197, 197);
+}
+span#Titel{
+    font-weight: bold;
+    font-size:30px;
+    color: #ffc13b;
+}
+a#TitelView{
+    border-radius: 40px;
+    background-color: #FFFFFF;
+    padding: 5px 20px;
+}
+div#Introduction_1{
+    background: #ffc13b;
+    box-shadow:0 0 20px 20px #00000010 ;
+}
+div#Introduction_2{
+    background: #FFFFFF;
+}
+
+div#Introduction_3{
+    background: #F7F7F7;
+}
+div#Introduction_4{
+    background: #EAEAEA;
+}
+
+div#Menu{
+    font-size:18px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    margin-left: auto;
+    margin-right: 5%;
+    display: flex;
+    flex-direction: row;
+}
+a.MenuItem{
+    color: #FFFFFF;
+    font-size:16px;
+    margin: 0 20px;
+}
+div.Exhibit{
+    display: flex;
+    width: 500px;
+    height: 650px;
+    position: relative;
+}
+img.Exhibit{
+    -webkit-filter: drop-shadow(-5px 10px 10px #000000A0);
+}
+span#Welcome{
+    font-weight: bold;
+    color: #FFFFFF;
+    font-size:64px;
+    margin: 160px 0 0 auto;
+    letter-spacing: 3px;
+}
+span#IntroductionText{
+    font-weight: bold;
+    color: #FFFFFF;
+    font-size:24px;
+    margin: 30px 0 0 auto;
+    letter-spacing: 3px;
+}
+span#Download{
+    font-weight: bold;
+    font-size:24px;
+    color: #555;
+}
+a#Download{
+    height: 60px; 
+    padding: 0 40px; 
+    display: flex; 
+    flex-direction: row; 
+    align-items:center;
+    background-color: #FFFFFF;
+    border-radius: 40px;
+}
+span#FeaturesTitle{
+    margin: auto;
+    font-size: 48px;
+    font-weight: bold;
+}
+div.Features{
+    flex: 1;
+    padding: 41px;
+    border-radius: 20px;
+    border-width: 1px;
+    border-color: #E0E0E0;
+    border-style:solid;
+    margin: 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+}
+div.FeaturesTitle{
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    letter-spacing: 1px;
+}
+div.FeaturesContent{
+    padding-top: 15px;
+    font-weight: bold;
+    word-break: break-all;
+    font-size: 16px;
+    color: #777;
+    letter-spacing: .2px;
+}
+div.Image{
+    overflow: hidden;
+    padding-bottom: 16px;
+}
+img.Features{
+    filter: drop-shadow(#ffc13b 100px 0);
+	transform: translateX(-100px);
+}
+div.FunctionIntroductionBox{
+    flex: 1;
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center;
+}
+span.FunctionTitle{
+    font-weight: bold;
+    color: #202020;
+    font-size:48px;
+    letter-spacing: 3px;
+    word-break: break-all;
+}
+span.FunctionIntroductionText{
+    font-weight: bold;
+    color: #202020;
+    font-size:20px;
+    margin-top: 30px;
+    letter-spacing: 3px;
+    word-break: break-all;
+}
+span#InviteTitle{
+    font-weight: bold;
+    color: #FFFFFF;
+    font-size:48px;
+    margin: 0 auto;
+    letter-spacing: 3px;
+}
+span#InviteContent{
+    font-weight: bold;
+    color: #FFFFFF;
+    font-size:32px;
+    margin: 0 auto;
+    letter-spacing: 3px;
+    padding-top: 20px;
+}
+span#Copyright{
+    font-weight: bold;
+    color: #505050;
+    font-size:16px;
+    margin: auto auto 40px auto;
+    padding-top: 20px;
+}

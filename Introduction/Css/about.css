@@ -1,0 +1,151 @@
+body{
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    font-size:0px;
+    font-family: 微軟正黑體;
+    min-width: 1200px;
+}
+a{
+    text-decoration:none
+}
+div.Body{
+    margin: auto;
+    width: 1200px;
+    background-position: center;
+    display: flex;
+}
+div#Header{
+    background-color: rgb(197, 197, 197);
+}
+span#Titel{
+    font-weight: bold;
+    font-size:30px;
+    color: #ffc13b;
+}
+a#TitelView{
+    border-radius: 40px;
+    background-color: #FFFFFF;
+    padding: 5px 20px;
+}
+div#Introduction_1{
+    background: #ffc13b;
+    box-shadow:0 0 20px 20px #00000010 ;
+}
+div#Introduction_2{
+    background: #FFFFFF;
+}
+
+div#Introduction_3{
+    background: #F7F7F7;
+}
+div#Introduction_4{
+    background: #EAEAEA;
+}
+
+div#Menu{
+    font-size:18px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    margin-left: auto;
+    margin-right: 5%;
+    display: flex;
+    flex-direction: row;
+}
+a.MenuItem{
+    color: #FFFFFF;
+    font-size:16px;
+    margin: 0 20px;
+}
+div.Exhibit{
+    display: flex;
+    width: 400px;
+    height: 650px;
+    position: relative;
+}
+img.Exhibit{
+    -webkit-filter: drop-shadow(-5px 10px 10px #000000A0);
+}
+span.IntroductionTitle{
+    font-size:28px;
+    color: #333;
+    font-weight: bold;
+    padding-bottom: 20px;
+}
+span.IntroductionText{
+    font-size:20px;
+    color: #555;
+    font-weight: bold;
+}
+span#Download{
+    font-weight: bold;
+    font-size:24px;
+    color: #555;
+}
+a#Download{
+    height: 60px; 
+    padding: 0 40px; 
+    display: flex; 
+    flex-direction: row; 
+    align-items:center;
+    background-color: #FFFFFF;
+    border-radius: 40px;
+}
+span#DeveloperTitle{
+    margin: auto;
+    font-size: 36px;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+}
+div.Developer{
+    padding: 41px;
+    border-radius: 20px;
+    border-width: 1px;
+    border-color: #E0E0E0;
+    border-style:solid;
+    margin: 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+    background-color: #FFFFFF;
+}
+div.DeveloperTitle{
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    letter-spacing: 1px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+span#DeveloperName{
+    padding-top: 10px;
+    font-weight: bold;
+    word-break: break-all;
+    font-size: 22px;
+    color: #333;
+    letter-spacing: .2px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+span#DeveloperPosition{
+    padding: 15px 0;
+    font-weight: bold;
+    word-break: break-all;
+    font-size: 18px;
+    color: #777;
+    letter-spacing: .2px;
+}
+a.DeveloperLink{
+    padding-top: 5px;
+    font-weight: bold;
+    word-break: break-all;
+    font-size: 16px;
+    color: rgb(34, 130, 185);
+    letter-spacing: .2px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+span#Copyright{
+    font-weight: bold;
+    color: #505050;
+    font-size:16px;
+    margin: auto auto 40px auto;
+    padding-top: 20px;
+}
