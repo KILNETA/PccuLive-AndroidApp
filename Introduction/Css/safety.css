@@ -43,7 +43,6 @@ div#Introduction_3{
 div#Introduction_4{
     background: #EAEAEA;
 }
-
 div#Menu{
     font-size:18px;
     font-family: Arial, Helvetica, sans-serif;
@@ -75,74 +74,23 @@ span.IntroductionTitle{
 }
 span.IntroductionText{
     word-break: break-all;
-    font-size:20px;
+    font-size:22px;
     color: #555;
     font-weight: bold;
 }
-span#Download{
-    font-weight: bold;
-    font-size:24px;
-    color: #555;
-}
-a#Download{
-    height: 60px; 
-    padding: 0 40px; 
-    display: flex; 
-    flex-direction: row; 
-    align-items:center;
-    background-color: #FFFFFF;
-    border-radius: 40px;
-}
-span#DeveloperTitle{
-    margin: auto;
-    font-size: 36px;
-    font-weight: bold;
-    font-family: Arial, Helvetica, sans-serif;
-}
-div.Developer{
-    padding: 41px;
+a.linkButton{
+    border-color: #E0E0E0;
     border-radius: 20px;
     border-width: 1px;
-    border-color: #E0E0E0;
     border-style:solid;
-    margin: 0 20px;
-    display: flex;
-    flex-direction: column;
-    align-items:center;
-    background-color: #FFFFFF;
+    margin: 50px;
+    background-color: #FFF;
 }
-div.DeveloperTitle{
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-    letter-spacing: 1px;
-    font-family: Arial, Helvetica, sans-serif;
+a.linkButton:hover{
+    background-color: #EEE;
 }
-span#DeveloperName{
-    padding-top: 10px;
-    font-weight: bold;
-    word-break: break-all;
-    font-size: 22px;
-    color: #333;
-    letter-spacing: .2px;
-    font-family: Arial, Helvetica, sans-serif;
-}
-span#DeveloperPosition{
-    padding: 15px 0;
-    font-weight: bold;
-    word-break: break-all;
-    font-size: 18px;
-    color: #777;
-    letter-spacing: .2px;
-}
-a.DeveloperLink{
-    padding-top: 5px;
-    font-weight: bold;
-    word-break: break-all;
-    font-size: 16px;
-    color: rgb(34, 130, 185);
-    letter-spacing: .2px;
-    font-family: Arial, Helvetica, sans-serif;
+a.linkButton:active{
+    background-color: #DDD;
 }
 span#Copyright{
     font-weight: bold;
