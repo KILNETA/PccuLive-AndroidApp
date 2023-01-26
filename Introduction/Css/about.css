@@ -135,6 +135,10 @@ span#DeveloperPosition{
     color: #777;
     letter-spacing: .2px;
 }
+a.Link{
+    color: rgb(34, 130, 185);
+    letter-spacing: .2px;
+}
 a.DeveloperLink{
     padding-top: 5px;
     font-weight: bold;
