@@ -6,6 +6,9 @@ Programming language : Kotlin（Use Android Studio）
 language : Chinese（Traditional)  
   
 # Introduction  
+  
+[**GooglePlay免費下載**](https://play.google.com/store/apps/details?id=com.pccu.pccu&hl=zh_TW)  
+  
 APP主旨為作者與同學在文化大學就學時，基於就學經歷需求，所設計的一款應用程式，也期望這個APP可以幫助到在文化大學的各位；其主要服務內容目前包括：  
   
 　　１.即時氣象與預報  
@@ -40,12 +43,13 @@ APP主旨為作者與同學在文化大學就學時，基於就學經歷需求�
 * @KILNETA   
   
 # Links  
-文化生活通－官網：  
-https://kilneta.github.io/PccuLive-AndroidApp/Introduction/index.html  
-GitHub開源：  
-https://github.com/KILNETA/PccuLive-AndroidApp  
-反饋&BUG回報表單：  
-https://docs.google.com/forms/d/e/1FAIpQLScAOJnqIZOspwZCGv0hq2zSoucugq2kiMp3NzlIZ8npGfymgg/viewform  
+[**文化生活通－官網**](https://kilneta.github.io/PccuLive-AndroidApp/Introduction/index.html)  
+  
+[**GooglePlay免費下載**](https://play.google.com/store/apps/details?id=com.pccu.pccu&hl=zh_TW)  
+  
+[**GitHub開源**](https://github.com/KILNETA/PccuLive-AndroidApp)  
+  
+[**反饋&BUG回報表單**](https://docs.google.com/forms/d/e/1FAIpQLScAOJnqIZOspwZCGv0hq2zSoucugq2kiMp3NzlIZ8npGfymgg/viewform)  
   
 # DataSourse  
 TDX運輸資料流通服務平臺、文化大學校務網站、交通部中央氣象局API、行政院環境保護署
