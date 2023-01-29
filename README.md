@@ -48,3 +48,8 @@ https://docs.google.com/forms/d/e/1FAIpQLScAOJnqIZOspwZCGv0hq2zSoucugq2kiMp3NzlI
   
 # DataSourse  
 TDX運輸資料流通服務平臺、文化大學校務網站、交通部中央氣象局API、行政院環境保護署
+  
+# Display  
+| 首頁-即時氣象 | 即時影像 | 文大校園公告 | 市區公車動態-收藏頁面 | 市區公車動態-路線頁面 |
+| :----: | :----: | :----: | :----: | :----: |
+| ![](https://github.com/KILNETA/PccuLive-AndroidApp/blob/master/Introduction/Image/phone1.png) | ![](https://github.com/KILNETA/PccuLive-AndroidApp/blob/master/Introduction/Image/phone2.png) | ![](https://github.com/KILNETA/PccuLive-AndroidApp/blob/master/Introduction/Image/phone5.png)  | ![](https://github.com/KILNETA/PccuLive-AndroidApp/blob/master/Introduction/Image/phone6.png)  | ![](https://github.com/KILNETA/PccuLive-AndroidApp/blob/master/Introduction/Image/phone7.png)  |
