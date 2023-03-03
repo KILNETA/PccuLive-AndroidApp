@@ -123,17 +123,22 @@ object BusAPI{
      */
     fun get(token:TdxToken, activity:String , request :BusApiRequest): ResponseBody? {
         //回傳 路線站點表
-        return HttpRetrofit.createJson(
-            HttpRetrofit.ApiService::class.java,                        //Api資料節點接口
-            baseUrl                                                    //根網域
-        ).getTdxBus(
-            "${token.token_type} ${token.access_token}",    //API許可證
-            activity,                                                   //功能
-            request.city,                                               //縣市
-            if(request.routeName==null) "" else "/${request.routeName}",//車名(中文)
-            request.filter,
-            "JSON",                                              //返回檔案格式
-        ).execute().body()
+        return try {
+            HttpRetrofit.createJson(
+                HttpRetrofit.ApiService::class.java,                        //Api資料節點接口
+                baseUrl                                                    //根網域
+            ).getTdxBus(
+                "${token.token_type} ${token.access_token}",    //API許可證
+                activity,                                                   //功能
+                request.city,                                               //縣市
+                if(request.routeName==null) "" else "/${request.routeName}",//車名(中文)
+                request.filter,
+                "JSON",                                              //返回檔案格式
+            ).execute().body()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 }
 

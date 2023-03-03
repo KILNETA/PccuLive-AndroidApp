@@ -70,8 +70,8 @@
     <LinearLayout
         android:id="@+id/loading"
         android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:orientation="horizontal"
+        android:layout_height="0dp"
+        android:orientation="vertical"
         android:gravity="center">
         <ProgressBar
             android:layout_margin="10dp"
@@ -79,6 +79,12 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:text="資 料 加 載 中"/>
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

@@ -1,5 +1,6 @@
 package com.pccu.pccu.internet
 
+import android.util.Log
 import kotlinx.coroutines.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -27,7 +28,12 @@ object EpaAPI{
     @DelicateCoroutinesApi
     fun get():String? {
         //空污數據資料
-        return HttpRetrofit.createHTML(epaUrl, "utf-8")
+        return try {
+            HttpRetrofit.createHTML(epaUrl, "utf-8")
+        } catch (e: Exception) {
+            Log.e("okHttp", e.toString())
+            null
+        }
     }
 }
 

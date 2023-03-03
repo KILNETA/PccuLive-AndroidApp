@@ -1246,15 +1246,22 @@ class BusRouteFragment(
      * @author KILNETA
      * @since Alpha_5.0
      */
-    data class StationData(
+    private data class StationData(
         val Station: Stop,
         var EstimateTime : EstimateTime? = null,
         val innerBuses: ArrayList<BusA2> = arrayListOf(),
     )
 
     /**
+     * 車輛顯示資料 -數據結構
+     * @param PopWindow     [PopupWindow] 站牌資料
+     * @param Station       [Int] 站點順序位置
+     * @param A2EventType   [Int] 進站離站 - ( 0:離站 1:進站 )
+     *
+     * @author KILNETA
+     * @since Beta_1.2.0
      */
-    data class PlateNumbPopWindowData(
+    private data class PlateNumbPopWindowData(
         var PopWindow: PopupWindow? = null,
         var Station : Int,
         val A2EventType: Int,
@@ -1273,7 +1280,7 @@ class BusRouteFragment(
      * @author KILNETA
      * @since Alpha_5.0
      */
-    data class BufferZoneData(
+    private data class BufferZoneData(
         val isSame : Boolean,
         val start_StationID : String,
         val start_StationName : String,

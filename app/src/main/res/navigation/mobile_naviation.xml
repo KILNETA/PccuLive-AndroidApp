@@ -12,9 +12,9 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_announcement"
-        android:name="com.pccu.pccu.page.AnnouncementPage"
-        tools:layout="@layout/announcement_page" >
+        android:id="@+id/navigation_campus_affair"
+        android:name="com.pccu.pccu.page.CampusAffair"
+        tools:layout="@layout/campus_affair_page" >
     </fragment>
 
     <fragment

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/noNetWork"
+        android:layout_weight="0"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:background="#FF4141"
+        android:textColor="#FFFFFF"
+        android:text="無法連線上網"
+        android:textSize="14sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="59dp"
+        android:background="@color/PCCU_yellow"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/backButton"
+            app:backgroundTint="#00FFFFFF"
+            app:iconTint="#90000000"
+            android:stateListAnimator="@null"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            app:cornerRadius="90dp"
+            android:padding="8dp"
+            app:icon="@drawable/back"
+            app:iconGravity="start"
+            app:iconSize="30dp"
+            android:layout_marginLeft="3dp"
+            />
+
+        <TextView
+            android:id="@+id/CollegeDepartmentName"
+            android:layout_width="wrap_content"
+            android:padding="5dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:textColor="#90000000"
+            android:text="體育運動健康學院 - 技擊國術系"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/aboutButton"
+            app:backgroundTint="#00FFFFFF"
+            android:stateListAnimator="@null"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="3dp"
+            android:insetTop="3dp"
+            android:insetBottom="3dp"
+            android:padding="7dp"
+            app:cornerRadius="90dp"
+            app:icon="@drawable/about"
+            app:iconGravity="start"
+            app:iconSize="30dp"
+            app:iconTint="#90000000"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="7dp"
+        android:paddingBottom="5dp"
+        android:background="@color/PCCU_yellow"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/evaluationCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#90000000"
+            android:textSize="16sp"
+            android:text="－"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#90000000"
+            android:textSize="16sp"
+            android:text=" 筆評價："/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+        <ProgressBar
+            android:layout_margin="10dp"
+            style="@style/Widget.MaterialComponents.ChipGroup"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:text="資 料 加 載 中"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/noDataView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:text="尚 無 任 何 評 價"/>
+    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/courseEvaluateList"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:overScrollMode="never"
+        android:scrollbars="none" />
+</LinearLayout>

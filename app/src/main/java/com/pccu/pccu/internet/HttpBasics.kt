@@ -1,7 +1,5 @@
 package com.pccu.pccu.internet
 
-import android.content.Context
-import android.net.ConnectivityManager
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -12,9 +10,6 @@ import java.io.InputStream
 import okhttp3.OkHttpClient
 import retrofit2.http.*
 import retrofit2.http.Headers
-import android.content.Intent
-import android.content.BroadcastReceiver
-
 
 /**
  * 更好的網路數據解析 "object"
@@ -145,6 +140,8 @@ object HttpRetrofit{
         @GET("public/weather.json") //取得Api資訊的子節點
         fun getWeather(): Call<List<WeatherData>> //得到天氣資料
 
+        /***************************** Google行事曆 *****************************/
+
         /**取得Google_Calendar_Api資訊的子節點
          * @param key       [String] 密鑰
          * @param timeMax   [String] 結束時間
@@ -161,6 +158,8 @@ object HttpRetrofit{
             @Query("timeMin") timeMin:String
         ): Call<CalendarSource>
 
+        /***************************** 中央氣象局 *****************************/
+
         /**
          * 取得CWB_Api資訊的子節點
          * @param key   [String] 密鑰
@@ -174,6 +173,8 @@ object HttpRetrofit{
         fun getCWB(
             @Query("Authorization") key:String,
         ): Call<CwbWeatherSource>
+
+        /***************************** TDX_BUS *****************************/
 
         /**
          * 取得TDX_token
@@ -202,7 +203,7 @@ object HttpRetrofit{
          * @param routeName     [String] 路線名稱
          * @param filter        [String] 篩選條件
          * @param format        [String] 檔案格式
-         * @return API原始文檔 : [CwbWeatherSource]
+         * @return API原始文檔 : [ResponseBody]
          *
          * @author KILNETA
          * @since  Alpha_4.0
@@ -216,62 +217,76 @@ object HttpRetrofit{
             @Query("\$filter") filter:String?,
             @Query("\$format") format:String,
         ): Call<ResponseBody>
-    }
-}
 
-class NetWorkChangeReceiver(
-    val respond:RespondNetWork,
-    context:Context
-    ) : BroadcastReceiver() {
-    var isConnect = false
+        /***************************** 課程評價 *****************************/
 
-    init{
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val network =
-            connectivityManager.activeNetwork
-
-        if (network == null) {
-            isConnect = false
-            respond.interruptInternet()
-        } else {
-            isConnect = true
-        }
-    }
-
-    override fun onReceive(context: Context, intent: Intent)  {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val network =
-            connectivityManager.activeNetwork
-
-        if (network == null && isConnect) {
-            respond.interruptInternet()
-            isConnect = false
-        } else if ( network != null && !isConnect ) {
-            respond.connectedInternet()
-            isConnect = true
-        }
-    }
-
-    /**
-     * ItemTouchHelperViewHolder (項目觸控助手視圖支架)
-     * @author KILNETA
-     * @since Alpha_5.0
-     */
-    interface RespondNetWork {
-        /**
-         * 中斷網路
+        /** 課程評鑑API
+         * @param keyword     [String] 關鍵字
+         * @return API原始文檔 : [ResponseBody]
+         *
          * @author KILNETA
-         * @since Alpha_5.0
+         * @since  Alpha_4.0
          */
-        fun interruptInternet()
-        /**
-         * 連接到網路
-         * @author KILNETA
-         * @since Alpha_5.0
-         */
-        fun connectedInternet()
-    }
+        @GET("api/courses/search?")
+        fun getCourseEvaluation(
+            @Query("keyword") keyword:String
+        ): Call<ArrayList<CourseIntroduction>>
 
+        /** 課程評鑑API 學院
+         * @return API原始文檔 : [ResponseBody]
+         *
+         * @author KILNETA
+         * @since  Alpha_4.0
+         */
+        @GET("/api/colleges")
+        fun getCourseEvaluationColleges(
+        ): Call<ArrayList<String>>
+
+        /** 課程評鑑API 依系組
+         * @param college     [String] 學院
+         * @return API原始文檔 : [ResponseBody]
+         *
+         * @author KILNETA
+         * @since  Alpha_4.0
+         */
+        @GET("/api/departments?")
+        fun getCourseEvaluationDepartments(
+            @Query("college") college:String,
+        ): Call<ArrayList<Department>>
+
+        /** 課程評鑑API 評價數
+         * @return API原始文檔 : [ResponseBody]
+         *
+         * @author KILNETA
+         * @since  Alpha_4.0
+         */
+        @GET("/api/ratings/count")
+        fun getCourseEvaluationCount(
+        ): Call<EvaluationCount>
+
+        /** 課程評鑑API 評價數
+         * @return API原始文檔 : [ResponseBody]
+         *
+         * @author KILNETA
+         * @since  Alpha_4.0
+         */
+        @GET("api/courses?")
+        fun getCourseEvaluationIntroduction(
+            @Query("college") college:String,
+            @Query("department") department:String
+        ): Call<ArrayList<CourseIntroduction>>
+
+        /** 課程評鑑API 評價數
+         * @return API原始文檔 : [ResponseBody]
+         *
+         * @author KILNETA
+         * @since  Alpha_4.0
+         */
+        @GET("api/ratings?")
+        fun getCourseEvaluationEvaluates(
+            @Query("department") department:String,
+            @Query("course") course:String,
+            @Query("teacher") teacher:String
+        ): Call<ArrayList<CourseEvaluation>>
+    }
 }

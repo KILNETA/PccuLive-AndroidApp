@@ -21,7 +21,7 @@ android {
         applicationId "com.pccu.pccu"
         minSdk 24
         targetSdk 32
-        versionCode 2
+        versionCode 3
         versionName "Beta_1.2.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

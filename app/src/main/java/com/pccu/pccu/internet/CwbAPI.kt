@@ -28,12 +28,12 @@ object CwbAPI{
 
         //回傳取得的CWB 36小時天氣預報資料
         return  try {
-            HttpRetrofit.createJson(HttpRetrofit.ApiService::class.java,url).getCWB(
-                key
-            ).execute().body()
+            HttpRetrofit.createJson(HttpRetrofit.ApiService::class.java,url)
+                .getCWB(
+                    key
+                ).execute().body()
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.e("","$e")
             null
         }
     }

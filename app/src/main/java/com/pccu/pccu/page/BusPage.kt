@@ -18,7 +18,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.pccu.pccu.internet.*
 import com.pccu.pccu.page.bus.BusCollectFragment
 import com.pccu.pccu.page.bus.dialogs.*
-import com.pccu.pccu.page.bus.search.SearchActivity
+import com.pccu.pccu.page.bus.search.BusSearchActivity
 import com.pccu.pccu.sharedFunctions.Object_SharedPreferences
 import com.pccu.pccu.sharedFunctions.PToast
 import com.google.android.material.tabs.TabLayoutMediator
@@ -286,7 +286,7 @@ class BusPage : Fragment(R.layout.bus_page){
             //轉換當前的頁面 至 搜索頁面
             /**新介面Activity目標*/
             val intentObj = Intent()
-            intentObj.setClass(requireContext(), SearchActivity::class.java )
+            intentObj.setClass(requireContext(), BusSearchActivity::class.java )
             startActivity(intentObj)
         }
     }
@@ -478,6 +478,7 @@ class BusPage : Fragment(R.layout.bus_page){
          * @param position [Int] 頁面數量
          * @return 頁面 : [Fragment]
          */
+        @OptIn(DelicateCoroutinesApi::class)
         override fun createFragment(position: Int): Fragment {
             /**傳入介面的資料包*/
             val args = Bundle()

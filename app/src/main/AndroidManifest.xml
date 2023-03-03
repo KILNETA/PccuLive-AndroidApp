@@ -42,12 +42,27 @@
             android:screenOrientation="portrait"/>
         <!-- 新分頁-即時氣象-Activity -->
         <activity
-            android:name=".page.bus.search.SearchActivity"
+            android:name=".page.bus.search.BusSearchActivity"
             android:exported="true"
             android:screenOrientation="portrait"/>
         <!-- 新分頁-即時氣象-Activity -->
         <activity
             android:name=".page.bus.BusRoutePage"
+            android:exported="true"
+            android:screenOrientation="portrait"/>
+        <!-- 新分頁- -->
+        <activity
+            android:name=".page.courseEvaluate.CourseEvaluatePage"
+            android:exported="true"
+            android:screenOrientation="portrait"/>
+        <!-- 新分頁- -->
+        <activity
+            android:name=".page.courseEvaluate.CourseEvaluateDepartmentCoursesPage"
+            android:exported="true"
+            android:screenOrientation="portrait"/>
+        <!-- 新分頁- -->
+        <activity
+            android:name=".page.courseEvaluate.search.CourseEvaluateSearchActivity"
             android:exported="true"
             android:screenOrientation="portrait"/>
 

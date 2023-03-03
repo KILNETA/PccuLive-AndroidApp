@@ -58,12 +58,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center">
-    <ProgressBar
-        android:layout_margin="10dp"
-        style="@style/Widget.MaterialComponents.ChipGroup"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        />
+        <ProgressBar
+            android:layout_margin="10dp"
+            style="@style/Widget.MaterialComponents.ChipGroup"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            />
     </LinearLayout>
 
 

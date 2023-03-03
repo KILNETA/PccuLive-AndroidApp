@@ -6,9 +6,9 @@
         android:title="@string/menu_home" />
 
     <item
-        android:id="@+id/navigation_announcement"
+        android:id="@+id/navigation_campus_affair"
         android:icon="@drawable/menu_announcement"
-        android:title="@string/menu_announcement"/>
+        android:title="@string/menu_campus_affair"/>
 
     <item
         android:id="@+id/navigation_bus"

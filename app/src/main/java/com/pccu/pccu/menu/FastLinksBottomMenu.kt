@@ -52,50 +52,15 @@ class FastLinksBottomMenu : BottomSheetDialogFragment() {
 
         /**快速連結Url*/
         val url:List<String> = listOf(
-            "https://icas.pccu.edu.tw/cfp/#my",
-            "https://ecampus.pccu.edu.tw/ecampus/default.aspx?usertype=student",
-            "https://www.pccu.edu.tw/",
-            "https://mycourse.pccu.edu.tw/",
-            "https://www.pccu.edu.tw/fever/fever.html",
             "https://docs.google.com/forms/d/e/1FAIpQLScAOJnqIZOspwZCGv0hq2zSoucugq2kiMp3NzlIZ8npGfymgg/viewform"
         )
         /**Uri*/
         var uri: Uri
 
-        /**課 輔 系 統*/
-        view.findViewById<LinearLayout>(R.id.FastLink_Course_assistance_system)
-            .setOnClickListener{
-                uri = Uri.parse(url[0])
-                startActivity(Intent(Intent.ACTION_VIEW, uri))
-            }
-        /**學 生 專 區*/
-        view.findViewById<LinearLayout>(R.id.FastLink_Student_area)
-            .setOnClickListener{
-                uri = Uri.parse(url[1])
-                startActivity(Intent(Intent.ACTION_VIEW, uri))
-            }
-        /**文 化 校 網*/
-        view.findViewById<LinearLayout>(R.id.FastLink_Pccu_page)
-            .setOnClickListener{
-                uri = Uri.parse(url[2])
-                startActivity(Intent(Intent.ACTION_VIEW, uri))
-            }
-        /**選 課 專 區*/
-        view.findViewById<LinearLayout>(R.id.FastLink_Course_selection)
-            .setOnClickListener{
-                uri = Uri.parse(url[3])
-                startActivity(Intent(Intent.ACTION_VIEW, uri))
-            }
-        /**防 疫 專 區*/
-        view.findViewById<LinearLayout>(R.id.FastLink_Epidemic_Prevention_Zone)
-            .setOnClickListener{
-                uri = Uri.parse(url[4])
-                startActivity(Intent(Intent.ACTION_VIEW, uri))
-            }
         /**反 饋 問 卷*/
         view.findViewById<LinearLayout>(R.id.FastLink_Feedback_Questionnaire)
             .setOnClickListener{
-                uri = Uri.parse(url[5])
+                uri = Uri.parse(url[0])
                 startActivity(Intent(Intent.ACTION_VIEW, uri))
             }
     }

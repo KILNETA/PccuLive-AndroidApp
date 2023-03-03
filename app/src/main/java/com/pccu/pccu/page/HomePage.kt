@@ -446,7 +446,7 @@ class HomePage : Fragment(R.layout.home_page){
                     WeatherAPI().get()
                 }
                 //更新氣溫數據
-                resetData(weather!!)
+                weather?.let { resetData(it) }
             }
         }
 

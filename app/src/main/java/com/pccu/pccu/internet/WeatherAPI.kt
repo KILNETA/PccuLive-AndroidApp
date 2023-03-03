@@ -1,5 +1,6 @@
 package com.pccu.pccu.internet
 
+import android.util.Log
 import java.io.Serializable
 
 /**
@@ -19,8 +20,14 @@ class WeatherAPI{
      */
     fun get(): List<WeatherData>? {
         val url = "https://api.pccu.edu.tw/" //API 主網域
-        return HttpRetrofit.createJson(HttpRetrofit.ApiService::class.java,url).getWeather()
-            .execute().body()
+        return try{
+            HttpRetrofit.createJson(HttpRetrofit.ApiService::class.java,url)
+                .getWeather()
+                .execute().body()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 }
 
