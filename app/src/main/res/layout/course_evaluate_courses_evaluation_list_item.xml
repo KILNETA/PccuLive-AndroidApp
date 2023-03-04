@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="2019-05-31 11:25:41"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
     </LinearLayout>
     <LinearLayout
         android:paddingBottom="5dp"
@@ -47,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="推爆 / 👍👍👍"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
     </LinearLayout>
     <LinearLayout
         android:paddingBottom="5dp"
@@ -67,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="107下"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
     </LinearLayout>
     <LinearLayout
         android:paddingBottom="5dp"
@@ -87,7 +87,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="會簽到，上上課講義（pdf）\n可以玩手機👍🏻"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
     </LinearLayout>
     <LinearLayout
         android:paddingBottom="5dp"
@@ -107,7 +107,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="有作業、期中考、期末成品"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
     </LinearLayout>
     <LinearLayout
         android:paddingBottom="5dp"
@@ -127,7 +127,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="每次上課都有作業\n沒有報告"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -146,6 +146,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="用心體會"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
     </LinearLayout>
 </LinearLayout>

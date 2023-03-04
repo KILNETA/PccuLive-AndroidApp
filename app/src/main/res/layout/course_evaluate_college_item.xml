@@ -17,18 +17,18 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
+            android:paddingLeft="25dp"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textColor="#B0000000"
             android:text="理工學院"/>
 
         <ImageView
             android:id="@+id/collapseButton"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginRight="25dp"
             android:src="@drawable/expand"
             android:tint="#444" />
     </LinearLayout>

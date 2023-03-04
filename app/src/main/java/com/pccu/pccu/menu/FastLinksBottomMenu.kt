@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.content.Intent
 import android.net.Uri
 import android.widget.LinearLayout
+import androidx.fragment.app.DialogFragment
+import com.pccu.pccu.about.AboutUsDialog
 
 /**
  *  首頁快速連結彈窗介面 建構類 : "BottomSheetDialogFragment"
@@ -57,11 +59,27 @@ class FastLinksBottomMenu : BottomSheetDialogFragment() {
         /**Uri*/
         var uri: Uri
 
+        /**關 於 我 們*/
+        view.findViewById<LinearLayout>(R.id.aboutUs)
+            .setOnClickListener{
+                val aboutUs = AboutUsDialog()
+                aboutUs.setStyle(
+                    DialogFragment.STYLE_NO_TITLE,
+                    android.R.style.Theme_Holo_Light_Dialog_MinWidth
+                )
+                //顯示介面
+                aboutUs.show(parentFragmentManager,"aboutUs")
+                //點選後徹底關閉這個彈窗頁面
+                super.onDismiss(dialog!!)
+            }
+
         /**反 饋 問 卷*/
         view.findViewById<LinearLayout>(R.id.FastLink_Feedback_Questionnaire)
             .setOnClickListener{
                 uri = Uri.parse(url[0])
                 startActivity(Intent(Intent.ACTION_VIEW, uri))
+                //點選後徹底關閉這個彈窗頁面
+                super.onDismiss(dialog!!)
             }
     }
 }

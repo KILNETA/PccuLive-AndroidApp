@@ -72,7 +72,7 @@ class CourseEvaluateDepartmentCoursesPage : AppCompatActivity(
                             ViewGroup.LayoutParams.WRAP_CONTENT,
                         )
                     if(init){
-                        adapter!!.closeThread()
+                        adapter?.closeThread()
                     }
                 }
                 /**網路連接*/
@@ -83,7 +83,7 @@ class CourseEvaluateDepartmentCoursesPage : AppCompatActivity(
                             0,
                         )
                     if(init){
-                        adapter!!.callThread()
+                        adapter?.callThread()
                     }
                 }
             },

@@ -13,9 +13,10 @@
         android:layout_weight="1"
         android:layout_height="wrap_content"
         android:paddingLeft="45dp"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textColor="#B0000000"
-        android:text="資訊工程學系"/>
+        android:text="資訊工程學系"
+        android:textStyle="bold"/>
 
     <TextView
 
@@ -27,7 +28,8 @@
         android:layout_marginLeft="25dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textColor="#FFF"
-        android:text="8"/>
+        android:text="8"
+        android:textStyle="bold"/>
 </LinearLayout>
