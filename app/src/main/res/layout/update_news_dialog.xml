@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingTop="20dp"
+    android:paddingBottom="20dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center">
+
+    <ScrollView
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:overScrollMode="never"
+        android:fillViewport="true">
+        <LinearLayout
+            android:id="@+id/listView"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:paddingTop="5dp"
+                android:paddingLeft="15dp"
+                android:paddingBottom="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textColor="#B0000000"
+                android:text="最新公告"
+                />
+            <TextView
+                android:paddingBottom="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                android:textSize="16sp"
+                android:textColor="#B0000000"
+                android:text="歡迎您使用【文化生活通】！
+                \n當前版本：Beta_1.3.0
+                \n
+                \n更新內容：
+                \n。新增
+                \n　１.新增【文化大學課程評價系統】
+                \n　２.新增【公告】
+                \n　３.新增【關於我們】
+                \n。修改
+                \n　１.修改原【公告】介面為【校務】，以及介面佈局和功能
+                \n　２.修改首頁【快速連結】功能至【校務】頁面
+                \n　３.修復部分API和網絡接收錯誤
+                \n　４.修復時間、電量懸浮條顯示問題
+                \n
+                \n感謝您的使用與支持，如果這個APP對您有幫助，不彷幫我們在PlayStore留個好評吧。
+                "/>
+            <TextView
+                android:id="@+id/PlayStore_evaluate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="25dp"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:textColor="#1DC05E"
+                android:gravity="center"
+                android:text="點我填寫評價 - PlayStore"/>
+            <TextView
+                android:paddingBottom="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                android:textSize="16sp"
+                android:textColor="#B0000000"
+                android:gravity="center"
+                android:text="點選【我知道了】關閉公告通知"/>
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/close_Button"
+        android:layout_marginTop="5dp"
+        app:backgroundTint="#DDD"
+        android:stateListAnimator="@null"
+        android:layout_width="112dp"
+        android:insetTop="3dp"
+        android:insetRight="3dp"
+        android:insetBottom="3dp"
+        android:insetLeft="3dp"
+        android:layout_height="wrap_content"
+        android:padding="7dp"
+        android:text="我知道了"
+        android:textColor="#333"
+        android:textSize="14sp"
+        />
+
+</LinearLayout>

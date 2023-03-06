@@ -21,8 +21,8 @@ android {
         applicationId "com.pccu.pccu"
         minSdk 24
         targetSdk 32
-        versionCode 3
-        versionName "Beta_1.2.0"
+        versionCode 4
+        versionName "Beta_1.3.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "API_KEY", API_KEY)
@@ -76,6 +76,10 @@ android {
 }
 
 dependencies {
+
+    implementation 'com.google.android.play:core:1.10.3'
+    implementation 'com.google.android.play:core-ktx:1.8.1'
+
 
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10'
     implementation 'androidx.core:core-ktx:1.8.0'

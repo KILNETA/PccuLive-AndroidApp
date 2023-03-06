@@ -18,7 +18,8 @@
         <activity
             android:name=".appStart.MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.PCCU.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,42 +30,50 @@
         <activity
             android:name=".page.liveImage.LiveImagePage"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.PCCU.NoActionBar"/>
         <!-- 新分頁-公告內文-Activity -->
         <activity
             android:name=".page.announcement.AnnouncementContentPage"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.PCCU.NoActionBar"/>
         <!-- 新分頁-即時氣象-Activity -->
         <activity
             android:name=".appStart.CwbMainActivity"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.PCCU.NoActionBar"/>
         <!-- 新分頁-即時氣象-Activity -->
         <activity
             android:name=".page.bus.search.BusSearchActivity"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.PCCU.NoActionBar"/>
         <!-- 新分頁-即時氣象-Activity -->
         <activity
             android:name=".page.bus.BusRoutePage"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.PCCU.NoActionBar"/>
         <!-- 新分頁- -->
         <activity
             android:name=".page.courseEvaluate.CourseEvaluatePage"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.PCCU.NoActionBar"/>
         <!-- 新分頁- -->
         <activity
             android:name=".page.courseEvaluate.CourseEvaluateDepartmentCoursesPage"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.PCCU.NoActionBar"/>
         <!-- 新分頁- -->
         <activity
             android:name=".page.courseEvaluate.search.CourseEvaluateSearchActivity"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.PCCU.NoActionBar"/>
 
     </application>
 

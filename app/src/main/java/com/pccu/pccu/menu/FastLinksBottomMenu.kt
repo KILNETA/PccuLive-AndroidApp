@@ -11,6 +11,7 @@ import android.net.Uri
 import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
 import com.pccu.pccu.about.AboutUsDialog
+import com.pccu.pccu.about.UpdateNewsDialog
 
 /**
  *  首頁快速連結彈窗介面 建構類 : "BottomSheetDialogFragment"
@@ -58,6 +59,18 @@ class FastLinksBottomMenu : BottomSheetDialogFragment() {
         )
         /**Uri*/
         var uri: Uri
+
+        /**最 新 公 告*/
+        view.findViewById<LinearLayout>(R.id.updateNews)
+            .setOnClickListener{
+                val updateNews = UpdateNewsDialog()
+                updateNews.setStyle(
+                    DialogFragment.STYLE_NO_TITLE,
+                    android.R.style.Theme_Holo_Light_Dialog_MinWidth
+                )
+                //顯示介面
+                updateNews.show(parentFragmentManager,"UpdateNewsDialog")
+            }
 
         /**關 於 我 們*/
         view.findViewById<LinearLayout>(R.id.aboutUs)

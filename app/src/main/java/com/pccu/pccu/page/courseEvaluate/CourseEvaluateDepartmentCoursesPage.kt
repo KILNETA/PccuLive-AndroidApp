@@ -2,9 +2,6 @@ package com.pccu.pccu.page.courseEvaluate
 
 import android.content.IntentFilter
 import android.os.Bundle
-import android.os.Handler
-import android.os.HandlerThread
-import android.os.Message
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -115,7 +112,6 @@ class CourseEvaluateDepartmentCoursesPage : AppCompatActivity(
             "聲明：",
             "　　本程式之課程評價系統僅是提供便捷閱讀，無法保證評價之正確性，參考時請謹慎評估；" +
                     "本程式亦無編輯課程評價數據之權限，數據由\"中國文化大學選課評價系統\"提供與管理。",
-            "　　(長按評價項可使用瀏覽器開啟)",
             "",
             "　　評價條目、內文若出現部分無法顯示，或是內容出現問題，可聯繫程式負責方協助修正。",
             "",
