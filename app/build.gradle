@@ -21,8 +21,8 @@ android {
         applicationId "com.pccu.pccu"
         minSdk 24
         targetSdk 32
-        versionCode 4
-        versionName "Beta_1.3.0"
+        versionCode 5
+        versionName "Beta_1.3.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "API_KEY", API_KEY)

@@ -41,18 +41,11 @@
                 android:textSize="16sp"
                 android:textColor="#B0000000"
                 android:text="歡迎您使用【文化生活通】！
-                \n當前版本：Beta_1.3.0
+                \n當前版本：Beta_1.3.1
                 \n
                 \n更新內容：
-                \n。新增
-                \n　１.新增【文化大學課程評價系統】
-                \n　２.新增【公告】
-                \n　３.新增【關於我們】
                 \n。修改
-                \n　１.修改原【公告】介面為【校務】，以及介面佈局和功能
-                \n　２.修改首頁【快速連結】功能至【校務】頁面
-                \n　３.修復部分API和網絡接收錯誤
-                \n　４.修復時間、電量懸浮條顯示問題
+                \n　１.深色模式所導致顯示錯誤問題
                 \n
                 \n感謝您的使用與支持，如果這個APP對您有幫助，不彷幫我們在PlayStore留個好評吧。
                 "/>
@@ -94,6 +87,7 @@
         android:text="我知道了"
         android:textColor="#333"
         android:textSize="14sp"
+        android:gravity="center"
         />
 
 </LinearLayout>
