@@ -15,14 +15,14 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.pccu.pccu"
         minSdk 24
-        targetSdk 32
-        versionCode 5
-        versionName "Beta_1.3.1"
+        targetSdk 33
+        versionCode 10
+        versionName "Beta_1.3.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "API_KEY", API_KEY)

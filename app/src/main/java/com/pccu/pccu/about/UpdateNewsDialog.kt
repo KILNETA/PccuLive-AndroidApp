@@ -79,6 +79,6 @@ class UpdateNewsDialog : DialogFragment(R.layout.update_news_dialog) {
     override fun dismiss() {
         super.dismiss()
         //確認公告已被已讀
-        Object_SharedPreferences.save("News","update","true_1.3.1",requireContext())
+        Object_SharedPreferences.save("News","update","true_1.3.2",requireContext())
     }
 }

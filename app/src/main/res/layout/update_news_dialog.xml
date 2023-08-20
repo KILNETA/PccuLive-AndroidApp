@@ -41,11 +41,11 @@
                 android:textSize="16sp"
                 android:textColor="#B0000000"
                 android:text="歡迎您使用【文化生活通】！
-                \n當前版本：Beta_1.3.1
+                \n當前版本：Beta_1.3.2
                 \n
                 \n更新內容：
                 \n。修改
-                \n　１.深色模式所導致顯示錯誤問題
+                \n　１.因應Android API級別政策，調整最高兼容至Android 13 (API 級別 33)等級，對其餘功能不構成影響。
                 \n
                 \n感謝您的使用與支持，如果這個APP對您有幫助，不彷幫我們在PlayStore留個好評吧。
                 "/>
