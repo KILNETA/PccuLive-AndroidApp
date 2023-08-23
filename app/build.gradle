@@ -21,7 +21,7 @@ android {
         applicationId "com.pccu.pccu"
         minSdk 24
         targetSdk 33
-        versionCode 10
+        versionCode 14
         versionName "Beta_1.3.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -29,6 +29,7 @@ android {
         buildConfigField("String", "CWB_API_KEY", CWB_API_KEY)
         buildConfigField("String", "TDX_Id_API_KEY", TDX_Id_API_KEY)
         buildConfigField("String", "TDX_Secret_API_KEY", TDX_Secret_API_KEY)
+        buildConfigField("String", "MOENV_KEY", MOENV_KEY)
     }
 
     lint {

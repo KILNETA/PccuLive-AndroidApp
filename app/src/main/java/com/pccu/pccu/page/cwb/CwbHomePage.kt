@@ -24,6 +24,7 @@ import com.pccu.pccu.sharedFunctions.Object_SharedPreferences
 import com.pccu.pccu.sharedFunctions.OffsetPageTransformer
 import kotlinx.android.synthetic.main.cwb_home_page.aboutButton
 import kotlinx.coroutines.*
+import java.text.SimpleDateFormat
 import kotlin.collections.ArrayList
 
 /**
@@ -39,7 +40,7 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
     /**暫存氣象預報資料(全縣市)*/ //減少反覆讀取時間
     private var weatherForecast : CwbForecastSave? = null
     /**暫存空汙指標(全縣市)*/
-    private var airQualityData : EpaAirQuality? = null
+    private var airQualityData = MoenvAirQuality()
     /**CWB第一次加載數據*/
     private var initCwb = true
     /**CWB第一次加載數據*/
@@ -190,7 +191,7 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
      * @author KILNETA
      * @since Alpha_4.0
      */
-    private fun epaFilterLocation(epaForecast : EpaAirQuality): EpaAirQualityData? {
+    private fun epaFilterLocation(epaForecast : MoenvAirQuality): MoenvAirQualityData? {
         /**EPA地區*/
         var epaArea: String? = null
         //換算Cwb縣市 對應之 EPA地區
@@ -200,7 +201,7 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
         }
 
         if(epaArea != null) {
-            epaForecast.EPA_airQualityData.forEach {
+            epaForecast.Moenv_airQualityData.forEach {
                 //找到回傳該縣市氣象預報資料
                 if (it.locationArea == epaArea)
                     return it
@@ -370,13 +371,58 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
 
     /**
      * 接收新的空污預報資料 & 更新空污展示
-     * @author airQuality [EpaAirQuality] 新的空污預報資料
      *
      * @author KILNETA
      * @since Alpha_4.0
      */
     @DelicateCoroutinesApi
     fun initEpaAirQuality(){
+        //使用協程調用moenv天氣預報資料(API)
+        GlobalScope.launch ( Dispatchers.Main ) {
+            val wF = withContext(Dispatchers.IO) {
+                EpaAPI.getAirQualityForecast()
+            }
+            wF?.records?.let { it->
+                /**用於彙整資料的列表*/
+                val datas = ArrayList<MoenvAirQualityData>()
+                /**根據預測時間排序的列表(欲取出最近的預測日期)*/
+                val records = wF.records.sortedBy {
+                    it.forecastdate?.let { _it ->
+                        SimpleDateFormat(
+                            "yyyy-MM-dd",
+                            Locale.TAIWAN
+                        ).parse(
+                            _it
+                        )
+                    }
+                }
+                //取出前十筆(全台及外島共十區的預報)
+                for (i in 0 until 10){
+                    datas.add(
+                        MoenvAirQualityData(
+                            records[i].area,
+                            records[i].aqi?.toInt())
+                    )
+                    //Log.e(records[i].area,records[i].aqi!!+" "+records[i].forecastdate)
+                }
+                //存入資料暫存列表
+                airQualityData.Moenv_airQualityData = datas
+                airQualityData.upDate =
+                    it[0].publishtime?.let { _it ->
+                        SimpleDateFormat(
+                            "yyyy-MM-dd HH:mm",
+                            Locale.TAIWAN
+                        ).parse(_it)
+                    }
+
+                //Log.e("",airQualityData.toString())
+
+                //重置空汙預報顯示
+                resetEpaView()
+                initEpa = false
+            }
+        }
+        /* epa時期的官網爬蟲
         //取用協程
         GlobalScope.launch (Dispatchers.Main) {
             /**EpaHtmlString*/
@@ -389,6 +435,7 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
                 initEpa = false
             }
         }
+        */
     }
 
     /**
@@ -398,18 +445,16 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
      * @since Alpha_4.0
      */
     fun resetEpaView(){
-        if(view != null && airQualityData!= null) {
-            val airQuality = epaFilterLocation(airQualityData!!)!!
+        if(view != null) {
+            val airQuality = epaFilterLocation(airQualityData)!!
 
             //發布日期：－/－/－ －:－ (vvv 避免系統警告的寫法 vvv)
             /**空污預報發布日期*/
             val upDate =
-                "發布日期：${DateFormat.format("yyyy/MM/dd HH:mm", airQualityData!!.upDate)}"
+                "發布日期：${DateFormat.format("yyyy/MM/dd HH:mm", airQualityData.upDate)}"
             EPA_UpDate.text = upDate
             //空污預報地區
             EPA_Loction.text = airQuality.locationArea
-            //空污指標描述
-            EPA_AirQuality_context.text = airQuality.airQualityName!!
 
             //設置空汙數值
             if (airQuality.airQualityValue == null) {
@@ -425,35 +470,41 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
             //設置空汙對應指標圖示
             when (airQuality.airQualityValue) {
                 in 0..50 -> {       //良好 0~50
+                    EPA_AirQuality_context.text = "良好"
                     EPA_AirQuality_progressbar.progressTintList =
                         ColorStateList.valueOf(Color.parseColor("#009865"))//良好 0~50
                     EPA_AirQuality_icon.setImageResource(R.drawable.air_quality_1)
                 }
                 in 51..100 -> {     //普通 51~100
+                    EPA_AirQuality_context.text = "普通"
                     EPA_AirQuality_progressbar.progressTintList =
                         ColorStateList.valueOf(Color.parseColor("#fffb26")
                     )//普通 51~100
                     EPA_AirQuality_icon.setImageResource(R.drawable.air_quality_2)
                 }
                 in 101..150 -> {    //對敏感族群不健康 101~150
+                    EPA_AirQuality_context.text = "對敏感族群不健康"
                     EPA_AirQuality_progressbar.progressTintList =
                         ColorStateList.valueOf(Color.parseColor("#ff9734")
                     )//對敏感族群不健康 101~150
                     EPA_AirQuality_icon.setImageResource(R.drawable.air_quality_3)
                 }
                 in 151..200 -> {    //對所有族群不健康 151~200
+                    EPA_AirQuality_context.text = "對所有族群不健康"
                     EPA_AirQuality_progressbar.progressTintList =
                         ColorStateList.valueOf(Color.parseColor("#ca0034")
                     )//對所有族群不健康 151~200
                     EPA_AirQuality_icon.setImageResource(R.drawable.air_quality_4)
                 }
                 in 201..300 -> {    //非常不健康 201~300
+                    EPA_AirQuality_context.text = "非常不健康"
                     EPA_AirQuality_progressbar.progressTintList =
                         ColorStateList.valueOf(Color.parseColor("#670099")
                     )//非常不健康 201~300
                     EPA_AirQuality_icon.setImageResource(R.drawable.air_quality_5)
                 }
                 in 301..500 -> {    //危害 301~500
+                    EPA_AirQuality_context.text = "危害"
                     EPA_AirQuality_progressbar.progressTintList =
                         ColorStateList.valueOf(Color.parseColor("#7e0123")
                     )//危害 301~500

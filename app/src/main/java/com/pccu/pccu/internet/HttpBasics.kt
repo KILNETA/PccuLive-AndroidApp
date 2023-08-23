@@ -288,5 +288,21 @@ object HttpRetrofit{
             @Query("course") course:String,
             @Query("teacher") teacher:String
         ): Call<ArrayList<CourseEvaluation>>
+
+        /** Moenv空氣品質預報資料
+         * @param api_key  [String] ApiKey
+         * @param sort     [String] 以為排序基準
+         * @param limit    [String] 查多少筆
+         * @return API原始文檔 : [ResponseBody]
+         *
+         * @author KILNETA
+         * @since  Alpha_4.2
+         */
+        @GET("api/v2/aqf_p_01?")
+        fun getAirQualityForecast(
+            @Query("api_key") api_key:String,
+            @Query("sort") sort:String,
+            @Query("limit") limit:String
+        ): Call<MoenvJson>
     }
 }
