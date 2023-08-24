@@ -60,7 +60,7 @@ object EpaAPI{
                     key,
                     "publishtime desc",
                     //"forecastdate,eq,${todayDate}",
-                    "24"    //最新三天的空汙預報 (30-6[外島僅有最近一次的預報])
+                    "31"    //最新四天的空汙預報 (40-9[外島僅有最近一次的預報])
                 ).execute().body()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -258,12 +258,12 @@ data class MoenvLink(
  * @since Alpha_4.2
  */
 data class MoenvAirQualityForecast(
-    val content : String? = null ,
-    val publishtime : String? = null ,
-    val area : String? = null,
+    val content : String,
+    val publishtime : String,
+    val area : String,
     val majorpollutant : String? = null,
-    val forecastdate : String? = null,
-    val aqi : String? = null,
+    val forecastdate : String,
+    val aqi : String,
     val minorpollutant : String? = null,
     val minorpollutantaqi : String? = null
 ) : Serializable

@@ -385,15 +385,30 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
             wF?.records?.let { it->
                 /**用於彙整資料的列表*/
                 val datas = ArrayList<MoenvAirQualityData>()
+
+                //去除非時間段的資訊
+                //10:30分的預報中 會出現4天的預報 其他則為3天
+                //因此其他時段的預報 需要額外判斷 4天的預報則有31條資訊 3天(24條)
+                //因此需要將較舊的預測資料刪除
+                if(!it[it.size-1].publishtime.contains(" 10:30")){
+                    for (i in (1..it.lastIndex).reversed()) {
+                        if( SimpleDateFormat("yyyy-MM-dd HH:mm",Locale.TAIWAN)
+                                .parse(it[0].publishtime)!!
+                            >
+                            SimpleDateFormat("yyyy-MM-dd HH:mm",Locale.TAIWAN)
+                                .parse(it[i].publishtime)
+                        ) {
+                            //Log.e(it[i].area,it[i].aqi+" "+it[i].forecastdate+" "+it[i].publishtime)
+                            it.removeAt(i)
+                        }
+                    }
+                }
+
                 /**根據預測時間排序的列表(欲取出最近的預測日期)*/
-                val records = wF.records.sortedBy {
-                    it.forecastdate?.let { _it ->
-                        SimpleDateFormat(
-                            "yyyy-MM-dd",
-                            Locale.TAIWAN
-                        ).parse(
-                            _it
-                        )
+                val records = it.sortedBy {
+                    it.forecastdate.let { _it ->
+                        SimpleDateFormat("yyyy-MM-dd",Locale.TAIWAN)
+                            .parse(_it)
                     }
                 }
                 //取出前十筆(全台及外島共十區的預報)
@@ -401,14 +416,14 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
                     datas.add(
                         MoenvAirQualityData(
                             records[i].area,
-                            records[i].aqi?.toInt())
+                            records[i].aqi.toInt())
                     )
                     //Log.e(records[i].area,records[i].aqi!!+" "+records[i].forecastdate)
                 }
                 //存入資料暫存列表
                 airQualityData.Moenv_airQualityData = datas
                 airQualityData.upDate =
-                    it[0].publishtime?.let { _it ->
+                    it[0].publishtime.let { _it ->
                         SimpleDateFormat(
                             "yyyy-MM-dd HH:mm",
                             Locale.TAIWAN
