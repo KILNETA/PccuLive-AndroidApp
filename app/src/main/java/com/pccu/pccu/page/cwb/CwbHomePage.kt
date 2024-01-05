@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -390,7 +391,7 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
                 //10:30分的預報中 會出現4天的預報 其他則為3天
                 //因此其他時段的預報 需要額外判斷 4天的預報則有31條資訊 3天(24條)
                 //因此需要將較舊的預測資料刪除
-                if(!it[it.size-1].publishtime.contains(" 10:30")){
+                //if(!it[0].publishtime.contains(" 10:30")){
                     for (i in (1..it.lastIndex).reversed()) {
                         if( SimpleDateFormat("yyyy-MM-dd HH:mm",Locale.TAIWAN)
                                 .parse(it[0].publishtime)!!
@@ -402,7 +403,7 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
                             it.removeAt(i)
                         }
                     }
-                }
+                //}
 
                 /**根據預測時間排序的列表(欲取出最近的預測日期)*/
                 val records = it.sortedBy {
@@ -411,6 +412,10 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
                             .parse(_it)
                     }
                 }
+                //records.forEach { _it->
+                //    Log.e(_it.area,_it.aqi+" "+_it.forecastdate+" "+_it.publishtime)
+                //}
+                //Log.e("---","")
                 //取出前十筆(全台及外島共十區的預報)
                 for (i in 0 until 10){
                     datas.add(
@@ -418,7 +423,7 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
                             records[i].area,
                             records[i].aqi.toInt())
                     )
-                    //Log.e(records[i].area,records[i].aqi!!+" "+records[i].forecastdate)
+                    //Log.e(records[i].area,records[i].aqi+" "+records[i].forecastdate+" "+records[i].publishtime)
                 }
                 //存入資料暫存列表
                 airQualityData.Moenv_airQualityData = datas
@@ -460,8 +465,8 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
      * @since Alpha_4.0
      */
     fun resetEpaView(){
-        if(view != null) {
-            val airQuality = epaFilterLocation(airQualityData)!!
+        val airQuality = epaFilterLocation(airQualityData)
+        if(view != null && airQuality != null) {
 
             //發布日期：－/－/－ －:－ (vvv 避免系統警告的寫法 vvv)
             /**空污預報發布日期*/

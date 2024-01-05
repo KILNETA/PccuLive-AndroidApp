@@ -22,7 +22,7 @@ object CwbAPI{
      */
     fun getWeatherForecast(): CwbWeatherSource? {
         //API 主網域
-        val url = "https://opendata.cwb.gov.tw/"
+        val url = "https://opendata.cwa.gov.tw/"
         //設置條件
         val key = BuildConfig.CWB_API_KEY
 

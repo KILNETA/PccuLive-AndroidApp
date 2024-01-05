@@ -45,13 +45,13 @@ object CwbSource {
 
     /**CWB圖資來源*/
     val CWB_ImageSource_Url: List<CwbImageUrl> = listOf(
-        CwbImageUrl("雷達合成回波圖","https://www.cwb.gov.tw/Data/radar/CV1_TW_3600.png"),
-        CwbImageUrl("衛星雲圖","https://www.cwb.gov.tw/Data/satellite/TWI_VIS_TRGB_1375/TWI_VIS_TRGB_1375.jpg"),
-        CwbImageUrl("衛星紅外線雲圖","https://www.cwb.gov.tw/Data/satellite/TWI_IR1_CR_800/TWI_IR1_CR_800.jpg"),
-        CwbImageUrl("累計雨量圖","https://www.cwb.gov.tw/Data/rainfall/QZJ.jpg"),
-        CwbImageUrl("氣溫分布圖","https://www.cwb.gov.tw/Data/temperature/temp.jpg"),
-        CwbImageUrl("健康氣象資料","https://www.cwb.gov.tw/Data/health/health_forPreview.png"),
-        CwbImageUrl("紫外線資料圖","https://www.cwb.gov.tw/Data/UVI/UVI.png")
+        CwbImageUrl("雷達合成回波圖","https://www.cwa.gov.tw/Data/radar/CV1_TW_3600.png"),
+        CwbImageUrl("衛星雲圖","https://www.cwa.gov.tw/Data/satellite/TWI_VIS_TRGB_1375/TWI_VIS_TRGB_1375.jpg"),
+        CwbImageUrl("衛星紅外線雲圖","https://www.cwa.gov.tw/Data/satellite/TWI_IR1_CR_800/TWI_IR1_CR_800.jpg"),
+        CwbImageUrl("累計雨量圖","https://www.cwa.gov.tw/Data/rainfall/QZJ.jpg"),
+        CwbImageUrl("氣溫分布圖","https://www.cwa.gov.tw/Data/temperature/temp.jpg"),
+        CwbImageUrl("健康氣象資料","https://www.cwa.gov.tw/Data/health/health_forPreview.png"),
+        CwbImageUrl("紫外線資料圖","https://www.cwa.gov.tw/Data/UVI/UVI.png")
     )
 }
 
