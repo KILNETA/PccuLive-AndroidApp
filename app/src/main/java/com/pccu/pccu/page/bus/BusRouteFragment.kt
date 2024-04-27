@@ -707,7 +707,7 @@ class BusRouteFragment(
                         if(vehicleDataList.any { v->
                             it.PlateNumb == v.PlateNumb &&
                             (   v.VehicleType == 1 ||
-                                v.IsLowFloor
+                                v.IsLowFloor == 18
                             )
                         }) {
                             /**身障友善車型標示Icon*/
