@@ -7,31 +7,22 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Message
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.reflect.TypeToken
+import com.google.android.material.button.MaterialButton
 import com.pccu.pccu.R
 import com.pccu.pccu.internet.*
 import com.pccu.pccu.page.courseEvaluate.search.CourseEvaluateSearchActivity
-import com.pccu.pccu.sharedFunctions.JsonFunctions
 import com.pccu.pccu.sharedFunctions.RV
 import com.pccu.pccu.sharedFunctions.ViewGauge
-import kotlinx.android.synthetic.main.course_evaluate_college_item.view.*
-import kotlinx.android.synthetic.main.course_evaluate_college_item.view.CollegeName
-import kotlinx.android.synthetic.main.course_evaluate_college_item.view.collapseButton
-import kotlinx.android.synthetic.main.course_evaluate_courses_list_item.view.*
-import kotlinx.android.synthetic.main.course_evaluate_department_item.view.*
-import kotlinx.android.synthetic.main.course_evaluate_page.*
-import kotlinx.android.synthetic.main.course_evaluate_page.aboutButton
-import kotlinx.android.synthetic.main.course_evaluate_page.loading
-import kotlinx.android.synthetic.main.course_evaluate_page.noNetWork
 import kotlinx.coroutines.*
 import java.io.Serializable
 import java.util.*
@@ -69,7 +60,7 @@ class CourseEvaluatePage : AppCompatActivity(R.layout.course_evaluate_page){
             object : NetWorkChangeReceiver.RespondNetWork{
                 /**中斷網路*/
                 override fun interruptInternet() {
-                    noNetWork.layoutParams =
+                    findViewById<TextView>(R.id.noNetWork)?.layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -81,7 +72,7 @@ class CourseEvaluatePage : AppCompatActivity(R.layout.course_evaluate_page){
                 }
                 /**網路連接*/
                 override fun connectedInternet() {
-                    noNetWork.layoutParams =
+                    findViewById<TextView>(R.id.noNetWork)?.layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             0,
@@ -114,7 +105,7 @@ class CourseEvaluatePage : AppCompatActivity(R.layout.course_evaluate_page){
             "　　中國文化大學選課評價系統"
         )
         //點擊關於按鈕 開啟關於頁面
-        aboutButton.setOnClickListener{
+        findViewById<MaterialButton>(R.id.aboutButton)?.setOnClickListener{
             /**關於介面 底部彈窗*/
             val aboutSheetFragment = com.pccu.pccu.about.AboutBottomSheet(content)
             aboutSheetFragment.show(supportFragmentManager, aboutSheetFragment.tag)
@@ -128,7 +119,7 @@ class CourseEvaluatePage : AppCompatActivity(R.layout.course_evaluate_page){
      */
     fun stopLoading(){
         //套用設定至載入動畫物件
-        loading.layoutParams =
+        findViewById<LinearLayout>(R.id.loading).layoutParams =
             LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 0
@@ -142,7 +133,7 @@ class CourseEvaluatePage : AppCompatActivity(R.layout.course_evaluate_page){
      */
     private fun initSearchBox(){
         //當搜索框被按下
-        searchBox.setOnClickListener{
+        findViewById<MaterialButton>(R.id.searchBox).setOnClickListener{
             //轉換當前的頁面 至 搜索頁面
             /**新介面Activity目標*/
             val intentObj = Intent()
@@ -158,7 +149,7 @@ class CourseEvaluatePage : AppCompatActivity(R.layout.course_evaluate_page){
      */
     private fun initWriteEvaluate(){
         //撰寫課程評價按鈕被按下
-        writeEvaluate.setOnClickListener{
+        findViewById<MaterialButton>(R.id.writeEvaluate).setOnClickListener{
             //使用外部瀏覽器開啟撰寫課程評價網頁
             startActivity(
                 Intent(
@@ -177,7 +168,7 @@ class CourseEvaluatePage : AppCompatActivity(R.layout.course_evaluate_page){
     @OptIn(DelicateCoroutinesApi::class)
     private fun initEvaluateCount(){
         GlobalScope.launch(Dispatchers.Main) {
-            evaluationCount.text =
+            findViewById<TextView>(R.id.evaluationCount).text =
                 callEvaluateCount()?.count?.toString()
                     ?: run { "－" }
         }
@@ -219,9 +210,9 @@ class CourseEvaluatePage : AppCompatActivity(R.layout.course_evaluate_page){
         initWriteEvaluate()
 
         //掛載 courseEvaluateCollege_list 列表適配器
-        courseEvaluateCollege_list.adapter = adapter
+        findViewById<RecyclerView>(R.id.courseEvaluateCollege_list).adapter = adapter
         //列表控件 courseEvaluateCollege_list 的設置佈局管理器 (列表)
-        courseEvaluateCollege_list.layoutManager =
+        findViewById<RecyclerView>(R.id.courseEvaluateCollege_list).layoutManager =
             LinearLayoutManager(
                 baseContext,
                 LinearLayoutManager.VERTICAL,
@@ -499,25 +490,25 @@ class CourseEvaluatePage : AppCompatActivity(R.layout.course_evaluate_page){
                 collegeDepartment[position].college,
                 collegeDepartment[position].departments
             )
-            holder.itemView.CollegeName.text = collegeDepartment[position].college
+            holder.itemView.findViewById<TextView>(R.id.CollegeName).text = collegeDepartment[position].college
             //掛載 DepartmentList 列表適配器
-            holder.itemView.DepartmentList.adapter = adapter
+            holder.itemView.findViewById<RecyclerView>(R.id.DepartmentList).adapter = adapter
             //DepartmentList列表 禁止滑動
-            holder.itemView.DepartmentList.layoutManager =
+            holder.itemView.findViewById<RecyclerView>(R.id.DepartmentList).layoutManager =
                 object : LinearLayoutManager(baseContext) {
                     override fun canScrollVertically(): Boolean {
                         return false
                     }
                 }
             //DepartmentList列表 方向(垂直)
-            holder.itemView.DepartmentList.layoutManager =
+            holder.itemView.findViewById<RecyclerView>(R.id.DepartmentList).layoutManager =
                 LinearLayoutManager(
                     baseContext,
                     LinearLayoutManager.VERTICAL,
                     false
                 )
             //設置當前布局(收合、展開)
-            holder.itemView.DepartmentList.layoutParams =
+            holder.itemView.findViewById<RecyclerView>(R.id.DepartmentList).layoutParams =
                 LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     if(!collegeDepartment[position].isCollapse)
@@ -526,26 +517,26 @@ class CourseEvaluatePage : AppCompatActivity(R.layout.course_evaluate_page){
                         0
                 )
             //設置按紐
-            holder.itemView.collapseButton.setImageDrawable(
+            holder.itemView.findViewById<ImageView>(R.id.collapseButton).setImageDrawable(
                 if(!collegeDepartment[position].isCollapse)
                     ContextCompat.getDrawable(baseContext, R.drawable.collapse)
                 else
                     ContextCompat.getDrawable(baseContext, R.drawable.expand)
             )
             //按下標題區塊 操作(收合、展開)
-            holder.itemView.CollegeBar.setOnClickListener {
+            holder.itemView.findViewById<LinearLayout>(R.id.CollegeBar).setOnClickListener {
                 collegeDepartment[position].isCollapse = run {
                     //收合操作
                     ViewGauge.changeExpandCollapse(
                         collegeDepartment[position].isCollapse,
-                        courseEvaluateCollege_list,
-                        holder.itemView.DepartmentList,
+                        findViewById<RecyclerView>(R.id.courseEvaluateCollege_list),
+                        holder.itemView.findViewById<RecyclerView>(R.id.DepartmentList),
                         500,
                         null,
                         null
                     )
                     //更改按鈕圖片
-                    holder.itemView.collapseButton.setImageDrawable(
+                    holder.itemView.findViewById<ImageView>(R.id.collapseButton).setImageDrawable(
                         if(collegeDepartment[position].isCollapse)
                             ContextCompat.getDrawable(baseContext, R.drawable.collapse)
                         else
@@ -623,9 +614,9 @@ class CourseEvaluatePage : AppCompatActivity(R.layout.course_evaluate_page){
              * @since Beta_1.3.0
              */
             override fun onBindViewHolder(holder: RV.ViewHolder, position: Int) {
-                holder.itemView.DepartmentName.text =
+                holder.itemView.findViewById<TextView>(R.id.DepartmentName).text =
                     collegeDepartment[position].name
-                holder.itemView.CourseNum.text =
+                holder.itemView.findViewById<TextView>(R.id.CourseNum).text =
                     collegeDepartment[position].course_count.toString()
                 holder.itemView.setOnClickListener {
                     /**新方案 (新建Activity介面展示)*/

@@ -18,7 +18,6 @@ import com.pccu.pccu.internet.CameraSourceData
 import com.pccu.pccu.internet.CameraAPI
 import com.squareup.picasso.MemoryPolicy
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.live_image_fragment.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -92,7 +91,7 @@ class LiveImageFragment (
             cameraView.addView(cameraItem.imageView)
 
             //將視圖組綁定於即時影像區上 (顯示於Home_Page上)
-            LiveImage_view.addView(cameraView)
+            this.view?.findViewById<LinearLayout>(R.id.LiveImage_view)?.addView(cameraView)
 
             //保存 影像控件 -編號資料-
             cameraList.add(cameraItem)

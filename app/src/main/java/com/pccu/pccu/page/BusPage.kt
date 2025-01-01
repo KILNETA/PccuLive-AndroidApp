@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.pccu.pccu.R
-import kotlinx.android.synthetic.main.bus_page.*
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
@@ -15,6 +14,9 @@ import android.widget.*
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.tabs.TabLayout
 import com.pccu.pccu.internet.*
 import com.pccu.pccu.page.bus.BusCollectFragment
 import com.pccu.pccu.page.bus.dialogs.*
@@ -22,10 +24,6 @@ import com.pccu.pccu.page.bus.search.BusSearchActivity
 import com.pccu.pccu.sharedFunctions.Object_SharedPreferences
 import com.pccu.pccu.sharedFunctions.PToast
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.bus_page.bus_fragment
-import kotlinx.android.synthetic.main.bus_page.bus_tabs
-import kotlinx.android.synthetic.main.bus_page.moreButton
-import kotlinx.android.synthetic.main.bus_page.noNetWork
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlin.collections.ArrayList
 
@@ -63,17 +61,18 @@ class BusPage : Fragment(R.layout.bus_page){
      */
     @OptIn(DelicateCoroutinesApi::class)
     private fun initInternetReceiver(){
+        val noNetWork = this.view?.findViewById<TextView>(R.id.noNetWork)
         internetReceiver = NetWorkChangeReceiver(
             object : NetWorkChangeReceiver.RespondNetWork{
                 override fun interruptInternet() {
-                    noNetWork.layoutParams =
+                    noNetWork?.layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT,
                         )
                 }
                 override fun connectedInternet() {
-                    noNetWork.layoutParams =
+                    noNetWork?.layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             0,
@@ -93,18 +92,21 @@ class BusPage : Fragment(R.layout.bus_page){
      * @since Alpha_5.0
      */
     private fun editGroup(){
+        val busFragment = this.view?.findViewById<ViewPager2>(R.id.bus_fragment)
         /**編輯群組介面 (Dialog)*/
         val editGroup = BusEditGroupDialog (
             object : PToast.Listener {
                 //回應是否需要重置站牌頁面+列表
                 override fun respond(respond: Boolean?) {
-                    if (respond!!) {
-                        //設置最後瀏覽的頁面位置 (最終瀏覽頁面的名稱)
-                        resetCollectPage(collectList[bus_fragment.currentItem].GroupName)
-                    }else if(!respond){
-                        //設置最後瀏覽的頁面位置
-                        lastPageNum = bus_fragment.currentItem
-                        resetCollectPage()
+                    busFragment?.let {
+                        if (respond!!) {
+                            //設置最後瀏覽的頁面位置 (最終瀏覽頁面的名稱)
+                            resetCollectPage(collectList[busFragment.currentItem].GroupName)
+                        } else if (!respond) {
+                            //設置最後瀏覽的頁面位置
+                            lastPageNum = busFragment.currentItem
+                            resetCollectPage()
+                        }
                     }
                 }
             }
@@ -126,13 +128,16 @@ class BusPage : Fragment(R.layout.bus_page){
      */
     private fun removeGroup() {
         /**刪除群組介面 (Dialog)*/
+        val busFragment = this.view?.findViewById<ViewPager2>(R.id.bus_fragment)
         val removeGroup = BusRemoveGroupDialog(
             object : PToast.Listener {
                 //回應是否需要重置站牌頁面+列表
                 override fun respond(respond: Boolean?) {
                     if(respond!!) {
-                        //設置最後瀏覽的頁面位置 (最終瀏覽頁面的名稱)
-                        resetCollectPage(collectList[bus_fragment.currentItem].GroupName)
+                        busFragment?.let {
+                            //設置最後瀏覽的頁面位置 (最終瀏覽頁面的名稱)
+                            resetCollectPage(collectList[busFragment.currentItem].GroupName)
+                        }
             }   }   }
         )
         //顯示刪除群組介面
@@ -146,19 +151,24 @@ class BusPage : Fragment(R.layout.bus_page){
      */
     private fun sequenceStation() {
         /**排序站牌介面 (Dialog)*/
-        val sequenceStation = BusSequenceStationDialog (
-            collectList[bus_fragment.currentItem].GroupName,
-            object : PToast.Listener {
-                //回應是否需要重置站牌頁面+列表
-                override fun respond(respond: Boolean?) {
-                    if (respond!!) {
-                        //設置最後瀏覽的頁面位置
-                        lastPageNum = bus_fragment.currentItem
-                        resetCollectPage()
-            }   }   }
-        )
-        //顯示編輯群組介面
-        sequenceStation.show(childFragmentManager, "sequenceStation")
+        val busFragment = this.view?.findViewById<ViewPager2>(R.id.bus_fragment)
+        busFragment?.let {
+            val sequenceStation = BusSequenceStationDialog(
+                collectList[busFragment.currentItem].GroupName,
+                object : PToast.Listener {
+                    //回應是否需要重置站牌頁面+列表
+                    override fun respond(respond: Boolean?) {
+                        if (respond!!) {
+                            //設置最後瀏覽的頁面位置
+                            lastPageNum = busFragment.currentItem
+                            resetCollectPage()
+                        }
+                    }
+                }
+            )
+            //顯示編輯群組介面
+            sequenceStation.show(childFragmentManager, "sequenceStation")
+        }
     }
 
     /**
@@ -168,19 +178,22 @@ class BusPage : Fragment(R.layout.bus_page){
      */
     private fun removeStation(){
         /**刪除站牌介面 (Dialog)*/
-        val removeStation = BusRemoveStationDialog(
-            collectList[bus_fragment.currentItem].GroupName,
-            object : PToast.Listener {
-                //回應是否需要重置站牌頁面+列表
-                override fun respond(respond: Boolean?) {
-                    if(respond!!){
-                        //設置最後瀏覽的頁面位置
-                        lastPageNum = bus_fragment.currentItem
-                        resetCollectPage()
-            }   }   }
-        )
-        //顯示編輯群組介面
-        removeStation.show(childFragmentManager, "removeStation")
+        val busFragment = this.view?.findViewById<ViewPager2>(R.id.bus_fragment)
+        busFragment?.let {
+            val removeStation = BusRemoveStationDialog(
+                collectList[busFragment.currentItem].GroupName,
+                object : PToast.Listener {
+                    //回應是否需要重置站牌頁面+列表
+                    override fun respond(respond: Boolean?) {
+                        if(respond!!){
+                            //設置最後瀏覽的頁面位置
+                            lastPageNum = busFragment.currentItem
+                            resetCollectPage()
+                }   }   }
+            )
+            //顯示編輯群組介面
+            removeStation.show(childFragmentManager, "removeStation")
+        }
     }
 
     /**
@@ -231,39 +244,43 @@ class BusPage : Fragment(R.layout.bus_page){
      */
     private fun initMoreMenuButton(){
         //當 更多功能按鈕 被按下
-        moreButton.setOnClickListener{
+        val moreButton = this.view?.findViewById<MaterialButton>(R.id.moreButton)
+        moreButton?.setOnClickListener{
             /**PopupMenu菜單窗口*/
             val popupMenu = PopupMenu(context, moreButton)
             //設置PopupMenu對象的佈局 與帶入menu菜單
             popupMenu.menuInflater.inflate(R.menu.bus_menu, popupMenu.menu)
             //設置menu列表功能
             popupMenu.setOnMenuItemClickListener { item ->
-                when(item.itemId){
-                    /**編輯群組*/
-                    R.id.bus_editGroup -> {
-                        editGroup()
-                    }
-                    /**刪除群組*/
-                    R.id.bus_removeGroup -> {
-                        removeGroup()
-                    }
-                    /**排序站牌*/
-                    R.id.bus_sequenceStation -> {
-                        if (collectList[bus_fragment.currentItem].SaveStationList.isNotEmpty())
-                            sequenceStation()
-                        else
-                            noStationInformation()
-                    }
-                    /**刪除站牌*/
-                    R.id.bus_removeStation -> {
-                        if (collectList[bus_fragment.currentItem].SaveStationList.isNotEmpty())
-                            removeStation()
-                        else
-                            noStationInformation()
-                    }
-                    /**關於介面*/
-                    R.id.bus_about -> {
-                        aboutSheetFragment()
+                val busFragment = this.view?.findViewById<ViewPager2>(R.id.bus_fragment)
+                busFragment?.let {
+                    when (item.itemId) {
+                        /**編輯群組*/
+                        R.id.bus_editGroup -> {
+                            editGroup()
+                        }
+                        /**刪除群組*/
+                        R.id.bus_removeGroup -> {
+                            removeGroup()
+                        }
+                        /**排序站牌*/
+                        R.id.bus_sequenceStation -> {
+                            if (collectList[busFragment.currentItem].SaveStationList.isNotEmpty())
+                                sequenceStation()
+                            else
+                                noStationInformation()
+                        }
+                        /**刪除站牌*/
+                        R.id.bus_removeStation -> {
+                            if (collectList[busFragment.currentItem].SaveStationList.isNotEmpty())
+                                removeStation()
+                            else
+                                noStationInformation()
+                        }
+                        /**關於介面*/
+                        R.id.bus_about -> {
+                            aboutSheetFragment()
+                        }
                     }
                 }
                 //關閉列表
@@ -282,7 +299,7 @@ class BusPage : Fragment(R.layout.bus_page){
      */
     private fun initSearchBox(){
         //當搜索框被按下
-        searchBox.setOnClickListener{
+        this.view?.findViewById<MaterialButton>(R.id.searchBox)?.setOnClickListener{
             //轉換當前的頁面 至 搜索頁面
             /**新介面Activity目標*/
             val intentObj = Intent()
@@ -349,6 +366,7 @@ class BusPage : Fragment(R.layout.bus_page){
      */
     @OptIn(DelicateCoroutinesApi::class)
     private fun resetCollectPage(lastGroupName:String? = null){
+        val busFragment = this.view?.findViewById<ViewPager2>(R.id.bus_fragment)
         //重新取得 群組站牌收藏資料
         collectList = getCollectBuses()
 
@@ -364,41 +382,44 @@ class BusPage : Fragment(R.layout.bus_page){
             createFragment()        //收藏群組站牌頁面視圖
         )
         //套用 收藏群組頁面 適配器
-        bus_fragment.adapter = pageAdapter
+        busFragment?.adapter = pageAdapter
 
         //銜接 收藏群組頁面 至 控制Tab
-        TabLayoutMediator(bus_tabs, bus_fragment) { tab, position ->
-            /**Tab文字控件*/
-            val textView = TextView(context)
+        val busTabs = this.view?.findViewById<TabLayout>(R.id.bus_tabs)
+        if (busFragment != null && busTabs != null) {
+            TabLayoutMediator(busTabs, busFragment) { tab, position ->
+                /**Tab文字控件*/
+                val textView = TextView(context)
 
-            //設置文字大小
-            textView.setTextSize(
-                TypedValue.COMPLEX_UNIT_SP,
-                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 16f, resources.displayMetrics))
-            //設置文字顏色
-            textView.setTextColor(Color.parseColor("#FFFFFF"))
-            //設置文字布局 (置中)
-            textView.gravity = Gravity.CENTER
-            //設置tab自定義視圖 為 Tab文字控件
-            tab.customView = textView
-            //設置文字內容 (收藏群組名稱)
-            textView.text = collectList[position].GroupName
+                //設置文字大小
+                textView.setTextSize(
+                    TypedValue.COMPLEX_UNIT_SP,
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 16f, resources.displayMetrics))
+                //設置文字顏色
+                textView.setTextColor(Color.parseColor("#FFFFFF"))
+                //設置文字布局 (置中)
+                textView.gravity = Gravity.CENTER
+                //設置tab自定義視圖 為 Tab文字控件
+                tab.customView = textView
+                //設置文字內容 (收藏群組名稱)
+                textView.text = collectList[position].GroupName
 
-            /**外部布局適配*/
-            val params = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                0f)
-            //套用 外部布局適配 至 Tab & Tab文字控件
-            textView.layoutParams = params
-            tab.view.layoutParams = params
-        }.attach()
+                /**外部布局適配*/
+                val params = LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    0f)
+                //套用 外部布局適配 至 Tab & Tab文字控件
+                textView.layoutParams = params
+                tab.view.layoutParams = params
+            }.attach()
+        }
 
         //當最後瀏覽的頁面 超過於總頁數 則歸0
         if(lastPageNum >= collectList.size)
             lastPageNum = 0
         //前往最後瀏覽的頁面
-        bus_fragment.currentItem = lastPageNum
+        busFragment?.currentItem = lastPageNum
     }
 
     /**
@@ -412,7 +433,8 @@ class BusPage : Fragment(R.layout.bus_page){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState) //創建頁面
         //關閉左右托拽時的Android預設動畫
-        bus_fragment.getChildAt(0)?.overScrollMode = View.OVER_SCROLL_NEVER
+        this.view?.findViewById<ViewPager2>(R.id.bus_fragment)?.getChildAt(0)?.overScrollMode =
+            View.OVER_SCROLL_NEVER
 
         //網路接收器初始化
         initInternetReceiver()

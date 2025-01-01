@@ -2,13 +2,14 @@ package com.pccu.pccu.menu
 
 import android.os.Bundle
 import android.view.*
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.pccu.pccu.internet.BusRoute
 import com.pccu.pccu.internet.NameType
 import com.pccu.pccu.internet.CollectStation
 import com.pccu.pccu.page.bus.dialogs.BusAddStationDialog
 import com.pccu.pccu.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.bus_route_item_menu.*
 
 /**
  *  站牌Item底部彈窗介面 建構類 : "BottomSheetDialogFragment"
@@ -61,9 +62,9 @@ class BusStationItemBottomMenu (
         super.onViewCreated(view, savedInstanceState)
 
         //標示選中的站牌名稱
-        BusStationName.text = StationName.Zh_tw
+        this.view?.findViewById<TextView>(R.id.BusStationName)?.text = StationName.Zh_tw
         //當收藏站牌選項被選中
-        BusStationItem_Menu_Collect.setOnClickListener{
+        this.view?.findViewById<LinearLayout>(R.id.BusStationItem_Menu_Collect)?.setOnClickListener{
             /**製作存儲用站牌資料*/
             val saveStation = CollectStation(
                 RouteData,

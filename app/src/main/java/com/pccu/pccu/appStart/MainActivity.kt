@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main){
         //判斷公告是否已被已讀
         val updateNews = Object_SharedPreferences["News", "update", baseContext].toString()
         //若未被已讀 顯示公告介面
-        if(updateNews != "true_1.3.3") {
+        if(updateNews != UPDATE_NEWAS_STR) {
             /**公告介面*/
             val news = UpdateNewsDialog()
             news.setStyle(
@@ -49,5 +49,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main){
             //顯示介面
             news.show(supportFragmentManager, "UpdateNewsDialog")
         }
+    }
+
+    companion object {
+        const val UPDATE_NEWAS_STR = "true_1.3.4"
     }
 }

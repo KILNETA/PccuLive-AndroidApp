@@ -7,23 +7,25 @@ import android.os.Build
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.pccu.pccu.R
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.button.MaterialButton
 import com.pccu.pccu.about.AboutBottomSheet
-import kotlinx.android.synthetic.main.cwb_home_page.*
 import java.util.*
 import com.pccu.pccu.internet.*
 import com.pccu.pccu.menu.MoreLocationBottomMenu
 import com.pccu.pccu.sharedFunctions.Object_SharedPreferences
 import com.pccu.pccu.sharedFunctions.OffsetPageTransformer
-import kotlinx.android.synthetic.main.cwb_home_page.aboutButton
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import kotlin.collections.ArrayList
@@ -61,17 +63,18 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
      */
     @DelicateCoroutinesApi
     private fun initInternetReceiver(){
+        val pageView = this.view
         internetReceiver = NetWorkChangeReceiver(
             object : NetWorkChangeReceiver.RespondNetWork{
                 override fun interruptInternet() {
-                    noNetWork.layoutParams =
+                    pageView?.findViewById<TextView>(R.id.noNetWork)?.layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT,
                         )
                 }
                 override fun connectedInternet() {
-                    noNetWork.layoutParams =
+                    pageView?.findViewById<TextView>(R.id.noNetWork)?.layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             0,
@@ -96,7 +99,7 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
      */
     private fun setMoreLocation(){
         //當 選擇縣市列表按鈕 被按下
-        Cwb_moreLocation.setOnClickListener{
+        this.view?.findViewById<MaterialButton>(R.id.Cwb_moreLocation)?.setOnClickListener{
             /**選擇縣市列表 底部彈窗*/
             val moreLocationSheetFragment = MoreLocationBottomMenu(requireView(),this)
             moreLocationSheetFragment.show(parentFragmentManager, moreLocationSheetFragment.tag)
@@ -120,7 +123,7 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
         )
 
         //當 關於按鈕 被按下
-        aboutButton.setOnClickListener{
+        this.view?.findViewById<MaterialButton>(R.id.aboutButton)?.setOnClickListener{
             /**關於介面 底部彈窗*/
             val aboutSheetFragment = AboutBottomSheet(content)
             aboutSheetFragment.show(parentFragmentManager, aboutSheetFragment.tag)
@@ -158,7 +161,7 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
             targetLocation = sP as String
 
         //更改目標縣市 = 存儲中的目標縣市
-        Cwb_Location.text = targetLocation
+        this.view?.findViewById<TextView>(R.id.Cwb_Location)?.text = targetLocation
     }
 
     /**
@@ -264,13 +267,14 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
         //創建CWBForecast頁面資料
         val pageAdapter = PageAdapter(childFragmentManager, lifecycle, fragments)
         //CWBForecast頁面 適配器
-        Cwb_value_page.adapter = pageAdapter
+        val cwbValuePage = this.view?.findViewById<ViewPager2>(R.id.Cwb_value_page)
+        cwbValuePage?.adapter = pageAdapter
         //重新調整頁面邊界與動畫
         val scale = resources.displayMetrics.density
         val x = (vWidth-(280*scale)).toInt()
-        Cwb_value_page.setPageTransformer(OffsetPageTransformer(x, -x))
+        cwbValuePage?.setPageTransformer(OffsetPageTransformer(x, -x))
         //同時加載最大頁面為3
-        Cwb_value_page.offscreenPageLimit = 3
+        cwbValuePage?.offscreenPageLimit = 3
     }
 
     /**
@@ -472,65 +476,69 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
             /**空污預報發布日期*/
             val upDate =
                 "發布日期：${DateFormat.format("yyyy/MM/dd HH:mm", airQualityData.upDate)}"
-            EPA_UpDate.text = upDate
+            this.view?.findViewById<TextView>(R.id.EPA_UpDate)?.text = upDate
             //空污預報地區
-            EPA_Loction.text = airQuality.locationArea
+            this.view?.findViewById<TextView>(R.id.EPA_Loction)?.text = airQuality.locationArea
 
+            val epaAirQualityContext = this.view?.findViewById<TextView>(R.id.EPA_AirQuality_context)
+            val epaAirQualityValue = this.view?.findViewById<TextView>(R.id.EPA_AirQuality_value)
+            val epaAirQualityProgressbar = this.view?.findViewById<ProgressBar>(R.id.EPA_AirQuality_progressbar)
+            val epaAirQualityIcon = this.view?.findViewById<ImageView>(R.id.EPA_AirQuality_icon)
             //設置空汙數值
             if (airQuality.airQualityValue == null) {
                 //數值為空
-                EPA_AirQuality_value.text = "－"
-                EPA_AirQuality_progressbar.progress = 0
+                this.view?.findViewById<TextView>(R.id.EPA_AirQuality_value)?.text = "－"
+                epaAirQualityProgressbar?.progress = 0
             } else {
                 //數值不為空
-                EPA_AirQuality_value.text = airQuality.airQualityValue.toString()
-                EPA_AirQuality_progressbar.progress = airQuality.airQualityValue
+                epaAirQualityValue?.text = airQuality.airQualityValue.toString()
+                epaAirQualityProgressbar?.progress = airQuality.airQualityValue
             }
 
             //設置空汙對應指標圖示
             when (airQuality.airQualityValue) {
                 in 0..50 -> {       //良好 0~50
-                    EPA_AirQuality_context.text = "良好"
-                    EPA_AirQuality_progressbar.progressTintList =
+                    epaAirQualityContext?.text = "良好"
+                    epaAirQualityProgressbar?.progressTintList =
                         ColorStateList.valueOf(Color.parseColor("#009865"))//良好 0~50
-                    EPA_AirQuality_icon.setImageResource(R.drawable.air_quality_1)
+                    epaAirQualityIcon?.setImageResource(R.drawable.air_quality_1)
                 }
                 in 51..100 -> {     //普通 51~100
-                    EPA_AirQuality_context.text = "普通"
-                    EPA_AirQuality_progressbar.progressTintList =
+                    epaAirQualityContext?.text = "普通"
+                    epaAirQualityProgressbar?.progressTintList =
                         ColorStateList.valueOf(Color.parseColor("#fffb26")
                     )//普通 51~100
-                    EPA_AirQuality_icon.setImageResource(R.drawable.air_quality_2)
+                    epaAirQualityIcon?.setImageResource(R.drawable.air_quality_2)
                 }
                 in 101..150 -> {    //對敏感族群不健康 101~150
-                    EPA_AirQuality_context.text = "對敏感族群不健康"
-                    EPA_AirQuality_progressbar.progressTintList =
+                    epaAirQualityContext?.text = "對敏感族群不健康"
+                    epaAirQualityProgressbar?.progressTintList =
                         ColorStateList.valueOf(Color.parseColor("#ff9734")
                     )//對敏感族群不健康 101~150
-                    EPA_AirQuality_icon.setImageResource(R.drawable.air_quality_3)
+                    epaAirQualityIcon?.setImageResource(R.drawable.air_quality_3)
                 }
                 in 151..200 -> {    //對所有族群不健康 151~200
-                    EPA_AirQuality_context.text = "對所有族群不健康"
-                    EPA_AirQuality_progressbar.progressTintList =
+                    epaAirQualityContext?.text = "對所有族群不健康"
+                    epaAirQualityProgressbar?.progressTintList =
                         ColorStateList.valueOf(Color.parseColor("#ca0034")
                     )//對所有族群不健康 151~200
-                    EPA_AirQuality_icon.setImageResource(R.drawable.air_quality_4)
+                    epaAirQualityIcon?.setImageResource(R.drawable.air_quality_4)
                 }
                 in 201..300 -> {    //非常不健康 201~300
-                    EPA_AirQuality_context.text = "非常不健康"
-                    EPA_AirQuality_progressbar.progressTintList =
+                    epaAirQualityContext?.text = "非常不健康"
+                    epaAirQualityProgressbar?.progressTintList =
                         ColorStateList.valueOf(Color.parseColor("#670099")
                     )//非常不健康 201~300
-                    EPA_AirQuality_icon.setImageResource(R.drawable.air_quality_5)
+                    epaAirQualityIcon?.setImageResource(R.drawable.air_quality_5)
                 }
                 in 301..500 -> {    //危害 301~500
-                    EPA_AirQuality_context.text = "危害"
-                    EPA_AirQuality_progressbar.progressTintList =
+                    epaAirQualityContext?.text = "危害"
+                    epaAirQualityProgressbar?.progressTintList =
                         ColorStateList.valueOf(Color.parseColor("#7e0123")
                     )//危害 301~500
-                    EPA_AirQuality_icon.setImageResource(R.drawable.air_quality_6)
+                    epaAirQualityIcon?.setImageResource(R.drawable.air_quality_6)
                 }
-                else -> EPA_AirQuality_icon.setImageResource(R.drawable.question1)
+                else -> epaAirQualityIcon?.setImageResource(R.drawable.question1)
             }
         }
 
@@ -548,7 +556,7 @@ class CwbHomePage : Fragment(R.layout.cwb_home_page) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState) //創建頁面
         //關閉左右托拽時的Android預設動畫
-        Cwb_value_page.getChildAt(0)?.overScrollMode = View.OVER_SCROLL_NEVER
+        this.view?.findViewById<ViewPager2>(R.id.Cwb_value_page)?.getChildAt(0)?.overScrollMode = View.OVER_SCROLL_NEVER
 
         //初始化網路接收器
         initInternetReceiver()

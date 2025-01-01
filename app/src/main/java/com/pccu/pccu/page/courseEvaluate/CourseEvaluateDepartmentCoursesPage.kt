@@ -5,22 +5,13 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import com.pccu.pccu.R
 import com.pccu.pccu.internet.*
-import kotlinx.android.synthetic.main.bus_route_page.*
-import kotlinx.android.synthetic.main.course_evaluate_college_item.view.*
-import kotlinx.android.synthetic.main.course_evaluate_courses_evaluation_list_item.view.*
-import kotlinx.android.synthetic.main.course_evaluate_courses_list_item.view.*
-import kotlinx.android.synthetic.main.course_evaluate_department_courses_page.*
-import kotlinx.android.synthetic.main.course_evaluate_department_courses_page.aboutButton
-import kotlinx.android.synthetic.main.course_evaluate_department_courses_page.backButton
-import kotlinx.android.synthetic.main.course_evaluate_department_courses_page.courseEvaluateList
-import kotlinx.android.synthetic.main.course_evaluate_department_courses_page.loading
-import kotlinx.android.synthetic.main.course_evaluate_department_courses_page.noNetWork
-import kotlinx.android.synthetic.main.course_evaluate_department_courses_page.view.*
-import kotlinx.android.synthetic.main.course_evaluation_search_main.*
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -63,7 +54,7 @@ class CourseEvaluateDepartmentCoursesPage : AppCompatActivity(
             object : NetWorkChangeReceiver.RespondNetWork{
                 /**中斷網路*/
                 override fun interruptInternet() {
-                    noNetWork.layoutParams =
+                    findViewById<TextView>(R.id.noNetWork)?.layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -74,7 +65,7 @@ class CourseEvaluateDepartmentCoursesPage : AppCompatActivity(
                 }
                 /**網路連接*/
                 override fun connectedInternet() {
-                    noNetWork.layoutParams =
+                    findViewById<TextView>(R.id.noNetWork)?.layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             0,
@@ -94,7 +85,7 @@ class CourseEvaluateDepartmentCoursesPage : AppCompatActivity(
      * @since Beta_1.3.0
      */
     private fun initBackButton(){
-        backButton.setOnClickListener {
+        findViewById<MaterialButton>(R.id.backButton)?.setOnClickListener {
             //關閉視窗
             finish()
         }
@@ -119,7 +110,7 @@ class CourseEvaluateDepartmentCoursesPage : AppCompatActivity(
             "　　中國文化大學選課評價系統"
         )
         //點擊關於按鈕 開啟關於頁面
-        aboutButton.setOnClickListener{
+        findViewById<MaterialButton>(R.id.aboutButton)?.setOnClickListener{
             /**關於介面 底部彈窗*/
             val aboutSheetFragment = com.pccu.pccu.about.AboutBottomSheet(content)
             aboutSheetFragment.show(supportFragmentManager, aboutSheetFragment.tag)
@@ -134,7 +125,7 @@ class CourseEvaluateDepartmentCoursesPage : AppCompatActivity(
      */
     fun stopLoading(){
         //套用設定至載入動畫物件
-        loading.layoutParams =
+        findViewById<LinearLayout>(R.id.loading).layoutParams =
             LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 0
@@ -149,7 +140,7 @@ class CourseEvaluateDepartmentCoursesPage : AppCompatActivity(
      */
     private fun noDatasView(){
         //套用設定至載入動畫物件
-        noDataView.layoutParams =
+        findViewById<LinearLayout>(R.id.noDataView).layoutParams =
             LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
@@ -177,8 +168,8 @@ class CourseEvaluateDepartmentCoursesPage : AppCompatActivity(
         department = bundle.getString("Department").toString()
         courseCount =  bundle.getInt("CourseCount")
         //設置頁面 學院、學系展示
-        CollegeDepartmentName.text = "${college} - ${department}"
-        evaluationCount.text = courseCount.toString()
+        findViewById<TextView>(R.id.CollegeDepartmentName).text = "${college} - ${department}"
+        findViewById<TextView>(R.id.evaluationCount).text = courseCount.toString()
 
         //設置返回按鈕
         initBackButton()
@@ -192,9 +183,9 @@ class CourseEvaluateDepartmentCoursesPage : AppCompatActivity(
         }
 
         //掛載 courseEvaluateList 列表適配器
-        courseEvaluateList.adapter = adapter
+        findViewById<RecyclerView>(R.id.courseEvaluateList).adapter = adapter
         //列表控件courseEvaluateList的設置佈局管理器 (列表)
-        courseEvaluateList.layoutManager =
+        findViewById<RecyclerView>(R.id.courseEvaluateList).layoutManager =
             LinearLayoutManager(
                 baseContext,
                 LinearLayoutManager.VERTICAL,
@@ -241,7 +232,7 @@ class CourseEvaluateDepartmentCoursesPage : AppCompatActivity(
     inner class Adapter: CourseEvaluateListAdapter(
         baseContext,
         internetReceiver!!,
-        courseEvaluateList
+        findViewById<RecyclerView>(R.id.courseEvaluateList)
     ) {
 
         /**

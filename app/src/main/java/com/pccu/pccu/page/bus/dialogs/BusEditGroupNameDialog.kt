@@ -10,7 +10,6 @@ import com.pccu.pccu.R
 import com.pccu.pccu.sharedFunctions.Object_SharedPreferences
 import com.pccu.pccu.sharedFunctions.PToast
 import com.pccu.pccu.sharedFunctions.ViewGauge
-import kotlinx.android.synthetic.main.bus_dialog.*
 import kotlinx.coroutines.*
 
 /**
@@ -75,7 +74,7 @@ class BusEditGroupNameDialog(
             editText!!.setText(it)
         }
         //載入視圖
-        listView.addView(editText)
+        this.view?.findViewById<LinearLayout>(R.id.listView)?.addView(editText)
     }
 
     /**
@@ -98,7 +97,7 @@ class BusEditGroupNameDialog(
             dismiss()
         }
         //載入視圖
-        buttonView.addView(buttonCancel)
+        this.view?.findViewById<LinearLayout>(R.id.buttonView)?.addView(buttonCancel)
     }
 
     /**
@@ -167,7 +166,7 @@ class BusEditGroupNameDialog(
                         dismiss()
         }   }   }   }
         //載入視圖
-        buttonView.addView(buttonConfirm)
+        this.view?.findViewById<LinearLayout>(R.id.buttonView)?.addView(buttonConfirm)
     }
 
     /**
@@ -182,7 +181,7 @@ class BusEditGroupNameDialog(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //設置對話框功能標題
-        dialogName.text = when(mode){
+        this.view?.findViewById<TextView>(R.id.dialogName)?.text = when(mode){
             0 -> "更改群組名"
             1 -> "新建群組"
             else -> null

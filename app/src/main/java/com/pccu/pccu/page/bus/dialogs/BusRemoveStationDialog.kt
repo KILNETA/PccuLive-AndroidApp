@@ -8,14 +8,14 @@ import androidx.fragment.app.DialogFragment
 import com.pccu.pccu.internet.CollectGroup
 import com.pccu.pccu.R
 import com.pccu.pccu.sharedFunctions.Object_SharedPreferences
-import kotlinx.android.synthetic.main.bus_dialog.*
 import android.view.LayoutInflater
+import android.widget.CheckBox
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.pccu.pccu.sharedFunctions.PToast
 import com.pccu.pccu.sharedFunctions.RV
 import com.pccu.pccu.sharedFunctions.ViewGauge
-import kotlinx.android.synthetic.main.bus_dialog_station_remove_item.view.*
 import kotlinx.coroutines.*
 
 /**
@@ -85,7 +85,7 @@ class BusRemoveStationDialog (
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         //掛載 列表適配器
         recycler.adapter = adapter
-        listView.addView(recycler)
+        this.view?.findViewById<LinearLayout>(R.id.listView)?.addView(recycler)
     }
 
     /**
@@ -109,7 +109,7 @@ class BusRemoveStationDialog (
             dismiss()
         }
         //載入視圖
-        buttonView.addView(buttonCancel)
+        this.view?.findViewById<LinearLayout>(R.id.buttonView)?.addView(buttonCancel)
     }
 
     /**
@@ -163,7 +163,7 @@ class BusRemoveStationDialog (
             }
         }
         //載入視圖
-        buttonView.addView(buttonConfirm)
+        this.view?.findViewById<LinearLayout>(R.id.buttonView)?.addView(buttonConfirm)
     }
 
     /**
@@ -178,7 +178,7 @@ class BusRemoveStationDialog (
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //設置對話框功能標題
-        dialogName.text = "選擇移除的站牌"
+        this.view?.findViewById<TextView>(R.id.dialogName)?.text = "選擇移除的站牌"
 
         //取得收藏群組列表
         @Suppress("UNCHECKED_CAST")
@@ -242,25 +242,26 @@ class BusRemoveStationDialog (
          * @since Alpha_5.0
          */
         override fun onBindViewHolder(holder: RV.ViewHolder, position: Int) {
+            val check = holder.itemView.findViewById<CheckBox>(R.id.check)
             /**指定位置的站牌資料*/
             val station = collectGroup!!.SaveStationList[position]
             //設置路線名稱
-            holder.itemView.BusName.text = station.RouteData.RouteName.Zh_tw
+            holder.itemView.findViewById<TextView>(R.id.BusName).text = station.RouteData.RouteName.Zh_tw
             //設置終點站名稱
             @Suppress("SetTextI18n")
-            holder.itemView.DestinationStopName.text = "往${station.DestinationStopName}"
+            holder.itemView.findViewById<TextView>(R.id.DestinationStopName).text = "往${station.DestinationStopName}"
             //設置站牌名稱
-            holder.itemView.StationName.text = station.StationName.Zh_tw
+            holder.itemView.findViewById<TextView>(R.id.StationName).text = station.StationName.Zh_tw
 
             //當Item被按下
             holder.itemView.setOnClickListener {
                 //設置是否勾選
-                if(!holder.itemView.check.isChecked){
-                    holder.itemView.check.isChecked = true
-                    onChecks[position] = holder.itemView.check.isChecked
+                if(!check.isChecked){
+                    check.isChecked = true
+                    onChecks[position] = check.isChecked
                 }else{
-                    holder.itemView.check.isChecked = false
-                    onChecks[position] = holder.itemView.check.isChecked
+                    check.isChecked = false
+                    onChecks[position] = check.isChecked
                 }
             }
         }

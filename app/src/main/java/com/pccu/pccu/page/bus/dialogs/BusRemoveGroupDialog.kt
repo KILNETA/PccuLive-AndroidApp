@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.CheckBox
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,8 +17,6 @@ import com.pccu.pccu.sharedFunctions.Object_SharedPreferences
 import com.pccu.pccu.sharedFunctions.PToast
 import com.pccu.pccu.sharedFunctions.RV
 import com.pccu.pccu.sharedFunctions.ViewGauge
-import kotlinx.android.synthetic.main.bus_dialog.*
-import kotlinx.android.synthetic.main.bus_dialog_group_remove_item.view.*
 import kotlinx.coroutines.*
 
 /**
@@ -81,7 +81,7 @@ class BusRemoveGroupDialog(
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         //掛載 列表適配器
         recycler.adapter = adapter
-        listView.addView(recycler)
+        this.view?.findViewById<LinearLayout>(R.id.listView)?.addView(recycler)
     }
 
     /**
@@ -105,7 +105,7 @@ class BusRemoveGroupDialog(
             dismiss()
         }
         //載入視圖
-        buttonView.addView(buttonCancel)
+        this.view?.findViewById<LinearLayout>(R.id.buttonView)?.addView(buttonCancel)
     }
 
     /**
@@ -179,7 +179,7 @@ class BusRemoveGroupDialog(
             }
         }
         //載入視圖
-        buttonView.addView(buttonConfirm)
+        this.view?.findViewById<LinearLayout>(R.id.buttonView)?.addView(buttonConfirm)
     }
 
     /**
@@ -194,7 +194,7 @@ class BusRemoveGroupDialog(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //設置對話框功能標題
-        dialogName.text = "選擇移除的群組"
+        this.view?.findViewById<TextView>(R.id.dialogName)?.text = "選擇移除的群組"
         //取得收藏群組列表
         @Suppress("UNCHECKED_CAST")
         allCollectList = Object_SharedPreferences["Bus", "Collects", requireContext()] as ArrayList<CollectGroup>
@@ -253,20 +253,22 @@ class BusRemoveGroupDialog(
          * @since Alpha_5.0
          */
         override fun onBindViewHolder(holder: RV.ViewHolder, position: Int) {
+            val groupName = holder.itemView.findViewById<TextView>(R.id.GroupName)
+            val check = holder.itemView.findViewById<CheckBox>(R.id.check)
             //設置群組名稱
-            holder.itemView.GroupName.text = allCollectList!![position].GroupName
+            groupName.text = allCollectList!![position].GroupName
             //群組不能被刪除
             if (!allCollectList!![position].canLost){
-                holder.itemView.GroupName.setTextColor(Color.parseColor("#BABABA"))
-                holder.itemView.check.buttonTintList = ColorStateList.valueOf(Color.parseColor("#FFFFFF"))
+                groupName.setTextColor(Color.parseColor("#BABABA"))
+                check.buttonTintList = ColorStateList.valueOf(Color.parseColor("#FFFFFF"))
             }
             else{
-                holder.itemView.bus_dialog_group_remove_item.setOnClickListener {
+                holder.itemView.findViewById<LinearLayout>(R.id.bus_dialog_group_remove_item).setOnClickListener {
                     //設置是否勾選
-                    if(!holder.itemView.check.isChecked){
-                        holder.itemView.check.isChecked = true
-                        onChecks[position] = holder.itemView.check.isChecked
+                    if(!check.isChecked){
+                        check.isChecked = true
+                        onChecks[position] = check.isChecked
                     }else{
-                        holder.itemView.check.isChecked = false
-                        onChecks[position] = holder.itemView.check.isChecked
+                        check.isChecked = false
+                        onChecks[position] = check.isChecked
 }   }   }   }   }   }

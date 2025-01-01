@@ -10,12 +10,11 @@ import android.widget.TextView
 import com.pccu.pccu.page.cwb.CwbHomePage
 import com.pccu.pccu.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.cwb_home_page.view.*
-import kotlinx.android.synthetic.main.cwb_locations_list.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import com.pccu.pccu.page.cwb.CwbSource
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -93,7 +92,7 @@ class MoreLocationBottomMenu(
             /**取得改為BottomSheetDialog格式的對話*/
             val mDialog = dialog as BottomSheetDialog
             /**取得底頁*/
-            val bottomSheet = mDialog.findViewById<View>(R.id.design_bottom_sheet) as FrameLayout?
+            val bottomSheet = mDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as FrameLayout?
             /**取得底頁的父輩 改為CoordinatorLayout格式*/
             val coordinatorLayout = bottomSheet!!.parent as CoordinatorLayout
             /**取得底頁行為 來自(底頁)*/
@@ -138,7 +137,7 @@ class MoreLocationBottomMenu(
             //文字 = 分區名
             textArea.text = CwbSource.CWB_locationArea[j]
             textArea.setBackgroundColor(Color.parseColor("#cedade"))
-            Cwb_Locations_list.addView(textArea)
+            this.view?.findViewById<LinearLayout>(R.id.Cwb_Locations_list)?.addView(textArea)
 
             //打印該分區所有縣市選項
             for (i in CwbSource.CWB_locations[j].indices) {
@@ -163,7 +162,7 @@ class MoreLocationBottomMenu(
                     //存儲用戶選擇的地區
                     parent.saveTargetLocation(CwbSource.CWB_locations[j][i])
                     //更改父視圖當前縣市 //給用戶看
-                    parentView.Cwb_Location.text = CwbSource.CWB_locations[j][i]
+                    parentView.findViewById<TextView>(R.id.Cwb_Location)?.text = CwbSource.CWB_locations[j][i]
                     //更改父類別(氣象主頁)目標縣市 //給資料看
                     parent.targetLocation = CwbSource.CWB_locations[j][i]
                     //重新設置 氣象預報 展示之數據
@@ -174,7 +173,7 @@ class MoreLocationBottomMenu(
                     super.onDismiss(dialog!!)
                 }
                 //新增到列表中
-                Cwb_Locations_list.addView(textLocation)
+                this.view?.findViewById<LinearLayout>(R.id.Cwb_Locations_list)?.addView(textLocation)
             }
         }
     }

@@ -19,7 +19,6 @@ import com.pccu.pccu.internet.AnnouncementContent
 import com.pccu.pccu.internet.ContentParser
 import com.pccu.pccu.internet.HttpRetrofit
 import com.pccu.pccu.internet.NetWorkChangeReceiver
-import kotlinx.android.synthetic.main.announcement_page.*
 import kotlinx.coroutines.*
 
 /**
@@ -47,14 +46,14 @@ class AnnouncementContentPage : AppCompatActivity(R.layout.announcement_content_
         internetReceiver = NetWorkChangeReceiver(
             object : NetWorkChangeReceiver.RespondNetWork{
                 override fun interruptInternet() {
-                    noNetWork.layoutParams =
+                    findViewById<TextView>(R.id.noNetWork)?.layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT,
                         )
                 }
                 override fun connectedInternet() {
-                    noNetWork.layoutParams =
+                    findViewById<TextView>(R.id.noNetWork)?.layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             0,
@@ -300,7 +299,7 @@ class AnnouncementContentPage : AppCompatActivity(R.layout.announcement_content_
         GlobalScope.launch (Dispatchers.Main) {
             //異地連接存取公告內文資料
             val announcementList = withContext(Dispatchers.IO) {
-                HttpRetrofit.createHTML(Content_Url, "big5")
+                HttpRetrofit.createHTML(Content_Url, "UTF-8")
             }
             //重新設置公告的數據資料
             announcementList?.let {

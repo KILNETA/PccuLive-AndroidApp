@@ -3,12 +3,14 @@ package com.pccu.pccu.about
 import android.app.Activity
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.button.MaterialButton
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.pccu.pccu.R
+import com.pccu.pccu.appStart.MainActivity
 import com.pccu.pccu.sharedFunctions.Object_SharedPreferences
-import kotlinx.android.synthetic.main.update_news_dialog.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 
 
@@ -27,7 +29,7 @@ class UpdateNewsDialog : DialogFragment(R.layout.update_news_dialog) {
     @DelicateCoroutinesApi
     private fun initCloseButton(){
         //當按鈕被按下
-        close_Button.setOnClickListener {
+        this.view?.findViewById<MaterialButton>(R.id.close_Button)?.setOnClickListener {
             //關閉彈窗
             dismiss()
         }
@@ -48,7 +50,7 @@ class UpdateNewsDialog : DialogFragment(R.layout.update_news_dialog) {
         initCloseButton()
 
         //開啟PlayStore 評價介面
-        PlayStore_evaluate.setOnClickListener {
+        this.view?.findViewById<TextView>(R.id.PlayStore_evaluate)?.setOnClickListener {
             val manager = ReviewManagerFactory.create(requireContext())
             val request = manager.requestReviewFlow()
             request.addOnCompleteListener { task ->
@@ -79,6 +81,6 @@ class UpdateNewsDialog : DialogFragment(R.layout.update_news_dialog) {
     override fun dismiss() {
         super.dismiss()
         //確認公告已被已讀
-        Object_SharedPreferences.save("News","update","true_1.3.3",requireContext())
+        Object_SharedPreferences.save("News","update", MainActivity.UPDATE_NEWAS_STR ,requireContext())
     }
 }

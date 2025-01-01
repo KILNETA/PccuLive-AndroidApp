@@ -3,7 +3,6 @@ package com.pccu.pccu.page
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.home_page.*
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,18 +19,17 @@ import android.text.format.DateFormat
 import android.widget.*
 import com.pccu.pccu.page.liveImage.*
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.calendar_item.view.*
 import java.util.Calendar
 import com.squareup.picasso.MemoryPolicy
 import java.text.SimpleDateFormat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.PagerSnapHelper
+import com.google.android.material.button.MaterialButton
 import com.pccu.pccu.sharedFunctions.DateConvert
 import com.pccu.pccu.sharedFunctions.Object_SharedPreferences
 import com.pccu.pccu.sharedFunctions.RV
 import com.pccu.pccu.appStart.CwbMainActivity
 import com.pccu.pccu.sharedFunctions.ViewGauge
-import kotlinx.android.synthetic.main.weather_item.view.*
 
 /**
  * 程式主頁面 : "Fragment(home_page)"
@@ -58,6 +56,9 @@ class HomePage : Fragment(R.layout.home_page){
     /**活動濾波器(監測斷線問題)*/
     private val itFilter = IntentFilter()
 
+    private var weatherUpdataProgressBar : ProgressBar? = null
+    private var calendarList : RecyclerView? = null
+
     init{
         itFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
     }
@@ -70,10 +71,11 @@ class HomePage : Fragment(R.layout.home_page){
      */
     @DelicateCoroutinesApi
     private fun initInternetReceiver(){
+        val noNetWork = this.view?.findViewById<TextView>(R.id.noNetWork)
         internetReceiver = NetWorkChangeReceiver(
             object : NetWorkChangeReceiver.RespondNetWork{
                 override fun interruptInternet() {
-                    noNetWork.layoutParams =
+                    noNetWork?.layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -82,7 +84,7 @@ class HomePage : Fragment(R.layout.home_page){
                 override fun connectedInternet() {
                     timer = 58
 
-                    noNetWork.layoutParams =
+                    noNetWork?.layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             0,
@@ -112,7 +114,7 @@ class HomePage : Fragment(R.layout.home_page){
     @DelicateCoroutinesApi
     private fun initCalendar(){
         //點擊日曆圖示 開啟整個GOOGLE行事曆頁面
-        CalendarView.setOnClickListener{
+        this.view?.findViewById<LinearLayout>(R.id.CalendarView)?.setOnClickListener{
             startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
@@ -130,21 +132,21 @@ class HomePage : Fragment(R.layout.home_page){
         val presentDates = presentDate.split("-")
 
         //設置小日曆圖示內部數據(年/月/日)
-        calendarYear.text = presentDates[0]
-        calendarMoon.text = DateConvert.monthNumToStr3(presentDates[1])
-        calendarDay. text = presentDates[2]
+        this.view?.findViewById<TextView>(R.id.calendarYear)?.text = presentDates[0]
+        this.view?.findViewById<TextView>(R.id.calendarMoon)?.text = DateConvert.monthNumToStr3(presentDates[1])
+        this.view?.findViewById<TextView>(R.id.calendarDay)?. text = presentDates[2]
 
         //行事曆列表控件 calendar_list 的設置佈局管理器 (列表)
-        calendar_list.layoutManager =
+        calendarList?.layoutManager =
             LinearLayoutManager(
                 context,
                 LinearLayoutManager.VERTICAL,
                 false
             )
         //行事曆列表 關閉滑動
-        calendar_list.isNestedScrollingEnabled = false
+        calendarList?.isNestedScrollingEnabled = false
         //行事曆列表 連接適配器
-        calendar_list.adapter = calendarAdapter
+        calendarList?.adapter = calendarAdapter
         //首次更新數據
         calendarAdapter.upDates(presentDate)
     }
@@ -157,13 +159,14 @@ class HomePage : Fragment(R.layout.home_page){
      */
     @DelicateCoroutinesApi
     private fun initWeather() {
+        val weatherList = this.view?.findViewById<RecyclerView>(R.id.weather_list)
         //氣溫列表控件 weather_list 的設置佈局管理器 (列表)
-        weather_list.layoutManager =
+        weatherList?.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false)
         //輔助RecyclerView在滾動結束時將Item對齊到某個位置
-        PagerSnapHelper().attachToRecyclerView(weather_list)
+        PagerSnapHelper().attachToRecyclerView(weatherList)
         //weather頁面 適配器
-        weather_list.adapter = weatherAdapter
+        weatherList?.adapter = weatherAdapter
     }
 
     /**
@@ -174,7 +177,7 @@ class HomePage : Fragment(R.layout.home_page){
      */
     private fun initFastLinks(){
        //快速連結按鈕被點下 開啟快速連結列表 底部彈窗
-        FastLink.setOnClickListener{
+        this.view?.findViewById<MaterialButton>(R.id.FastLink)?.setOnClickListener{
             /**快速連結底部彈窗*/
             val fastLinkSheetFragment = FastLinksBottomMenu()
             fastLinkSheetFragment.show(parentFragmentManager, fastLinkSheetFragment.tag)
@@ -226,7 +229,7 @@ class HomePage : Fragment(R.layout.home_page){
             cameraView.addView(cameraItem.imageView)
 
             //將視圖組綁定於即時影像區上 (顯示於Home_Page上)
-            Camera.addView(cameraView)
+            this.view?.findViewById<LinearLayout>(R.id.Camera)?.addView(cameraView)
 
             //保存 影像控件 -編號資料-
             cameraList.add(cameraItem)
@@ -290,7 +293,7 @@ class HomePage : Fragment(R.layout.home_page){
      * @since Alpha_2.0
      */
     private fun initMoreLiveImage(){
-        moreLiveImage_Button.setOnClickListener{
+        this.view?.findViewById<MaterialButton>(R.id.moreLiveImage_Button)?.setOnClickListener{
             //轉換當前的頁面 至 公告內文頁面
             startActivity(Intent().setClass(requireContext(), LiveImagePage::class.java))
         }
@@ -325,7 +328,7 @@ class HomePage : Fragment(R.layout.home_page){
         @DelicateCoroutinesApi
         override fun run() {
             //增加計時緩衝條數值
-            WeatherUpdataProgressBar.setProgress(++timer, false)
+            weatherUpdataProgressBar?.setProgress(++timer, false)
             when(timer){
                 59-> updatedHomePage()
                 60-> timer = 0
@@ -342,7 +345,7 @@ class HomePage : Fragment(R.layout.home_page){
         val currentTime = Calendar.getInstance().time
         val currentHour = DateFormat.format("HH",currentTime).toString().toInt()
 
-        homeTitle.text =
+        this.view?.findViewById<TextView>(R.id.homeTitle)?.text =
             when(currentHour){
             in 5..7->"早安！祝你有美好的一天！"
             in 8..10->"早安！(๑•̀ㅂ•́)و✧"
@@ -365,6 +368,8 @@ class HomePage : Fragment(R.layout.home_page){
     @DelicateCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState) //創建頁面
+        weatherUpdataProgressBar = this.view?.findViewById(R.id.WeatherUpdataProgressBar)
+        calendarList = this.view?.findViewById(R.id.calendar_list)
         //根據時間初始化歡迎語
         initWelcomeMessage()
         //網路接收器初始化
@@ -504,71 +509,72 @@ class HomePage : Fragment(R.layout.home_page){
                 /**取出相對應位置的元素*/
                 val weather = weatherData[position]
 
-                holder.itemView.weatherDesciption.text =
+                holder.itemView.findViewById<TextView>(R.id.weatherDesciption).text =
                     if (weather.WeatherDesciption == "-99") "null"                        //天氣描述
                     else weather.WeatherDesciption                                        //
-                holder.itemView.temperature.text = weather.Tempature                      //溫度
-                holder.itemView.humidity.text = weather.Humidity                          //濕度
-                holder.itemView.windSpeed.text = weather.WindSpeed                        //風速
-                holder.itemView.rainFall.text = weather.RainFall                          //雨量
-                holder.itemView.location.text = weather.Location                          //資料來源
+                holder.itemView.findViewById<TextView>(R.id.temperature).text = weather.Tempature                      //溫度
+                holder.itemView.findViewById<TextView>(R.id.humidity).text = weather.Humidity                          //濕度
+                holder.itemView.findViewById<TextView>(R.id.windSpeed).text = weather.WindSpeed                        //風速
+                holder.itemView.findViewById<TextView>(R.id.rainFall).text = weather.RainFall                          //雨量
+                holder.itemView.findViewById<TextView>(R.id.location).text = weather.Location                          //資料來源
 
                 //氣象描述縮圖判斷式 (同文化大學官網判斷公式)
+                val weatherImage = holder.itemView.findViewById<ImageView>(R.id.weather_image)
                 if (weather.WeatherDesciption.contains("雨")){
                     if (     weather.WeatherDesciption.contains("雷")
                          &&  weather.WeatherDesciption.contains("霧"))
-                        holder.itemView.weather_image.setImageResource(R.drawable.fog_thunder)
+                        weatherImage.setImageResource(R.drawable.fog_thunder)
                         //雨雷霧
 
                     else if (weather.WeatherDesciption.contains("雷"))
-                        holder.itemView.weather_image.setImageResource(R.drawable.cloudy_rain_thunder)
+                        weatherImage.setImageResource(R.drawable.cloudy_rain_thunder)
                         //雨雷
 
                     else if (weather.WeatherDesciption.contains("霧"))
-                        holder.itemView.weather_image.setImageResource(R.drawable.fog_rain)
+                        weatherImage.setImageResource(R.drawable.fog_rain)
                         //雨霧
 
                     else if (weather.WeatherDesciption.contains("晴"))
-                        holder.itemView.weather_image.setImageResource(R.drawable.sunny_cloudy_rain)
+                        weatherImage.setImageResource(R.drawable.sunny_cloudy_rain)
                         //雨晴
 
                     else
-                        holder.itemView.weather_image.setImageResource(R.drawable.cloudy_rain)
+                        weatherImage.setImageResource(R.drawable.cloudy_rain)
                         //雨
                 }
 
                 else if(     weather.WeatherDesciption.contains("霧")) {
                     if (     weather.WeatherDesciption.contains("晴")) {
-                        holder.itemView.weather_image.setImageResource(R.drawable.sunny_fog)
+                        weatherImage.setImageResource(R.drawable.sunny_fog)
                         //霧晴
                     }
 
                     else
-                        holder.itemView.weather_image.setImageResource(R.drawable.cloudy_fog)
+                        weatherImage.setImageResource(R.drawable.cloudy_fog)
                         //霧
                 }
 
                 else if (    weather.WeatherDesciption.contains("晴")) {
                     if (     weather.WeatherDesciption.contains("雲"))
-                        holder.itemView.weather_image.setImageResource(R.drawable.sunny_cloudy)
+                        weatherImage.setImageResource(R.drawable.sunny_cloudy)
                         //晴雲
 
                     else
-                        holder.itemView.weather_image.setImageResource(R.drawable.sunny)
+                        weatherImage.setImageResource(R.drawable.sunny)
                         //晴
                 }
 
                 else if (    weather.WeatherDesciption.contains("多雲"))
-                    holder.itemView.weather_image.setImageResource(R.drawable.muti_cloudy)
+                    weatherImage.setImageResource(R.drawable.muti_cloudy)
                     //多雲
 
                 else if (    weather.WeatherDesciption.contains("雪")) {
-                    holder.itemView.weather_image.setImageResource(R.drawable.cloudy_snow)
+                    weatherImage.setImageResource(R.drawable.cloudy_snow)
                     //雪
                 }
 
                 else
-                    holder.itemView.weather_image.setImageResource(R.drawable.cloudy)
+                    weatherImage.setImageResource(R.drawable.cloudy)
                     //陰
             }
 
@@ -729,11 +735,11 @@ class HomePage : Fragment(R.layout.home_page){
          * @since Alpha_2.0
          */
         override fun onBindViewHolder(holder: RV.ViewHolder, position: Int) {
-
+            val calendarText = holder.itemView.findViewById<TextView>(R.id.calendar_text)
             if(calendarData.size==0)// 如果當天沒有活動
-                holder.itemView.calendar_text.text = "今天沒有行事事項"
+                calendarText.text = "今天沒有行事事項"
             else                     // 當天有活動
-                holder.itemView.calendar_text.text = calendarData[position]
+                calendarText.text = calendarData[position]
 
             //使用點擊跳轉行事曆列表物件
             holder.itemView.setOnClickListener {
@@ -742,7 +748,7 @@ class HomePage : Fragment(R.layout.home_page){
                     currentPosition = 0
 
                 //跳轉列表物件
-                calendar_list.smoothScrollToPosition(
+                calendarList?.smoothScrollToPosition(
                     currentPosition
                 )
 }   }   }   }

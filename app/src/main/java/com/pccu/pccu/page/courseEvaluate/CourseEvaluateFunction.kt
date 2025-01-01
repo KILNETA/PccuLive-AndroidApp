@@ -7,19 +7,17 @@ import android.os.HandlerThread
 import android.os.Message
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.reflect.TypeToken
 import com.pccu.pccu.R
 import com.pccu.pccu.internet.*
-import com.pccu.pccu.internet.CourseEvaluationAPI.getCourseEvaluation
-import com.pccu.pccu.sharedFunctions.JsonFunctions
 import com.pccu.pccu.sharedFunctions.RV
 import com.pccu.pccu.sharedFunctions.ViewGauge
-import kotlinx.android.synthetic.main.course_evaluate_courses_evaluation_list_item.view.*
-import kotlinx.android.synthetic.main.course_evaluate_courses_list_item.view.*
 import kotlinx.coroutines.*
 
 /**
@@ -101,22 +99,22 @@ class CourseEvaluateContentListAdapter(
         val _CE = CE[position]
 
         if(position % 2 == 1)
-            holder.itemView.course_evaluate_courses_evaluation_list_item.setBackgroundColor(
-                Color.parseColor("#F9F9F9"))
+            holder.itemView.findViewById<LinearLayout>(R.id.course_evaluate_courses_evaluation_list_item)
+                .setBackgroundColor(Color.parseColor("#F9F9F9"))
 
-        holder.itemView.assigmentText.text =
+        holder.itemView.findViewById<TextView>(R.id.assigmentText).text =
             _CE.assigment
-        holder.itemView.commentText.text =
+        holder.itemView.findViewById<TextView>(R.id.commentText).text =
             _CE.comment
-        holder.itemView.gradingText.text =
+        holder.itemView.findViewById<TextView>(R.id.gradingText).text =
             _CE.grading
-        holder.itemView.ratingText.text =
+        holder.itemView.findViewById<TextView>(R.id.ratingText).text =
             ratingText(_CE.rating)
-        holder.itemView.semesterText.text =
+        holder.itemView.findViewById<TextView>(R.id.semesterText).text =
             _CE.semester
-        holder.itemView.teachingText.text =
+        holder.itemView.findViewById<TextView>(R.id.teachingText).text =
             _CE.teaching
-        holder.itemView.timestampText.text =
+        holder.itemView.findViewById<TextView>(R.id.timestampText).text =
             _CE.timestamp
     }
 }
@@ -427,16 +425,16 @@ open class CourseEvaluateListAdapter(
             courseEvaluationItem[position].courseIntroduction
         )
         //掛載 evaluationView 列表適配器
-        holder.itemView.evaluationView.adapter = adapter
+        holder.itemView.findViewById<RecyclerView>(R.id.evaluationView).adapter = adapter
         //evaluationView列表 禁止滑動
-        holder.itemView.evaluationView.layoutManager =
+        holder.itemView.findViewById<RecyclerView>(R.id.evaluationView).layoutManager =
             object : LinearLayoutManager(context) {
                 override fun canScrollVertically(): Boolean {
                     return false
                 }
             }
         //evaluationView列表 方向(垂直)
-        holder.itemView.evaluationView.layoutManager =
+        holder.itemView.findViewById<RecyclerView>(R.id.evaluationView).layoutManager =
             LinearLayoutManager(
                 context,
                 LinearLayoutManager.VERTICAL,
@@ -448,13 +446,13 @@ open class CourseEvaluateListAdapter(
         /**課程評鑑 簡介 指定position*/
         val CI = courseEvaluationItem[position].courseIntroduction
 
-        holder.itemView.CollegeName.text =
+        holder.itemView.findViewById<TextView>(R.id.CollegeName).text =
             CI.department
-        holder.itemView.CourseName.text =
+        holder.itemView.findViewById<TextView>(R.id.CourseName).text =
             "${CI.name} - ${CI.teacher}"
 
         //設置當前布局(收合、展開)
-        holder.itemView.evaluationView.layoutParams =
+        holder.itemView.findViewById<RecyclerView>(R.id.evaluationView).layoutParams =
             LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 if(!CEI.isCollapse)
@@ -463,27 +461,27 @@ open class CourseEvaluateListAdapter(
                     0
             )
         //設置按紐
-        holder.itemView.collapseButton.setImageDrawable(
+        holder.itemView.findViewById<ImageView>(R.id.collapseButton).setImageDrawable(
             if(!CEI.isCollapse)
                 ContextCompat.getDrawable(context, R.drawable.collapse)
             else
                 ContextCompat.getDrawable(context, R.drawable.expand)
         )
         //按下標題區塊 操作(收合、展開)
-        holder.itemView.courseBar.setOnClickListener {
+        holder.itemView.findViewById<LinearLayout>(R.id.courseBar).setOnClickListener {
             //判斷是否收合 並操作、賦值
             CEI.isCollapse = run {
                 //收合操作
                 ViewGauge.changeExpandCollapse(
                     CEI.isCollapse,
                     parentRecyclerView,
-                    holder.itemView.evaluationView,
+                    holder.itemView.findViewById<RecyclerView>(R.id.evaluationView),
                     500,
                     null,
                     null
                 )
                 //更改按鈕圖片
-                holder.itemView.collapseButton.setImageDrawable(
+                holder.itemView.findViewById<ImageView>(R.id.collapseButton).setImageDrawable(
                     if(CEI.isCollapse)
                         ContextCompat.getDrawable(context, R.drawable.collapse)
                     else

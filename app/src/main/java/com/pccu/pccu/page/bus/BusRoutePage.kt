@@ -4,6 +4,7 @@ import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.TextView
+import com.google.android.material.button.MaterialButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -12,7 +13,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.pccu.pccu.internet.*
 import com.pccu.pccu.R
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.bus_route_page.*
 import kotlinx.coroutines.*
 import kotlin.collections.ArrayList
 import android.util.TypedValue
@@ -21,9 +21,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
 import com.pccu.pccu.about.AboutBottomSheet
-import kotlinx.android.synthetic.main.bus_route_page.aboutButton
-import kotlinx.android.synthetic.main.bus_route_page.noNetWork
 
 /**
  * Cwb主框架建構類 : "AppCompatActivity"
@@ -52,14 +51,14 @@ class BusRoutePage : AppCompatActivity(R.layout.bus_route_page) {
         internetReceiver = NetWorkChangeReceiver(
             object : NetWorkChangeReceiver.RespondNetWork{
                 override fun interruptInternet() {
-                    noNetWork.layoutParams =
+                    findViewById<TextView>(R.id.noNetWork).layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT,
                         )
                 }
                 override fun connectedInternet() {
-                    noNetWork.layoutParams =
+                    findViewById<TextView>(R.id.noNetWork).layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             0,
@@ -96,7 +95,7 @@ class BusRoutePage : AppCompatActivity(R.layout.bus_route_page) {
         )
 
         //當 關於按鈕 被按下
-        aboutButton.setOnClickListener{
+        findViewById<MaterialButton>(R.id.aboutButton).setOnClickListener{
             /**關於介面 底部彈窗*/
             val aboutSheetFragment = AboutBottomSheet(content)
             aboutSheetFragment.show(supportFragmentManager, aboutSheetFragment.tag)
@@ -137,7 +136,7 @@ class BusRoutePage : AppCompatActivity(R.layout.bus_route_page) {
      * @since Alpha_5.0
      */
     private fun initBackButton(){
-        backButton.setOnClickListener {
+        findViewById<MaterialButton>(R.id.backButton).setOnClickListener {
             //關閉視窗
             finish()
         }
@@ -155,7 +154,7 @@ class BusRoutePage : AppCompatActivity(R.layout.bus_route_page) {
         //建構主框架
         super.onCreate(savedInstanceState)
         //關閉左右托拽時的Android預設動畫
-        bus_fragment.getChildAt(0)?.overScrollMode = View.OVER_SCROLL_NEVER
+        findViewById<ViewPager2>(R.id.bus_fragment).getChildAt(0)?.overScrollMode = View.OVER_SCROLL_NEVER
 
         //初始化網路接收器
         initInternetReceiver()
@@ -173,6 +172,7 @@ class BusRoutePage : AppCompatActivity(R.layout.bus_route_page) {
         /**目標站牌 (定位用)*/
         val goalDirection =  bundle.getInt("Direction")
 
+        val routeName = findViewById<TextView>(R.id.routeName)
         //設置路線名
         if(!routeData!!.HasSubRoutes && routeData!!.SubRoutes[0].Headsign!=null) {
             // 沒有附屬路線 && 有車頭描述
@@ -190,20 +190,22 @@ class BusRoutePage : AppCompatActivity(R.layout.bus_route_page) {
             createFragment( goalDirection, goalStation )
         )
 
+        val busFragment = findViewById<ViewPager2>(R.id.bus_fragment)
+        val busTabs = findViewById<TabLayout>(R.id.bus_tabs)
         //Bus頁面 是配器
-        bus_fragment.adapter = pageAdapter
+        busFragment.adapter = pageAdapter
         //最大同時顯示兩頁
-        bus_fragment.offscreenPageLimit = 2
+        busFragment.offscreenPageLimit = 2
         //翻至指定頁面
-        bus_fragment.currentItem = goalDirection
+        busFragment.currentItem = goalDirection
 
         //頁面標題配置
         val title: ArrayList<String> =
             arrayListOf("往${routeData!!.DestinationStopNameZh}", "往${routeData!!.DepartureStopNameZh}")
         //套用至Bus頁面的標題
-        bus_tabs.scrollBarSize
+        busTabs.scrollBarSize
         //設置路線站牌頁面控件 綁定 Tab控件
-        TabLayoutMediator(bus_tabs, bus_fragment) { tab, position ->
+        TabLayoutMediator(busTabs, busFragment) { tab, position ->
 
             /**Tab文字控件*/
             val textView = TextView(this)
@@ -262,7 +264,7 @@ class BusRoutePage : AppCompatActivity(R.layout.bus_route_page) {
     ){
         init {
             //設置頁面切換檢測器
-            bus_fragment.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            findViewById<ViewPager2>(R.id.bus_fragment).registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 /**當頁面被滑動
                  * (清除所有顯示的車牌PopupWindow、設當前用戶可見的頁面座標為-1，阻止移動中顯示車牌)
                  */

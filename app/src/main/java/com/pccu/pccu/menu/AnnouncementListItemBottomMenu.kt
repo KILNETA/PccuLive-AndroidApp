@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import com.pccu.pccu.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.announcement_item_menu.*
 
 /**
  *  公告底部彈窗介面 建構類 : "BottomSheetDialogFragment"
@@ -53,7 +53,7 @@ class AnnouncementListItemBottomMenu(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        AnnouncementListItem_Menu_Browser.setOnClickListener{
+        this.view?.findViewById<LinearLayout>(R.id.AnnouncementListItem_Menu_Browser)?.setOnClickListener{
             //使用外部瀏覽器開啟公告
             startActivity(
                 Intent(

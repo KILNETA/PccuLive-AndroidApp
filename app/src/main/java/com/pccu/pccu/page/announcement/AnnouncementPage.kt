@@ -7,18 +7,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import com.pccu.pccu.menu.AnnouncementListItemBottomMenu
 import com.pccu.pccu.R
 import com.pccu.pccu.internet.*
 import com.pccu.pccu.sharedFunctions.DateConvert
 import com.pccu.pccu.sharedFunctions.RV
-import kotlinx.android.synthetic.main.announcement_item.view.*
-import kotlinx.android.synthetic.main.announcement_page.*
-import kotlinx.android.synthetic.main.announcement_page.noNetWork
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -51,17 +51,18 @@ class AnnouncementPage : Fragment(R.layout.announcement_page){
      */
     @DelicateCoroutinesApi
     private fun initInternetReceiver(){
+        val pageView = this.view
         internetReceiver = NetWorkChangeReceiver(
             object : NetWorkChangeReceiver.RespondNetWork{
                 override fun interruptInternet() {
-                    noNetWork.layoutParams =
+                    pageView?.findViewById<TextView>(R.id.noNetWork)?.layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT,
                         )
                 }
                 override fun connectedInternet() {
-                    noNetWork.layoutParams =
+                    pageView?.findViewById<TextView>(R.id.noNetWork)?.layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             0,
@@ -85,7 +86,7 @@ class AnnouncementPage : Fragment(R.layout.announcement_page){
         //停止載入動畫前判斷視圖是否還存在 避免APP發生崩潰
         if(view != null) {
             //套用設定至載入動畫物件
-            loading.layoutParams =
+            this.view?.findViewById<LinearLayout>(R.id.loading)?.layoutParams =
                 LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     0,
@@ -117,7 +118,7 @@ class AnnouncementPage : Fragment(R.layout.announcement_page){
             "　　中國文化大學"
         )
         //點擊關於按鈕 開啟關於頁面
-        aboutButton.setOnClickListener{
+        this.view?.findViewById<MaterialButton>(R.id.aboutButton)?.setOnClickListener{
             /**關於介面 底部彈窗*/
             val aboutSheetFragment = com.pccu.pccu.about.AboutBottomSheet(content)
             aboutSheetFragment.show(parentFragmentManager, aboutSheetFragment.tag)
@@ -143,13 +144,13 @@ class AnnouncementPage : Fragment(R.layout.announcement_page){
         setAboutButton()
 
         //列表控件announcement_list的設置佈局管理器 (列表)
-        announcement_list.layoutManager =
+        this.view?.findViewById<RecyclerView>(R.id.announcement_list)?.layoutManager =
             LinearLayoutManager(
                 context,
                 LinearLayoutManager.VERTICAL,
                 false
             )
-        announcement_list.adapter = adapter
+        this.view?.findViewById<RecyclerView>(R.id.announcement_list)?.adapter = adapter
         //呼叫適配器callPccuAnnouncementAPI取得資料與建構列表
         if(internetReceiver!!.isConnect)
             adapter.callPccuAnnouncementRSS()
@@ -366,15 +367,15 @@ class AnnouncementPage : Fragment(R.layout.announcement_page){
             /**取得該元素對應的公告列表資料*/
             val pccuList = announcementList[position]
             //設置公告縮圖
-            holder.itemView.item_announcement_image.setImageResource(changeAuthorImage(cutAuthor(pccuList.author)))
+            holder.itemView.findViewById<ImageView>(R.id.item_announcement_image)?.setImageResource(changeAuthorImage(cutAuthor(pccuList.author)))
             //設置公告單位
-            holder.itemView.item_announcement_unit.text = cutAuthor(pccuList.author)
+            holder.itemView.findViewById<TextView>(R.id.item_announcement_unit)?.text = cutAuthor(pccuList.author)
             //設置公告單位顏色
-            holder.itemView.item_announcement_unit.setBackgroundColor(changeAuthorColor(cutAuthor(pccuList.author)))
+            holder.itemView.findViewById<TextView>(R.id.item_announcement_unit)?.setBackgroundColor(changeAuthorColor(cutAuthor(pccuList.author)))
             //設置公告標題
-            holder.itemView.item_announcement_title.text = pccuList.title
+            holder.itemView.findViewById<TextView>(R.id.item_announcement_title)?.text = pccuList.title
             //設置公告發布時間
-            holder.itemView.item_announcement_pubDate.text = cutTimeString(pccuList.pubDate)
+            holder.itemView.findViewById<TextView>(R.id.item_announcement_pubDate)?.text = cutTimeString(pccuList.pubDate)
 
             //設置元素子控件的點擊功能
             holder.itemView.setOnClickListener {

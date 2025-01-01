@@ -4,9 +4,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.button.MaterialButton
 import com.pccu.pccu.R
-import kotlinx.android.synthetic.main.about_us_dialog.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 
 /**
@@ -24,7 +25,7 @@ class AboutUsDialog : DialogFragment(R.layout.about_us_dialog) {
     @DelicateCoroutinesApi
     private fun initCloseButton(){
         //當按鈕被按下
-        close_Button.setOnClickListener {
+        this.view?.findViewById<MaterialButton>(R.id.close_Button)?.setOnClickListener {
             //關閉彈窗
             dismiss()
         }
@@ -44,7 +45,7 @@ class AboutUsDialog : DialogFragment(R.layout.about_us_dialog) {
         //初始化關閉按鈕
         initCloseButton()
         //開發者Github
-        developerGithub.setOnClickListener {
+        this.view?.findViewById<TextView>(R.id.developerGithub)?.setOnClickListener {
             startActivity(Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse(
@@ -53,7 +54,7 @@ class AboutUsDialog : DialogFragment(R.layout.about_us_dialog) {
             ))
         }
         //App官網
-        officialWebsite.setOnClickListener {
+        this.view?.findViewById<TextView>(R.id.officialWebsite)?.setOnClickListener {
             startActivity( Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse(
@@ -62,7 +63,7 @@ class AboutUsDialog : DialogFragment(R.layout.about_us_dialog) {
             ))
         }
         //App Github開源
-        GithubWebsite.setOnClickListener {
+        this.view?.findViewById<TextView>(R.id.GithubWebsite)?.setOnClickListener {
             startActivity( Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse(
@@ -71,7 +72,7 @@ class AboutUsDialog : DialogFragment(R.layout.about_us_dialog) {
             ))
         }
         //App 隱私權保護政策
-        privacyPolicyWebsite.setOnClickListener {
+        this.view?.findViewById<TextView>(R.id.privacyPolicyWebsite)?.setOnClickListener {
             startActivity( Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse(

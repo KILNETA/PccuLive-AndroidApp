@@ -5,6 +5,8 @@ import android.os.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,8 +17,6 @@ import com.pccu.pccu.internet.*
 import com.pccu.pccu.sharedFunctions.JsonFunctions
 import com.pccu.pccu.sharedFunctions.Object_SharedPreferences
 import com.pccu.pccu.sharedFunctions.RV
-import kotlinx.android.synthetic.main.bus_route_fragment.*
-import kotlinx.android.synthetic.main.bus_station_item.view.*
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -40,6 +40,8 @@ class BusCollectFragment : Fragment(R.layout.bus_route_fragment) {
     /**列表適配器*/
     private var adapter = Adapter()
 
+    private var busUpdataProgressBar : ProgressBar? = null
+
     /**
      * 更新內容用計時器 20s/次
      * @author KILNETA
@@ -54,7 +56,7 @@ class BusCollectFragment : Fragment(R.layout.bus_route_fragment) {
         @DelicateCoroutinesApi
         override fun run() {
             //增加計時緩衝條數值
-            BusUpdataProgressBar.setProgress(++timerI, false)
+            busUpdataProgressBar?.setProgress(++timerI, false)
             when (timerI) {
                 19 -> adapter.upData()
                 20 -> timerI = 0
@@ -86,17 +88,19 @@ class BusCollectFragment : Fragment(R.layout.bus_route_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         //創建頁面
         super.onViewCreated(view, savedInstanceState)
+        val busStationList = this.view?.findViewById<RecyclerView>(R.id.bus_StationList)
 
-        (bus_StationList.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+        (busStationList?.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         //取得該頁展示之收藏群組名
         groupName = requireArguments().getString("CollectListGroupName")
         //創建Bus列表
-        bus_StationList.layoutManager =
+        busStationList.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         //掛載 列表適配器
 
-        bus_StationList.adapter = adapter
+        busStationList.adapter = adapter
 
+        busUpdataProgressBar = this.view?.findViewById<ProgressBar>(R.id.BusUpdataProgressBar)
     }
 
     /**
@@ -337,12 +341,12 @@ class BusCollectFragment : Fragment(R.layout.bus_route_fragment) {
             val station = stationList!!.SaveStationList[position]
 
             //路線名子
-            holder.itemView.BusName.text = station.RouteData.RouteName.Zh_tw
+            holder.itemView.findViewById<TextView>(R.id.BusName).text = station.RouteData.RouteName.Zh_tw
             /**控件展示之終點方向*/ //此寫法不會出現警告 vvv
             val text = "往${station.DestinationStopName}"
-            holder.itemView.DestinationStopName.text = text
+            holder.itemView.findViewById<TextView>(R.id.DestinationStopName).text = text
             //站牌名子
-            holder.itemView.StationName.text = station.StationName.Zh_tw
+                    holder.itemView.findViewById<TextView>(R.id.StationName).text = station.StationName.Zh_tw
 
             //避免出界
             if(position < estimateTime.size){

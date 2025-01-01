@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import android.widget.Button
+import android.widget.TextView
 import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -16,16 +17,12 @@ import com.pccu.pccu.R
 import com.pccu.pccu.sharedFunctions.Object_SharedPreferences
 import com.pccu.pccu.sharedFunctions.RV
 import com.pccu.pccu.sharedFunctions.ViewGauge
-import kotlinx.android.synthetic.main.bus_dialog.*
-import kotlinx.android.synthetic.main.bus_dialog_group_edit_item.view.*
 import kotlinx.coroutines.*
 import java.util.*
 import kotlin.collections.ArrayList
 import android.view.MotionEvent
+import android.widget.ImageView
 import com.pccu.pccu.sharedFunctions.PToast
-import kotlinx.android.synthetic.main.bus_dialog_group_addition_item.view.*
-import kotlinx.android.synthetic.main.bus_dialog_group_edit_item.view.GroupName
-import kotlinx.android.synthetic.main.bus_dialog_group_edit_item.view.bar
 
 class BusEditGroupDialog(
     /**回傳函式*/
@@ -85,7 +82,7 @@ class BusEditGroupDialog(
         //列表物品觸控助手 套用 列表 (不能少 少了會讓Item拖移出Bug 且很難排查)
         mITH.attachToRecyclerView(recycler)
         //加載視圖
-        listView.addView(recycler)
+        this.view?.findViewById<LinearLayout>(R.id.listView)?.addView(recycler)
     }
 
     /**
@@ -112,7 +109,7 @@ class BusEditGroupDialog(
             dismiss()
         }
         //載入視圖
-        buttonView.addView(buttonCancel)
+        this.view?.findViewById<LinearLayout>(R.id.buttonView)?.addView(buttonCancel)
     }
 
     /**
@@ -156,14 +153,14 @@ class BusEditGroupDialog(
             }
         }
         //載入視圖
-        buttonView.addView(buttonConfirm)
+        this.view?.findViewById<LinearLayout>(R.id.buttonView)?.addView(buttonConfirm)
     }
 
     @DelicateCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //設置對話框功能標題
-        dialogName.text = "編輯群組"
+        this.view?.findViewById<TextView>(R.id.dialogName)?.text = "編輯群組"
         //取得收藏群組列表
         @Suppress("UNCHECKED_CAST")
         collectList = Object_SharedPreferences["Bus", "Collects", requireContext()] as ArrayList<CollectGroup>
@@ -247,7 +244,7 @@ class BusEditGroupDialog(
             if(position < collectList!!.size) {
                 //Item座標 為 編輯群組Item
 
-                holder.itemView.GroupName.text = collectList!![position].GroupName
+                holder.itemView.findViewById<TextView>(R.id.GroupName)?.text = collectList!![position].GroupName
 
                 //可編輯的群組
                 if(collectList!![position].canLost) {
@@ -274,7 +271,7 @@ class BusEditGroupDialog(
          */
         @SuppressLint("ClickableViewAccessibility")
         private fun setBarTouchListener(holder: ViewHolder){
-            holder.itemView.bar.setOnTouchListener { v, event ->
+            holder.itemView.findViewById<ImageView>(R.id.bar)?.setOnTouchListener { v, event ->
                 v.performClick()
                 v.onTouchEvent(event)
 
@@ -300,7 +297,7 @@ class BusEditGroupDialog(
          * @since Alpha_5.0
          */
         private fun setEditTouchListener(holder: ViewHolder,position: Int){
-            holder.itemView.edit.setOnClickListener {
+            holder.itemView.findViewById<ImageView>(R.id.edit)?.setOnClickListener {
                 BusEditGroupNameDialog(
                     0,
                     listener,
@@ -318,7 +315,7 @@ class BusEditGroupDialog(
          * @since Alpha_5.0
          */
         private fun setAddTouchListener(holder: ViewHolder){
-            holder.itemView.bus_dialog_group_addition_item.setOnClickListener {
+            holder.itemView.findViewById<LinearLayout>(R.id.bus_dialog_group_addition_item)?.setOnClickListener {
                 BusEditGroupNameDialog(
                     1,
                     listener
@@ -335,9 +332,9 @@ class BusEditGroupDialog(
          * @since Alpha_5.0
          */
         private fun initCantLostItem(holder: ViewHolder){
-            holder.itemView.GroupName.setTextColor(Color.parseColor("#BABABA"))
-            holder.itemView.bar.imageTintList = ColorStateList.valueOf(Color.parseColor("#FFFFFF"))
-            holder.itemView.edit.imageTintList = ColorStateList.valueOf(Color.parseColor("#FFFFFF"))
+            holder.itemView.findViewById<TextView>(R.id.GroupName)?.setTextColor(Color.parseColor("#BABABA"))
+            holder.itemView.findViewById<ImageView>(R.id.bar)?.imageTintList = ColorStateList.valueOf(Color.parseColor("#FFFFFF"))
+            holder.itemView.findViewById<ImageView>(R.id.edit)?.imageTintList = ColorStateList.valueOf(Color.parseColor("#FFFFFF"))
         }
 
         /**

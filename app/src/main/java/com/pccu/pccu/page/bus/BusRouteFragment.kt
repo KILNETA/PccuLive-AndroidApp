@@ -23,9 +23,6 @@ import com.pccu.pccu.menu.BusStationItemBottomMenu
 import com.pccu.pccu.sharedFunctions.PWindow
 import com.pccu.pccu.sharedFunctions.*
 import com.pccu.pccu.sharedFunctions.ViewGauge.DP_PX
-import kotlinx.android.synthetic.main.bus_popwindow.view.*
-import kotlinx.android.synthetic.main.bus_route_fragment.*
-import kotlinx.android.synthetic.main.bus_route_item.view.*
 import kotlinx.coroutines.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -56,6 +53,9 @@ class BusRouteFragment(
     /**當前瀏覽的Fragment位置*/
     var fragmentPositionInView = 0
 
+    private var busUpdataProgressBar : ProgressBar? = null
+    private var busStationList : RecyclerView? = null
+
     /**
      * 更新內容用計時器 20s/次
      * @author KILNETA
@@ -74,7 +74,7 @@ class BusRouteFragment(
                 20-> timerI = 0
             }
             //增加計時緩衝條數值
-            BusUpdataProgressBar.setProgress(++timerI, false)
+            busUpdataProgressBar?.setProgress(++timerI, false)
         }
     }
 
@@ -89,14 +89,17 @@ class BusRouteFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        busUpdataProgressBar = this.view?.findViewById(R.id.BusUpdataProgressBar)
+        busStationList = this.view?.findViewById<RecyclerView>(R.id.bus_StationList)
+
         //更改公車站牌列表控件(用於配合淡入淡出動畫)
-        bus_StationList.visibility = View.GONE
+        busStationList?.visibility = View.GONE
 
         //創建Bus列表
-        bus_StationList.layoutManager =
+        busStationList?.layoutManager =
             LinearLayoutManager( context, LinearLayoutManager.VERTICAL, false)
         //掛載 列表適配器
-        bus_StationList.adapter = adapter
+        busStationList?.adapter = adapter
         //設置公車站牌列表控件 滾動檢測器
         adapter.initScrollListener()
     }
@@ -166,10 +169,12 @@ class BusRouteFragment(
                 oldBottom: Int
             ) {
                 //刪除檢測器
-                bus_StationList.removeOnLayoutChangeListener(this)
+                busStationList?.removeOnLayoutChangeListener(this)
                 //如果當前用戶正在檢閱此Fragment頁面 則 顯示所有可見的車牌
-                if(fragmentPosition == fragmentPositionInView)
-                    showAllBusPlateNumbInView(bus_StationList)
+                if( busStationList != null &&
+                    fragmentPosition == fragmentPositionInView) {
+                    showAllBusPlateNumbInView(busStationList!!)
+                }
             }
         }
 
@@ -180,7 +185,7 @@ class BusRouteFragment(
          */
         fun initScrollListener(){
             //新增Recyclerview的滾動檢測器
-            bus_StationList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            busStationList?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 /**滾動狀態改變*/
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
@@ -406,67 +411,73 @@ class BusRouteFragment(
          */
         @DelicateCoroutinesApi
         fun upData(){
-            GlobalScope.launch ( Dispatchers.Main ) {
-                /**取得TDX Token協定*/
-                val tdxToken = withContext(Dispatchers.IO) {
-                    BusAPI.getToken()
-                }
+            if(busStationList != null) {
+                GlobalScope.launch(Dispatchers.Main) {
+                    /**取得TDX Token協定*/
+                    val tdxToken = withContext(Dispatchers.IO) {
+                        BusAPI.getToken()
+                    }
 
-                //確認有取得tdxToken協定 (判斷access_token是否有取得即可)
-                tdxToken?.access_token?.let {
-                    if (isInit) {
-                        //避免重複操作出錯
-                        stationDataList.clear()
-                        //取得站務資料 並初始化 站牌數據列表
-                        stations = getDisplayStation(tdxToken)?.get(0)?.Stops!!
-                        stations.forEach { stationDataList.add(StationData(it)) }
+                    //確認有取得tdxToken協定 (判斷access_token是否有取得即可)
+                    tdxToken?.access_token?.let {
+                        if (isInit) {
+                            //避免重複操作出錯
+                            stationDataList.clear()
+                            //取得站務資料 並初始化 站牌數據列表
+                            var request = getDisplayStation(tdxToken)?.get(0)
+                            request?.let {
+                                stations = request.Stops
+                                stations.forEach { stationDataList.add(StationData(it)) }
 
-                        //取得路線收費規定 (如果欲取得需縣市符合API要求 是否支援其縣市)
-                        if (BusAPI.RouteFare.contains(routeData.City)) {
-                            val rf = getRouteFare(tdxToken)
-                            rf?.let{
-                                if (rf.isNotEmpty())
-                                    fare = rf[0]
-                                else
-                                    noFare = true
-                            }
-                        }
-                        //公車站牌列表在首次加載成功後進行crossfade(淡入淡出)動畫
-                        RV.crossfade(bus_StationList)
-                        //由於前面經過大量網路請求
-                        //需檢查視窗尚未被關閉 則初始化列表控件繪圖
-                        if (stations.isNotEmpty()  && view != null) {
-                            setBufferZone()
-                            //刷新視圖列表
-                            @Suppress("NotifyDataSetChanged")
-                            notifyDataSetChanged()
-                            bus_StationList.post {
-                                //轉移到定位站牌
-                                if (goalStationUID != null) {
-                                    moveToPosition(
-                                        stationDataList.indexOfFirst {
-                                            goalStationUID == it.Station.StopUID }
-                                    )
+                                //取得路線收費規定 (如果欲取得需縣市符合API要求 是否支援其縣市)
+                                if (BusAPI.RouteFare.contains(routeData.City)) {
+                                    val rf = getRouteFare(tdxToken)
+                                    rf?.let {
+                                        if (rf.isNotEmpty())
+                                            fare = rf[0]
+                                        else
+                                            noFare = true
+                                    }
+                                }
+                                //公車站牌列表在首次加載成功後進行crossfade(淡入淡出)動畫
+                                RV.crossfade(busStationList!!)
+                                //由於前面經過大量網路請求
+                                //需檢查視窗尚未被關閉 則初始化列表控件繪圖
+                                if (stations.isNotEmpty() && view != null) {
+                                    setBufferZone()
+                                    //刷新視圖列表
+                                    @Suppress("NotifyDataSetChanged")
+                                    notifyDataSetChanged()
+                                    busStationList?.post {
+                                        //轉移到定位站牌
+                                        if (goalStationUID != null) {
+                                            moveToPosition(
+                                                stationDataList.indexOfFirst {
+                                                    goalStationUID == it.Station.StopUID
+                                                }
+                                            )
+                                        }
+                                    }
+                                    isInit = false
                                 }
                             }
-                            isInit = false
                         }
-                    }
 
-                    //取得公車列表展示之 站牌數據
-                    getStationData(tdxToken)
+                        //取得公車列表展示之 站牌數據
+                        getStationData(tdxToken)
 
-                    //刷新視圖列表
-                    @Suppress("NotifyDataSetChanged")
-                    notifyDataSetChanged()
-                    //一次清除所有顯示中的車牌PopWindow
-                    clearBusPlateNumbPopWindow()
-                    if(view != null) {
-                        //添加 列表內容更改檢測器
-                        bus_StationList.addOnLayoutChangeListener(changeListener)
-                    }
-                //取得tdxToken協定失敗 回報錯誤
-                } ?: PToast.popLongHint(context!!,"Error:無法取得TdxAPI的Token")
+                        //刷新視圖列表
+                        @Suppress("NotifyDataSetChanged")
+                        notifyDataSetChanged()
+                        //一次清除所有顯示中的車牌PopWindow
+                        clearBusPlateNumbPopWindow()
+                        if (view != null) {
+                            //添加 列表內容更改檢測器
+                            busStationList?.addOnLayoutChangeListener(changeListener)
+                        }
+                        //取得tdxToken協定失敗 回報錯誤
+                    } ?: PToast.popLongHint(context!!, "Error:無法取得TdxAPI的Token")
+                }
             }
         }
 
@@ -528,19 +539,19 @@ class BusRouteFragment(
             //先從RecyclerView的LayoutManager中獲取第一項和最後一項的Position
             /**RecyclerView第一項Position*/
             val firstItem: Int =
-                (bus_StationList.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                (busStationList?.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
             /**RecyclerView最後一項Position*/
             val lastItem: Int =
-                (bus_StationList.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+                (busStationList?.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
             /**單個列表控件的高度*/
-            val itemH = bus_StationList.getChildAt(0).height
+            var itemH = busStationList?.getChildAt(0)?.height ?: 0
             /**計算將控件置中顯示在列表裡所要移動的距離*/
             val positionMove: Int = (Position - (firstItem + lastItem)/2 ) * itemH + itemH / 2
             //平滑滑動至該位置
             //bus_StationList.smoothScrollBy(0, positionMove)
 
             //滑至該位置(無動畫)
-            bus_StationList.scrollBy(0, positionMove)
+            busStationList?.scrollBy(0, positionMove)
         }
 
         /**
@@ -551,12 +562,12 @@ class BusRouteFragment(
         private fun setBufferZone(){
             if (fare?.SectionFares?.get(0)?.BufferZones?.isNotEmpty() == true)
                 //存在緩衝區
-                bus_StationList.addItemDecoration(
+                busStationList?.addItemDecoration(
                     ItemDecoration(stations, fare!!.SectionFares!![0].BufferZones!!)
                 )
             else
                 //不存在緩衝區
-                bus_StationList.addItemDecoration(ItemDecoration(stations))
+                busStationList?.addItemDecoration(ItemDecoration(stations))
         }
 
         /**
@@ -571,7 +582,10 @@ class BusRouteFragment(
             /**公車域值*/
             val busStatus = arrayListOf(256,256)
             /**公車Icon控件*/
-            val busIconView = arrayListOf(view.BusIcon_after,view.BusIcon_now)
+            val busIconView = arrayListOf(
+                view.findViewById<ImageView>(R.id.BusIcon_after),
+                view.findViewById<ImageView>(R.id.BusIcon_now)
+            )
 
             //計算顯示域值
             for(i in BusDataList.indices) {
@@ -645,8 +659,8 @@ class BusRouteFragment(
             for(i in firstVisible..lastVisible) {
                 /**站牌Item各停靠狀態的Bus Icon*/
                 val busIconView = arrayListOf(
-                    layoutManager.findViewByPosition(i)!!.BusIcon_after,
-                    layoutManager.findViewByPosition(i)!!.BusIcon_now
+                    layoutManager.findViewByPosition(i)!!.findViewById<ImageView>(R.id.BusIcon_after),
+                    layoutManager.findViewByPosition(i)!!.findViewById<ImageView>(R.id.BusIcon_now)
                 )
                 //判斷各個Bus Icon有無須顯示車牌PopWindow
                 busIconView.forEachIndexed { index, it->
@@ -741,7 +755,7 @@ class BusRouteFragment(
                         //將 車牌Text 新增至車牌Item
                         busPlateNumbItem.addView(busPlateNumbText)
                         //將 車牌Item 新增至車牌PopupWindow
-                        popView.BusPlateNumbBox.addView(busPlateNumbItem)
+                        popView.findViewById<LinearLayout>(R.id.BusPlateNumbBox).addView(busPlateNumbItem)
                     }
                 }
                 /**初始化自定義的PopWindow控件*/
@@ -817,7 +831,7 @@ class BusRouteFragment(
             val buses = stationDataList[position].innerBuses
 
             //設置站點名稱
-            holder.itemView.StationName.text = station.StopName.Zh_tw
+            holder.itemView.findViewById<TextView>(R.id.StationName).text = station.StopName.Zh_tw
             //設置公車圖示
             busStatusIconChoose(holder.itemView,buses,position)
 

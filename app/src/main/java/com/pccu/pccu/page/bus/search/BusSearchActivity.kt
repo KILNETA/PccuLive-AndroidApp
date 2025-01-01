@@ -18,16 +18,13 @@ import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.pccu.pccu.internet.*
 import com.pccu.pccu.R
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.bus_search_main.*
-import kotlinx.android.synthetic.main.bus_search_result_item.view.*
-import kotlinx.android.synthetic.main.search_filter_item.view.*
 import kotlinx.coroutines.*
 import android.graphics.Canvas
 import android.widget.LinearLayout
+import android.widget.TextView
 import com.pccu.pccu.sharedFunctions.JsonFunctions.fromJson
 import com.pccu.pccu.page.bus.BusRoutePage
 import com.pccu.pccu.sharedFunctions.RV
-import kotlinx.android.synthetic.main.bus_search_main.noNetWork
 import java.io.Serializable
 import kotlin.math.max
 
@@ -56,14 +53,14 @@ class BusSearchActivity : AppCompatActivity(R.layout.bus_search_main) {
         internetReceiver = NetWorkChangeReceiver(
             object : NetWorkChangeReceiver.RespondNetWork{
                 override fun interruptInternet() {
-                    noNetWork.layoutParams =
+                    findViewById<TextView>(R.id.noNetWork).layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT,
                         )
                 }
                 override fun connectedInternet() {
-                    noNetWork.layoutParams =
+                    findViewById<TextView>(R.id.noNetWork).layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             0,
@@ -90,23 +87,29 @@ class BusSearchActivity : AppCompatActivity(R.layout.bus_search_main) {
         super.onCreate(savedInstanceState)
         //初始化網路接收器
         initInternetReceiver()
+
+        val routeList = findViewById<RecyclerView>(R.id.route_list)
         //掛載 route_list 列表適配器
-        route_list.adapter = routeAdapter
+        routeList.adapter = routeAdapter
         //列表控件 route_list 的設置佈局管理器 (列表)
-        route_list.layoutManager =
+        routeList.layoutManager =
             LinearLayoutManager(baseContext, LinearLayoutManager.VERTICAL, false)
+
         //設置分組標籤
         routeAdapter.setItemDecoration()
 
+        val filterList = findViewById<RecyclerView>(R.id.filter_list)
         //掛載 filter_list 列表適配器
-        filter_list.adapter = filterAdapter
+        filterList.adapter = filterAdapter
         //列表控件 filter_list 的設置佈局管理器 (列表)
-        filter_list.layoutManager =
+        filterList.layoutManager =
             LinearLayoutManager(baseContext, LinearLayoutManager.HORIZONTAL, false)
+
+        val searchView = findViewById<SearchView>(R.id._searchView)
         //開啟搜索框焦點 (順帶啟用軟鍵盤)
-        _searchView.requestFocusFromTouch()
+        searchView.requestFocusFromTouch()
         //設置搜索文本偵聽器
-        _searchView.setOnQueryTextListener(searchViewOnQueryTextListener)
+        searchView.setOnQueryTextListener(searchViewOnQueryTextListener)
     }
 
     /**
@@ -190,7 +193,7 @@ class BusSearchActivity : AppCompatActivity(R.layout.bus_search_main) {
                 stopLoading()
             }
             //清除焦點，收軟鍵盤
-            _searchView.clearFocus()
+            findViewById<SearchView>(R.id._searchView).clearFocus()
             return false
         }
 
@@ -202,16 +205,20 @@ class BusSearchActivity : AppCompatActivity(R.layout.bus_search_main) {
         private fun clearSearchResult(){
 
             //清空上次搜索的結果
-            if (filter_list.childCount > 0 ) {
-                filter_list.removeAllViews()
+            val filterList = findViewById<RecyclerView>(R.id.filter_list)
+            if (filterList.childCount > 0 ) {
+                filterList.removeAllViews()
                 filterAdapter.clearItems()
             }
-            if (route_list.childCount > 0 ) {
-                route_list.removeAllViews()
+
+            val routeList = findViewById<RecyclerView>(R.id.route_list)
+            if (routeList.childCount > 0 ) {
+                routeList.removeAllViews()
                 routeAdapter.clearItems()
             }
+
             //清空上次搜索的結果數
-            resultNum.text = "－"
+            findViewById<TextView>(R.id.resultNum).text = "－"
         }
 
         //當搜索內容改變時觸發該方法
@@ -309,15 +316,15 @@ class BusSearchActivity : AppCompatActivity(R.layout.bus_search_main) {
             /**取得該元素對應的篩選鈕資料*/
             val filterData = locationList[position]
             //設置篩選鈕文字
-            holder.itemView.filterItem_text.text = filterData.location.Zh_tw
+            holder.itemView.findViewById<TextView>(R.id.filterItem_text).text = filterData.location.Zh_tw
             //設置篩選鈕顏色
-            holder.itemView.filterItem.backgroundTintList = setButtonColor(filterData)
+            holder.itemView.findViewById<LinearLayout>(R.id.filterItem).backgroundTintList = setButtonColor(filterData)
 
             //設置元素子控件的點擊功能
             holder.itemView.setOnClickListener {
                 //重設選項 & 外觀
                 filterData.checked = !filterData.checked
-                holder.itemView.filterItem.backgroundTintList = setButtonColor(filterData)
+                holder.itemView.findViewById<LinearLayout>(R.id.filterItem).backgroundTintList = setButtonColor(filterData)
                 //刷新經篩選的查詢結果
                 routeAdapter.resetFilter(locationList)
             }
@@ -355,7 +362,7 @@ class BusSearchActivity : AppCompatActivity(R.layout.bus_search_main) {
          * @since Alpha_5.0
          */
         fun setItemDecoration(){
-            route_list.addItemDecoration(
+            findViewById<RecyclerView>(R.id.route_list).addItemDecoration(
                 ResultListItemDecoration(
                     object : ResultListItemDecoration.LinearSectionCallback {
                         override fun getItemStr(position: Int): String {
@@ -379,7 +386,7 @@ class BusSearchActivity : AppCompatActivity(R.layout.bus_search_main) {
             this.route = Route
             this.displayRoute.addAll(this.route)
             //顯示查詢結果數
-            resultNum.text = displayRoute.size.toString()
+            findViewById<TextView>(R.id.resultNum).text = displayRoute.size.toString()
             //刷新視圖列表
             @Suppress("NotifyDataSetChanged")
             notifyDataSetChanged()
@@ -406,7 +413,7 @@ class BusSearchActivity : AppCompatActivity(R.layout.bus_search_main) {
                 }
             }
             //顯示查詢結果數
-            resultNum.text = displayRoute.size.toString()
+            findViewById<TextView>(R.id.resultNum).text = displayRoute.size.toString()
             //刷新視圖列表
             @Suppress("NotifyDataSetChanged")
             notifyDataSetChanged()
@@ -451,18 +458,19 @@ class BusSearchActivity : AppCompatActivity(R.layout.bus_search_main) {
          */
         override fun onBindViewHolder(holder: RV.ViewHolder, position: Int) {
             //展示路線名
+            val routeName = holder.itemView.findViewById<TextView>(R.id.routeName)
             if(!displayRoute[position].HasSubRoutes && displayRoute[position].SubRoutes[0].Headsign!=null) {
                 // 沒有附屬路線 && 有車頭描述
                 /**控件展示之路線名*/ //此寫法不會出現警告 vvv
                 val text = "${displayRoute[position].RouteName.Zh_tw} ${displayRoute[position].SubRoutes[0].Headsign}"
-                holder.itemView.routeName.text = text
+                routeName.text = text
             }
             else {
-                holder.itemView.routeName.text = displayRoute[position].RouteName.Zh_tw
+                routeName.text = displayRoute[position].RouteName.Zh_tw
             }
             /**控件展示之路線首尾站*/ //此寫法不會出現警告 vvv
             val text = "${displayRoute[position].DepartureStopNameZh} - ${displayRoute[position].DestinationStopNameZh}"
-            holder.itemView.routeText.text = text
+            holder.itemView.findViewById<TextView>(R.id.routeText).text = text
 
             //設置元素子控件的點擊功能
             holder.itemView.setOnClickListener {
@@ -730,7 +738,7 @@ class BusSearchActivity : AppCompatActivity(R.layout.bus_search_main) {
      */
     private fun startLoading(){
         //修改版面 (顯示)
-        loading.layoutParams =
+        findViewById<LinearLayout>(R.id.loading).layoutParams =
             LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
@@ -744,7 +752,7 @@ class BusSearchActivity : AppCompatActivity(R.layout.bus_search_main) {
      */
     private fun stopLoading(){
         //修改版面 (隱藏)
-        loading.layoutParams =
+        findViewById<LinearLayout>(R.id.loading).layoutParams =
             LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 0

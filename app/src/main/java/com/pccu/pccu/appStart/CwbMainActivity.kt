@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.pccu.pccu.R
-import kotlinx.android.synthetic.main.cwb_activity_main.*
 
 /**
  * Cwb主框架建構類 : "AppCompatActivity"
@@ -29,6 +29,6 @@ class CwbMainActivity: AppCompatActivity(R.layout.cwb_activity_main) {
         /**設置導航控制器*/ // -> cwb_nav_fragment
         val navController = findNavController(R.id.cwb_nav_fragment)
         //底部導航視圖(cwb_bottom_navigation) 連結 導航控制器(nav_fragment)
-        cwb_bottom_navigation.setupWithNavController(navController)
+        findViewById<BottomNavigationView>(R.id.cwb_bottom_navigation)?.setupWithNavController(navController)
     }
 }

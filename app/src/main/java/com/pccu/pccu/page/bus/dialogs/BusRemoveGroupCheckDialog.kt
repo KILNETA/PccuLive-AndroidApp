@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.pccu.pccu.R
 import com.pccu.pccu.sharedFunctions.PToast
-import kotlinx.android.synthetic.main.bus_dialog.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 
 /**
@@ -45,7 +45,7 @@ class BusRemoveGroupCheckDialog(
             dismiss()
         }
         //載入視圖
-        buttonView.addView(buttonCancel)
+        this.view?.findViewById<LinearLayout>(R.id.buttonView)?.addView(buttonCancel)
     }
 
     /**
@@ -72,7 +72,7 @@ class BusRemoveGroupCheckDialog(
             dismiss()
         }
         //載入視圖
-        buttonView.addView(buttonConfirm)
+        this.view?.findViewById<LinearLayout>(R.id.buttonView)?.addView(buttonConfirm)
     }
 
     /**
@@ -87,7 +87,7 @@ class BusRemoveGroupCheckDialog(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //設置對話框功能標題
-        dialogName.text = "群組中的站牌也將一併刪除"
+        this.view?.findViewById<TextView>(R.id.dialogName)?.text = "群組中的站牌也將一併刪除"
 
         //初始化取消按鈕
         initCancelButton()

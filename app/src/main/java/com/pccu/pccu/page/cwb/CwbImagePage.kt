@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.google.android.material.button.MaterialButton
 import com.pccu.pccu.about.AboutBottomSheet
 import com.pccu.pccu.page.cwb.CwbSource.CWB_ImageSource_Url
 import com.pccu.pccu.R
@@ -18,9 +19,6 @@ import com.pccu.pccu.internet.NetWorkChangeReceiver
 import com.pccu.pccu.sharedFunctions.ViewGauge
 import com.squareup.picasso.MemoryPolicy
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.cwb_image_page.*
-import kotlinx.android.synthetic.main.cwb_image_page.aboutButton
-import kotlinx.android.synthetic.main.cwb_image_page.noNetWork
 import kotlinx.coroutines.DelicateCoroutinesApi
 
 /**
@@ -45,17 +43,18 @@ class CwbImagePage: Fragment(R.layout.cwb_image_page) {
      * @since Alpha_2.0
      */
     private fun initInternetReceiver(){
+        val pageView = this.view
         internetReceiver = NetWorkChangeReceiver(
             object : NetWorkChangeReceiver.RespondNetWork{
                 override fun interruptInternet() {
-                    noNetWork.layoutParams =
+                    pageView?.findViewById<TextView>(R.id.noNetWork)?.layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT,
                         )
                 }
                 override fun connectedInternet() {
-                    noNetWork.layoutParams =
+                    pageView?.findViewById<TextView>(R.id.noNetWork)?.layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             0,
@@ -83,7 +82,7 @@ class CwbImagePage: Fragment(R.layout.cwb_image_page) {
         )
 
         //當 關於按鈕 被按下
-        aboutButton.setOnClickListener{
+        this.view?.findViewById<MaterialButton>(R.id.aboutButton)?.setOnClickListener{
             /**關於介面 底部彈窗*/
             val aboutSheetFragment = AboutBottomSheet(context)
             aboutSheetFragment.show(parentFragmentManager, aboutSheetFragment.tag)
@@ -159,7 +158,7 @@ class CwbImagePage: Fragment(R.layout.cwb_image_page) {
         }
 
         //將視圖組綁定於即時影像區上 (顯示於Home_Page上)
-        Cwb_Images.addView(pictureView)
+        this.view?.findViewById<LinearLayout>(R.id.Cwb_Images)?.addView(pictureView)
     }
 
     /**

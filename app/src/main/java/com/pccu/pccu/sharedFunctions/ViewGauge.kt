@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.LinearLayout
-import kotlinx.android.synthetic.main.course_evaluate_courses_list_item.view.*
 
 /**
  * 視圖計算

@@ -2,20 +2,16 @@ package com.pccu.pccu.page.courseEvaluate.search
 
 import android.content.IntentFilter
 import android.os.Bundle
-import android.os.Handler
-import android.os.HandlerThread
-import android.os.Message
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.pccu.pccu.R
 import com.pccu.pccu.internet.*
 import com.pccu.pccu.page.courseEvaluate.*
-import kotlinx.android.synthetic.main.course_evaluation_search_main.*
-import kotlinx.android.synthetic.main.course_evaluation_search_main.loading
-import kotlinx.android.synthetic.main.course_evaluation_search_main.noNetWork
 import kotlinx.coroutines.*
 
 /**
@@ -41,14 +37,14 @@ class CourseEvaluateSearchActivity : AppCompatActivity(R.layout.course_evaluatio
         internetReceiver = NetWorkChangeReceiver(
             object : NetWorkChangeReceiver.RespondNetWork{
                 override fun interruptInternet() {
-                    noNetWork.layoutParams =
+                    findViewById<TextView>(R.id.noNetWork)?.layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT,
                         )
                 }
                 override fun connectedInternet() {
-                    noNetWork.layoutParams =
+                    findViewById<TextView>(R.id.noNetWork)?.layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             0,
@@ -79,15 +75,15 @@ class CourseEvaluateSearchActivity : AppCompatActivity(R.layout.course_evaluatio
         adapter = Adapter()
 
         //掛載 courseEvaluateList 列表適配器
-        courseEvaluateList.adapter = adapter
+        findViewById<RecyclerView>(R.id.courseEvaluateList).adapter = adapter
         //列表控件 courseEvaluateList 的設置佈局管理器 (列表)
-        courseEvaluateList.layoutManager =
+        findViewById<RecyclerView>(R.id.courseEvaluateList).layoutManager =
             LinearLayoutManager(baseContext, LinearLayoutManager.VERTICAL, false)
 
         //開啟搜索框焦點 (順帶啟用軟鍵盤)
-        _searchView.requestFocusFromTouch()
+        findViewById<SearchView>(R.id._searchView).requestFocusFromTouch()
         //設置搜索文本偵聽器
-        _searchView.setOnQueryTextListener(searchViewOnQueryTextListener)
+        findViewById<SearchView>(R.id._searchView).setOnQueryTextListener(searchViewOnQueryTextListener)
     }
 
     /**
@@ -134,7 +130,7 @@ class CourseEvaluateSearchActivity : AppCompatActivity(R.layout.course_evaluatio
             }
 
             //清除焦點，收軟鍵盤
-            _searchView.clearFocus()
+            findViewById<SearchView>(R.id._searchView).clearFocus()
             return false
         }
 
@@ -146,12 +142,12 @@ class CourseEvaluateSearchActivity : AppCompatActivity(R.layout.course_evaluatio
         private fun clearSearchResult(){
 
             //清空上次搜索的結果
-            if (courseEvaluateList.childCount > 0 ) {
-                courseEvaluateList.removeAllViews()
+            if (findViewById<RecyclerView>(R.id.courseEvaluateList).childCount > 0 ) {
+                findViewById<RecyclerView>(R.id.courseEvaluateList).removeAllViews()
                 adapter!!.clearItems()
             }
             //清空上次搜索的結果數
-            resultNum.text = "－"
+            findViewById<TextView>(R.id.resultNum).text = "－"
         }
 
         //當搜索內容改變時觸發該方法
@@ -169,7 +165,7 @@ class CourseEvaluateSearchActivity : AppCompatActivity(R.layout.course_evaluatio
     inner class Adapter: CourseEvaluateListAdapter(
         baseContext,
         internetReceiver!!,
-        courseEvaluateList
+        findViewById<RecyclerView>(R.id.courseEvaluateList)
     ) {
 
         /**
@@ -201,7 +197,7 @@ class CourseEvaluateSearchActivity : AppCompatActivity(R.layout.course_evaluatio
         private fun getCourseEvaluateData_Done(){
             //更新搜索到的數據
             resetData()
-            resultNum.text = courseEvaluationItem.size.toString()
+            findViewById<TextView>(R.id.resultNum).text = courseEvaluationItem.size.toString()
             //停止加載動畫
             stopLoading()
         }
@@ -214,7 +210,7 @@ class CourseEvaluateSearchActivity : AppCompatActivity(R.layout.course_evaluatio
      */
     private fun startLoading(){
         //修改版面 (顯示)
-        loading.layoutParams =
+        findViewById<LinearLayout>(R.id.loading).layoutParams =
             LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
@@ -228,7 +224,7 @@ class CourseEvaluateSearchActivity : AppCompatActivity(R.layout.course_evaluatio
      */
     private fun stopLoading(){
         //修改版面 (隱藏)
-        loading.layoutParams =
+        findViewById<LinearLayout>(R.id.loading).layoutParams =
             LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 0

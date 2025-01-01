@@ -18,14 +18,13 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.pccu.pccu.R
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.live_image_page.*
 import java.util.*
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.tabs.TabLayout
 import com.pccu.pccu.about.AboutBottomSheet
 import com.pccu.pccu.internet.CameraAPI
 import com.pccu.pccu.internet.NetWorkChangeReceiver
-import kotlinx.android.synthetic.main.live_image_page.aboutButton
-import kotlinx.android.synthetic.main.live_image_page.noNetWork
 
 /**
  * 即時影像 主頁面 頁面建構類 : "AppCompatActivity(live_image_page)"
@@ -57,14 +56,14 @@ class LiveImagePage : AppCompatActivity(R.layout.live_image_page) {
         internetReceiver = NetWorkChangeReceiver(
             object : NetWorkChangeReceiver.RespondNetWork{
                 override fun interruptInternet() {
-                    noNetWork.layoutParams =
+                    findViewById<TextView>(R.id.noNetWork).layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT,
                         )
                 }
                 override fun connectedInternet() {
-                    noNetWork.layoutParams =
+                    findViewById<TextView>(R.id.noNetWork).layoutParams =
                         LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             0,
@@ -99,7 +98,7 @@ class LiveImagePage : AppCompatActivity(R.layout.live_image_page) {
             "　　中國文化大學、臺北市即時交通資訊網。"
         )
         //當關於按鈕被按下 開啟關於介面 底部彈窗
-        aboutButton.setOnClickListener{
+        findViewById<MaterialButton>(R.id.aboutButton).setOnClickListener{
             /**關於介面 底部彈窗*/
             val aboutSheetFragment = AboutBottomSheet(content)
             aboutSheetFragment.show(supportFragmentManager, aboutSheetFragment.tag)
@@ -150,24 +149,26 @@ class LiveImagePage : AppCompatActivity(R.layout.live_image_page) {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState) //創建頁面
+        val liveCamerasFragment = findViewById<ViewPager2>(R.id.LiveCameras_fragment)
         //關閉左右托拽時的Android預設動畫
-        LiveCameras_fragment.getChildAt(0)?.overScrollMode = View.OVER_SCROLL_NEVER
+        liveCamerasFragment.getChildAt(0)?.overScrollMode = View.OVER_SCROLL_NEVER
         //初始化網路接收器
         initInternetReceiver()
         //初始化關於按鈕
         initAboutButton()
 
         //允許您定義在螢幕外呈現多少頁。 (全部頁數顯示)
-        LiveCameras_fragment.offscreenPageLimit = fragments.size
+        liveCamerasFragment.offscreenPageLimit = fragments.size
 
         //創建Bus頁面資料
         pageAdapter = PageAdapter(supportFragmentManager, lifecycle)
         //LiveCameras頁面 適配器
-        LiveCameras_fragment.adapter = pageAdapter
+        liveCamerasFragment.adapter = pageAdapter
 
 
         //套用至LiveCameras頁面的標題
-        TabLayoutMediator(camera_tabs, LiveCameras_fragment) { tab, position ->
+        val cameraTabs = findViewById<TabLayout>(R.id.camera_tabs)
+        TabLayoutMediator(cameraTabs, liveCamerasFragment) { tab, position ->
             /**Tab文字控件*/
             val textView = TextView(baseContext)
 
@@ -194,11 +195,11 @@ class LiveImagePage : AppCompatActivity(R.layout.live_image_page) {
             tab.view.layoutParams = params
         }.attach()
         //設置View覆蓋子類控件而直接獲得焦點 (避免ViewPage2跳轉頁面位置)
-        LiveCameras_fragment.descendantFocusability = FOCUS_BLOCK_DESCENDANTS
+        liveCamerasFragment.descendantFocusability = FOCUS_BLOCK_DESCENDANTS
 
         /** vvv 由於各頁面高度不一 功能使切換頁面會重新計算頁面高度 避免頁面空白 vvv */
         //重構 ViewPage2 控件的部分功能
-        LiveCameras_fragment.registerOnPageChangeCallback(
+        liveCamerasFragment.registerOnPageChangeCallback(
             object : OnPageChangeCallback() {
                 /**
                  * 頁面被選中 (頁面改變)
@@ -214,7 +215,7 @@ class LiveImagePage : AppCompatActivity(R.layout.live_image_page) {
                     //(避免如果使用TabLayout切換頁面時APP崩潰)
                     if (view != null) {
                         //重置ViewPage2控件的高度適配子視圖
-                        updatePagerHeightForChild(view, LiveCameras_fragment)
+                        updatePagerHeightForChild(view, liveCamerasFragment)
                     }
                 }
             }

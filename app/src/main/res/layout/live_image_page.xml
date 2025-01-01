@@ -3,21 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/live_image_page"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".page.liveImage.LiveImagePage">
+    android:orientation="vertical"
+    tools:context=".page.liveImage.LiveImagePage"
+    tools:viewBindingIgnore="true">
 
     <TextView
         android:id="@+id/noNetWork"
-        android:layout_weight="0"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:gravity="center"
+        android:layout_weight="0"
         android:background="#FF4141"
-        android:textColor="#FFFFFF"
+        android:gravity="center"
         android:text="無法連線上網"
-        android:textSize="14sp"/>
+        android:textColor="#FFFFFF"
+        android:textSize="14sp" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -26,71 +27,76 @@
         android:fillViewport="true"
         android:overScrollMode="never"
         android:scrollbars="none">
+
         <LinearLayout
             android:id="@+id/Livepage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <LinearLayout
-                android:background="@color/PCCU_yellow"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:background="@color/PCCU_yellow"
                 android:orientation="horizontal">
+
                 <TextView
-                    android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:textColor="#575757"
+                    android:paddingLeft="26dp"
                     android:text="即時影像"
-                    android:textSize="18sp"
-                    android:paddingLeft="26dp"/>
+                    android:textColor="#575757"
+                    android:textSize="18sp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/aboutButton"
-                    app:backgroundTint="#00FFFFFF"
-                    android:stateListAnimator="@null"
                     android:layout_width="53dp"
+                    android:layout_height="match_parent"
+                    android:insetLeft="3dp"
                     android:insetTop="3dp"
                     android:insetRight="3dp"
                     android:insetBottom="3dp"
-                    android:insetLeft="3dp"
-                    android:layout_height="match_parent"
                     android:padding="7dp"
+                    android:stateListAnimator="@null"
+                    app:backgroundTint="#00FFFFFF"
                     app:cornerRadius="133dp"
                     app:icon="@drawable/about"
                     app:iconGravity="top"
                     app:iconSize="30dp"
-                    app:iconTint="#575757"
-                    />
+                    app:iconTint="#575757" />
             </LinearLayout>
+
             <LinearLayout
-                android:background="@color/PCCU_yellow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/PCCU_yellow"
                 android:orientation="vertical">
+
                 <com.google.android.material.tabs.TabLayout
                     android:id="@+id/camera_tabs"
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:background="@color/PCCU_yellow"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:tabTextAppearance="@style/bottom_tab_title_inactive"
-                    app:tabSelectedTextColor="#FFFFFF"
-                    app:tabTextColor="#99FFFFFF"
-                    app:tabIndicatorColor="#FFFFFF"
                     app:tabGravity="center"
+                    app:tabIndicatorColor="#FFFFFF"
                     app:tabMode="scrollable"
-                    android:background="@color/PCCU_yellow">
+                    app:tabSelectedTextColor="#FFFFFF"
+                    app:tabTextAppearance="@style/bottom_tab_title_inactive"
+                    app:tabTextColor="#99FFFFFF">
 
                 </com.google.android.material.tabs.TabLayout>
             </LinearLayout>
+
             <androidx.viewpager2.widget.ViewPager2
-                android:layout_weight="1"
                 android:id="@+id/LiveCameras_fragment"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"/>
+                android:layout_height="0dp"
+                android:layout_weight="1" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

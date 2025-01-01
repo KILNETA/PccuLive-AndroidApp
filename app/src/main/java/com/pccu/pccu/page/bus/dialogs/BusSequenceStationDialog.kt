@@ -18,8 +18,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.pccu.pccu.sharedFunctions.PToast
 import com.pccu.pccu.sharedFunctions.RV
 import com.pccu.pccu.sharedFunctions.ViewGauge
-import kotlinx.android.synthetic.main.bus_dialog.*
-import kotlinx.android.synthetic.main.bus_dialog_station_sequence_item.view.*
 import kotlinx.coroutines.*
 
 /**
@@ -90,7 +88,7 @@ class BusSequenceStationDialog (
         //列表物品觸控助手 套用 列表 (不能少 少了會讓Item拖移出Bug 且很難排查)
         mITH.attachToRecyclerView(recycler)
         //加載視圖
-        listView.addView(recycler)
+        this.view?.findViewById<LinearLayout>(R.id.listView)?.addView(recycler)
     }
 
     /**
@@ -113,7 +111,7 @@ class BusSequenceStationDialog (
             dismiss()
         }
         //載入視圖
-        buttonView.addView(buttonCancel)
+        this.view?.findViewById<LinearLayout>(R.id.buttonView)?.addView(buttonCancel)
     }
 
     /**
@@ -156,7 +154,7 @@ class BusSequenceStationDialog (
             }
         }
         //載入視圖
-        buttonView.addView(buttonConfirm)
+        this.view?.findViewById<LinearLayout>(R.id.buttonView)?.addView(buttonConfirm)
     }
 
     /**
@@ -171,7 +169,7 @@ class BusSequenceStationDialog (
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //設置對話框功能標題
-        dialogName.text = "排序站牌"
+        this.view?.findViewById<TextView>(R.id.dialogName)?.text = "排序站牌"
         //取得收藏群組列表
         @Suppress("UNCHECKED_CAST")
         allCollectList = Object_SharedPreferences["Bus", "Collects", requireContext()] as ArrayList<CollectGroup>
@@ -237,15 +235,15 @@ class BusSequenceStationDialog (
             //取得指定站牌資料
             val station = collectGroup!!.SaveStationList[position]
             //設置路線名
-            holder.itemView.BusName.text = station.RouteData.RouteName.Zh_tw
+            holder.itemView.findViewById<TextView>(R.id.BusName).text = station.RouteData.RouteName.Zh_tw
             //設置終點站名
             @Suppress("SetTextI18n")
-            holder.itemView.DestinationStopName.text = "往${station.DestinationStopName}"
+            holder.itemView.findViewById<TextView>(R.id.DestinationStopName).text = "往${station.DestinationStopName}"
             //設置站牌名稱
-            holder.itemView.StationName.text = station.StationName.Zh_tw
+            holder.itemView.findViewById<TextView>(R.id.StationName).text = station.StationName.Zh_tw
 
             //當控制桿被按下
-            holder.itemView.bar.setOnTouchListener { v, event ->
+            holder.itemView.findViewById<ImageView>(R.id.bar).setOnTouchListener { v, event ->
                 //視圖執行點擊
                 v.performClick()
                 //設置觸摸事件
